@@ -1,20 +1,63 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
-import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/services/user.dart';
+import 'package:responsive_table/DatatableHeader.dart';
 
 class UserProvider with ChangeNotifier {
   UserServices _userServices = UserServices();
-  List<UserModel> users = [];
-  int _rowsPerPage = PaginatedDataTable.defaultRowsPerPage;
-  int _sortColumnIndex;
-  bool _sortAscending = true;
-
-  int get rowsPerPage => _rowsPerPage;
-  int get sortColumnIndex => _sortColumnIndex;
-  bool get sortAscending => _sortAscending;
+  List<DatatableHeader> headers = [
+    DatatableHeader(
+      text: 'ID',
+      value: 'id',
+      show: false,
+      sortable: true,
+      textAlign: TextAlign.left,
+    ),
+    DatatableHeader(
+      text: '名前',
+      value: 'name',
+      show: true,
+      sortable: true,
+      textAlign: TextAlign.left,
+    ),
+    DatatableHeader(
+      text: '電話番号',
+      value: 'tel',
+      show: true,
+      sortable: true,
+      textAlign: TextAlign.left,
+    ),
+    DatatableHeader(
+      text: 'メールアドレス',
+      value: 'email',
+      show: true,
+      sortable: true,
+      textAlign: TextAlign.left,
+    ),
+    DatatableHeader(
+      text: '登録日時',
+      value: 'createdAt',
+      show: true,
+      sortable: true,
+      textAlign: TextAlign.left,
+    ),
+  ];
+  List<int> perPages = [5, 10, 15, 100];
+  int total = 100;
+  int currentPerPage;
+  int currentPage = 1;
+  bool isSearch = false;
+  List<Map<String, dynamic>> source = [];
+  List<Map<String, dynamic>> selecteds = [];
+  String selectableKey = 'id';
+  String sortColumn;
+  bool sortAscending = true;
+  bool isLoading = true;
+  bool showSelect = true;
 
   TextEditingController name = TextEditingController();
   TextEditingController zip = TextEditingController();
@@ -75,18 +118,78 @@ class UserProvider with ChangeNotifier {
     return await _userServices.getUsers(shopId: shopId);
   }
 
-  set rowsPerPage(int rowsPerPage) {
-    _rowsPerPage = rowsPerPage;
+  List<Map<String, dynamic>> _generateData({int n: 100}) {
+    final List source = List.filled(n, Random.secure());
+    List<Map<String, dynamic>> temps = [];
+    var i = source.length;
+    print(i);
+    for (var data in source) {
+      temps.add({
+        'id': i,
+        'name': '弁当 $i',
+        'tel': '090-6289-3491-$i',
+        'email': 'info@gmail.com-$i',
+        'password': 'password-$i',
+        'createdAt': '2021/01/26',
+      });
+      i++;
+    }
+    return temps;
+  }
+
+  void initData() async {
+    isLoading = true;
+    notifyListeners();
+    Future.delayed(Duration(seconds: 3)).then((value) {
+      source.addAll(_generateData(n: 1000));
+      isLoading = false;
+      notifyListeners();
+    });
+  }
+
+  void onSort(dynamic value) {
+    sortColumn = value;
+    sortAscending = !sortAscending;
+    if (sortAscending) {
+      source.sort((a, b) => b['$sortColumn'].compareTo(a['$sortColumn']));
+    } else {
+      source.sort((a, b) => a['$sortColumn'].compareTo(b['$sortColumn']));
+    }
     notifyListeners();
   }
 
-  set sortColumnIndex(int sortColumnIndex) {
-    _sortColumnIndex = sortColumnIndex;
+  void onSelect(bool value, Map<String, dynamic> item) {
+    if (value) {
+      selecteds.add(item);
+      notifyListeners();
+    } else {
+      selecteds.removeAt(selecteds.indexOf(item));
+      notifyListeners();
+    }
+  }
+
+  void onSelectAll(bool value) {
+    if (value) {
+      selecteds = source.map((e) => e).toList().cast();
+      notifyListeners();
+    } else {
+      selecteds.clear();
+      notifyListeners();
+    }
+  }
+
+  void dropdownOnChanged(dynamic value) {
+    currentPerPage = value;
     notifyListeners();
   }
 
-  set sortAscending(bool sortAscending) {
-    _sortAscending = sortAscending;
+  void backOnPressed() {
+    currentPage = currentPage >= 2 ? currentPage - 1 : 1;
+    notifyListeners();
+  }
+
+  void forwardOnPressed() {
+    currentPage++;
     notifyListeners();
   }
 }
