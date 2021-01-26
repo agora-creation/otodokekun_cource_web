@@ -19,6 +19,7 @@ dependencies:
   firebase_storage: ^7.0.0
   provider: ^4.3.3
   flutter_admin_scaffold: ^0.0.5
+  responsive_table: ^0.1.1+8
   intl: ^0.16.1
 
 dev_dependencies:

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_scaffold/admin_scaffold.dart';
+import 'package:otodokekun_cource_web/helpers/side_menu.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 
 class CustomAdminScaffold extends StatelessWidget {
@@ -29,7 +30,7 @@ class CustomAdminScaffold extends StatelessWidget {
         activeTextStyle: TextStyle(color: Colors.white),
         activeBackgroundColor: kSubColor.withOpacity(0.8),
         textStyle: TextStyle(color: kSubColor),
-        items: [],
+        items: kSideMenu,
         selectedRoute: selectedRoute,
         onSelected: (item) {
           Navigator.pushNamed(context, item.route);
