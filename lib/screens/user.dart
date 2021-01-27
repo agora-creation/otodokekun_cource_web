@@ -19,43 +19,30 @@ class UserScreen extends StatelessWidget {
       appProvider: appProvider,
       shopProvider: shopProvider,
       selectedRoute: id,
-      body: FutureBuilder(
-        future: userProvider.getUsers(shopId: shopProvider.shop?.id),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return Text('読み込み中');
-          }
-          if (snapshot.hasError) {
-            print(snapshot.error);
-            return Text('エラー');
-          }
-          if (!snapshot.hasData) {
-            return Text('データなし');
-          }
-          return CustomTable(
-            title: '顧客一覧',
-            actions: [
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: FillBoxButton(
-                  labelText: '顧客新規登録',
-                  labelColor: Colors.white,
-                  backgroundColor: Colors.blueAccent,
-                  onTap: () {},
-                ),
-              ),
-            ],
-            headers: userProvider.headers,
-            source: userProvider.source,
-            selecteds: userProvider.selecteds,
-            onSort: (value) => userProvider.onSort(value),
-            sortAscending: userProvider.sortAscending,
-            sortColumn: userProvider.sortColumn,
-            isLoading: userProvider.isLoading,
-            onSelect: (value, item) => userProvider.onSelect(value, item),
-            onSelectAll: (value) => userProvider.onSelectAll(value),
-          );
-        },
+      body: CustomTable(
+        title: '顧客一覧',
+        actions: [
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: FillBoxButton(
+              labelText: '顧客新規登録',
+              labelColor: Colors.white,
+              backgroundColor: Colors.blueAccent,
+              onTap: () {
+                userProvider.getUsers(shopId: shopProvider.shop?.id);
+              },
+            ),
+          ),
+        ],
+        headers: userProvider.headers,
+        source: userProvider.source,
+        selecteds: userProvider.selecteds,
+        onSort: (value) => userProvider.onSort(value),
+        sortAscending: userProvider.sortAscending,
+        sortColumn: userProvider.sortColumn,
+        isLoading: userProvider.isLoading,
+        onSelect: (value, item) => userProvider.onSelect(value, item),
+        onSelectAll: (value) => userProvider.onSelectAll(value),
       ),
     );
   }
