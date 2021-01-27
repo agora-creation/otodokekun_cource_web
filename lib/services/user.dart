@@ -16,12 +16,16 @@ class UserServices {
     _firebaseFirestore.collection(_collection).doc(values['id']).delete();
   }
 
-  Future<QuerySnapshot> getUsers({String shopId}) async {
+  Future<List<Map<String, dynamic>>> getUsers({String shopId}) async {
+    List<Map<String, dynamic>> users = [];
     QuerySnapshot snapshot = await _firebaseFirestore
         .collection(_collection)
         .where('shopId', isEqualTo: shopId)
         .orderBy('createdAt', descending: true)
         .get();
-    return snapshot;
+    for (DocumentSnapshot user in snapshot.docs) {
+      users.add(user.data());
+    }
+    return users;
   }
 }

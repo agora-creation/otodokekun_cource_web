@@ -1,6 +1,3 @@
-import 'dart:math';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
@@ -18,9 +15,30 @@ class UserProvider with ChangeNotifier {
       textAlign: TextAlign.left,
     ),
     DatatableHeader(
+      text: '店舗ID',
+      value: 'shopId',
+      show: false,
+      sortable: true,
+      textAlign: TextAlign.left,
+    ),
+    DatatableHeader(
       text: '名前',
       value: 'name',
       show: true,
+      sortable: true,
+      textAlign: TextAlign.left,
+    ),
+    DatatableHeader(
+      text: '郵便番号',
+      value: 'zip',
+      show: false,
+      sortable: true,
+      textAlign: TextAlign.left,
+    ),
+    DatatableHeader(
+      text: '住所',
+      value: 'address',
+      show: false,
       sortable: true,
       textAlign: TextAlign.left,
     ),
@@ -39,6 +57,13 @@ class UserProvider with ChangeNotifier {
       textAlign: TextAlign.left,
     ),
     DatatableHeader(
+      text: 'パスワード',
+      value: 'password',
+      show: false,
+      sortable: true,
+      textAlign: TextAlign.left,
+    ),
+    DatatableHeader(
       text: '登録日時',
       value: 'createdAt',
       show: true,
@@ -46,11 +71,8 @@ class UserProvider with ChangeNotifier {
       textAlign: TextAlign.left,
     ),
   ];
-  List<int> perPages = [5, 10, 15, 100];
-  int total = 100;
-  int currentPerPage;
+  int currentPerPage = 10;
   int currentPage = 1;
-  bool isSearch = false;
   List<Map<String, dynamic>> source = [];
   List<Map<String, dynamic>> selecteds = [];
   String selectableKey = 'id';
@@ -114,37 +136,9 @@ class UserProvider with ChangeNotifier {
     password.text = '';
   }
 
-  Future<QuerySnapshot> getUsers({String shopId}) async {
-    return await _userServices.getUsers(shopId: shopId);
-  }
-
-  List<Map<String, dynamic>> _generateData({int n: 100}) {
-    final List source = List.filled(n, Random.secure());
-    List<Map<String, dynamic>> temps = [];
-    var i = source.length;
-    print(i);
-    for (var data in source) {
-      temps.add({
-        'id': i,
-        'name': '弁当 $i',
-        'tel': '090-6289-3491-$i',
-        'email': 'info@gmail.com-$i',
-        'password': 'password-$i',
-        'createdAt': '2021/01/26',
-      });
-      i++;
-    }
-    return temps;
-  }
-
-  void initData() async {
-    isLoading = true;
+  Future getUsers({String shopId}) async {
+    source = await _userServices.getUsers(shopId: shopId);
     notifyListeners();
-    Future.delayed(Duration(seconds: 3)).then((value) {
-      source.addAll(_generateData(n: 1000));
-      isLoading = false;
-      notifyListeners();
-    });
   }
 
   void onSort(dynamic value) {
