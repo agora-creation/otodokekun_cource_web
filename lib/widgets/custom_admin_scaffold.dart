@@ -170,6 +170,9 @@ class CustomAdminScaffold extends StatelessWidget {
             Container(
               margin: EdgeInsets.all(10.0),
               padding: EdgeInsets.all(0.0),
+              constraints: BoxConstraints(
+                maxHeight: 700.0,
+              ),
               child: Card(
                 elevation: 1.0,
                 clipBehavior: Clip.none,

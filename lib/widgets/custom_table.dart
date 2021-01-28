@@ -13,6 +13,12 @@ class CustomTable extends StatelessWidget {
   final bool isLoading;
   final dynamic Function(bool, Map<String, dynamic>) onSelect;
   final dynamic Function(bool) onSelectAll;
+  final dynamic Function(dynamic) currentPerPageChange;
+  final int currentPage;
+  final int currentPerPage;
+  final int total;
+  final Function currentPageBack;
+  final Function currentPageForward;
 
   CustomTable({
     this.title,
@@ -26,6 +32,12 @@ class CustomTable extends StatelessWidget {
     this.isLoading,
     this.onSelect,
     this.onSelectAll,
+    this.currentPerPageChange,
+    this.currentPage,
+    this.currentPerPage,
+    this.total,
+    this.currentPageBack,
+    this.currentPageForward,
   });
 
   @override
@@ -65,21 +77,21 @@ class CustomTable extends StatelessWidget {
             items: [
               DropdownMenuItem(child: Text('10'), value: 10),
             ],
-            onChanged: (value) {},
+            onChanged: currentPerPageChange,
           ),
         ),
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text('1 〜 10 全10件'),
+          child: Text('$currentPage 〜 $currentPerPage 全 $total件'),
         ),
         IconButton(
           icon: Icon(Icons.arrow_back_ios),
-          onPressed: () {},
+          onPressed: currentPageBack,
           padding: EdgeInsets.symmetric(horizontal: 16.0),
         ),
         IconButton(
           icon: Icon(Icons.arrow_forward_ios),
-          onPressed: () {},
+          onPressed: currentPageForward,
           padding: EdgeInsets.symmetric(horizontal: 16.0),
         ),
       ],

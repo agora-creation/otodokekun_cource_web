@@ -22,20 +22,19 @@ class UserScreen extends StatelessWidget {
       body: CustomTable(
         title: '顧客一覧',
         actions: [
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: FillBoxButton(
-              labelText: '顧客新規登録',
-              labelColor: Colors.white,
-              backgroundColor: Colors.blueAccent,
-              onTap: () {
-                userProvider.getUsers(shopId: shopProvider.shop?.id);
-              },
-            ),
+          Row(
+            children: [
+              FillBoxButton(
+                labelText: '顧客新規登録',
+                labelColor: Colors.white,
+                backgroundColor: Colors.blueAccent,
+                onTap: () {},
+              ),
+            ],
           ),
         ],
         headers: userProvider.headers,
-        source: userProvider.source,
+        source: userProvider.users,
         selecteds: userProvider.selecteds,
         onSort: (value) => userProvider.onSort(value),
         sortAscending: userProvider.sortAscending,
@@ -43,6 +42,13 @@ class UserScreen extends StatelessWidget {
         isLoading: userProvider.isLoading,
         onSelect: (value, item) => userProvider.onSelect(value, item),
         onSelectAll: (value) => userProvider.onSelectAll(value),
+        currentPerPageChange: (value) =>
+            userProvider.currentPerPageChange(value),
+        currentPage: userProvider.currentPage,
+        currentPerPage: userProvider.currentPerPage,
+        total: userProvider.users.length,
+        currentPageBack: userProvider.currentPageBack,
+        currentPageForward: userProvider.currentPageForward,
       ),
     );
   }

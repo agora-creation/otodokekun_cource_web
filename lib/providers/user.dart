@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
@@ -11,14 +12,14 @@ class UserProvider with ChangeNotifier {
       text: 'ID',
       value: 'id',
       show: false,
-      sortable: true,
+      sortable: false,
       textAlign: TextAlign.left,
     ),
     DatatableHeader(
       text: '店舗ID',
       value: 'shopId',
       show: false,
-      sortable: true,
+      sortable: false,
       textAlign: TextAlign.left,
     ),
     DatatableHeader(
@@ -32,14 +33,14 @@ class UserProvider with ChangeNotifier {
       text: '郵便番号',
       value: 'zip',
       show: false,
-      sortable: true,
+      sortable: false,
       textAlign: TextAlign.left,
     ),
     DatatableHeader(
       text: '住所',
       value: 'address',
       show: false,
-      sortable: true,
+      sortable: false,
       textAlign: TextAlign.left,
     ),
     DatatableHeader(
@@ -59,26 +60,26 @@ class UserProvider with ChangeNotifier {
     DatatableHeader(
       text: 'パスワード',
       value: 'password',
-      show: false,
+      show: true,
       sortable: true,
       textAlign: TextAlign.left,
     ),
     DatatableHeader(
       text: '登録日時',
       value: 'createdAt',
-      show: true,
-      sortable: true,
+      show: false,
+      sortable: false,
       textAlign: TextAlign.left,
     ),
   ];
   int currentPerPage = 10;
   int currentPage = 1;
-  List<Map<String, dynamic>> source = [];
+  List<Map<String, dynamic>> users = [];
   List<Map<String, dynamic>> selecteds = [];
   String selectableKey = 'id';
   String sortColumn;
   bool sortAscending = true;
-  bool isLoading = true;
+  bool isLoading = false;
   bool showSelect = true;
 
   TextEditingController name = TextEditingController();
@@ -137,7 +138,14 @@ class UserProvider with ChangeNotifier {
   }
 
   Future getUsers({String shopId}) async {
-    source = await _userServices.getUsers(shopId: shopId);
+    users.clear();
+    if (shopId != null) {
+      QuerySnapshot snapshot =
+          await _userServices.getUsersSnapshot(shopId: shopId);
+      for (DocumentSnapshot user in snapshot.docs) {
+        users.add(user.data());
+      }
+    }
     notifyListeners();
   }
 
@@ -145,9 +153,9 @@ class UserProvider with ChangeNotifier {
     sortColumn = value;
     sortAscending = !sortAscending;
     if (sortAscending) {
-      source.sort((a, b) => b['$sortColumn'].compareTo(a['$sortColumn']));
+      users.sort((a, b) => b['$sortColumn'].compareTo(a['$sortColumn']));
     } else {
-      source.sort((a, b) => a['$sortColumn'].compareTo(b['$sortColumn']));
+      users.sort((a, b) => a['$sortColumn'].compareTo(b['$sortColumn']));
     }
     notifyListeners();
   }
@@ -164,7 +172,7 @@ class UserProvider with ChangeNotifier {
 
   void onSelectAll(bool value) {
     if (value) {
-      selecteds = source.map((e) => e).toList().cast();
+      selecteds = users.map((e) => e).toList().cast();
       notifyListeners();
     } else {
       selecteds.clear();
@@ -172,17 +180,17 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  void dropdownOnChanged(dynamic value) {
+  void currentPerPageChange(dynamic value) {
     currentPerPage = value;
     notifyListeners();
   }
 
-  void backOnPressed() {
+  void currentPageBack() {
     currentPage = currentPage >= 2 ? currentPage - 1 : 1;
     notifyListeners();
   }
 
-  void forwardOnPressed() {
+  void currentPageForward() {
     currentPage++;
     notifyListeners();
   }
