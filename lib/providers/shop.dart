@@ -125,7 +125,6 @@ class ShopProvider with ChangeNotifier {
     address.text = _shop.address;
     tel.text = _shop.tel;
     staff.text = _shop.staff;
-    notifyListeners();
   }
 
   Future reloadShopModel() async {

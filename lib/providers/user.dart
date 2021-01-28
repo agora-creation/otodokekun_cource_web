@@ -67,8 +67,8 @@ class UserProvider with ChangeNotifier {
     DatatableHeader(
       text: '登録日時',
       value: 'createdAt',
-      show: false,
-      sortable: false,
+      show: true,
+      sortable: true,
       textAlign: TextAlign.left,
     ),
   ];
@@ -137,16 +137,17 @@ class UserProvider with ChangeNotifier {
     password.text = '';
   }
 
-  Future getUsers({String shopId}) async {
+  Future<QuerySnapshot> getUsersSnapshot({String shopId}) async {
+    QuerySnapshot snapshot =
+        await _userServices.getUsersSnapshot(shopId: shopId);
+    return snapshot;
+  }
+
+  void setUsers(List<QueryDocumentSnapshot> docs) {
     users.clear();
-    if (shopId != null) {
-      QuerySnapshot snapshot =
-          await _userServices.getUsersSnapshot(shopId: shopId);
-      for (DocumentSnapshot user in snapshot.docs) {
-        users.add(user.data());
-      }
+    for (DocumentSnapshot user in docs) {
+      users.add(user.data());
     }
-    notifyListeners();
   }
 
   void onSort(dynamic value) {

@@ -6,6 +6,7 @@ import 'package:otodokekun_cource_web/providers/app.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/screens/login.dart';
 import 'package:otodokekun_cource_web/widgets/border_round_button.dart';
+import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
 import 'package:otodokekun_cource_web/widgets/loading.dart';
@@ -41,14 +42,8 @@ class CustomAdminScaffold extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (_) {
-                  return AlertDialog(
-                    title: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        '店舗情報',
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                    ),
+                  return CustomDialog(
+                    title: '店舗情報',
                     content: appProvider.isLoading
                         ? LoadingWidget()
                         : Container(
@@ -94,11 +89,10 @@ class CustomAdminScaffold extends StatelessWidget {
                               ],
                             ),
                           ),
-                    contentPadding: EdgeInsets.all(16.0),
-                    actions: [
-                      appProvider.isLoading
-                          ? Container()
-                          : BorderRoundButton(
+                    actions: appProvider.isLoading
+                        ? []
+                        : [
+                            BorderRoundButton(
                               labelText: 'ログアウト',
                               labelColor: Colors.blueAccent,
                               borderColor: Colors.blueAccent,
@@ -116,9 +110,7 @@ class CustomAdminScaffold extends StatelessWidget {
                                 );
                               },
                             ),
-                      appProvider.isLoading
-                          ? Container()
-                          : FillRoundButton(
+                            FillRoundButton(
                               labelText: '変更を保存',
                               labelColor: Colors.white,
                               backgroundColor: Colors.blueAccent,
@@ -134,8 +126,7 @@ class CustomAdminScaffold extends StatelessWidget {
                                 Navigator.pop(context);
                               },
                             ),
-                    ],
-                    actionsPadding: EdgeInsets.symmetric(horizontal: 8.0),
+                          ],
                   );
                 },
               );

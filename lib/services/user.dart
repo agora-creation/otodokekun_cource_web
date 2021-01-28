@@ -22,7 +22,6 @@ class UserServices {
         .where('shopId', isEqualTo: shopId)
         .orderBy('createdAt', descending: true)
         .get();
-    print(shopId);
     return snapshot;
   }
 }

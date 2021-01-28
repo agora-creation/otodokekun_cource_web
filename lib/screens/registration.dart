@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
-import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/screens/user.dart';
 import 'package:otodokekun_cource_web/widgets/border_round_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
@@ -13,7 +12,6 @@ class RegistrationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shopProvider = Provider.of<ShopProvider>(context);
-    final userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
       backgroundColor: kMainColor,
       body: SingleChildScrollView(
@@ -114,8 +112,6 @@ class RegistrationScreen extends StatelessWidget {
                                       return;
                                     }
                                     shopProvider.clearController();
-                                    userProvider.getUsers(
-                                        shopId: shopProvider.shop?.id);
                                     Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(

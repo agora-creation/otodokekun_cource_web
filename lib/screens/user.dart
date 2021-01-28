@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/providers/app.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
@@ -19,37 +20,49 @@ class UserScreen extends StatelessWidget {
       appProvider: appProvider,
       shopProvider: shopProvider,
       selectedRoute: id,
-      body: CustomTable(
-        title: '顧客一覧',
-        actions: [
-          Row(
-            children: [
-              FillBoxButton(
-                labelText: '顧客新規登録',
-                labelColor: Colors.white,
-                backgroundColor: Colors.blueAccent,
-                onTap: () {},
-              ),
-            ],
-          ),
-        ],
-        headers: userProvider.headers,
-        source: userProvider.users,
-        selecteds: userProvider.selecteds,
-        onSort: (value) => userProvider.onSort(value),
-        sortAscending: userProvider.sortAscending,
-        sortColumn: userProvider.sortColumn,
-        isLoading: userProvider.isLoading,
-        onSelect: (value, item) => userProvider.onSelect(value, item),
-        onSelectAll: (value) => userProvider.onSelectAll(value),
-        currentPerPageChange: (value) =>
-            userProvider.currentPerPageChange(value),
-        currentPage: userProvider.currentPage,
-        currentPerPage: userProvider.currentPerPage,
-        total: userProvider.users.length,
-        currentPageBack: userProvider.currentPageBack,
-        currentPageForward: userProvider.currentPageForward,
-      ),
+      body: shopProvider.shop != null
+          ? FutureBuilder<QuerySnapshot>(
+              future:
+                  userProvider.getUsersSnapshot(shopId: shopProvider.shop?.id),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done &&
+                    !snapshot.hasError &&
+                    snapshot.hasData &&
+                    snapshot.data.docs.length > 0) {
+                  userProvider.setUsers(snapshot.data.docs);
+                  print(userProvider.users.length);
+                }
+                return CustomTable(
+                  title: '顧客一覧',
+                  actions: [
+                    FillBoxButton(
+                      labelText: '顧客新規登録',
+                      labelColor: Colors.white,
+                      backgroundColor: Colors.blueAccent,
+                      onTap: () {},
+                    ),
+                  ],
+                  headers: userProvider.headers,
+                  source: userProvider.users,
+                  selecteds: userProvider.selecteds,
+                  onTabRow: (data) => print(data),
+                  onSort: (value) => userProvider.onSort(value),
+                  sortAscending: userProvider.sortAscending,
+                  sortColumn: userProvider.sortColumn,
+                  isLoading: userProvider.isLoading,
+                  onSelect: (value, item) => userProvider.onSelect(value, item),
+                  onSelectAll: (value) => userProvider.onSelectAll(value),
+                  currentPerPageChange: (value) =>
+                      userProvider.currentPerPageChange(value),
+                  currentPage: userProvider.currentPage,
+                  currentPerPage: userProvider.currentPerPage,
+                  total: userProvider.users.length,
+                  currentPageBack: userProvider.currentPageBack,
+                  currentPageForward: userProvider.currentPageForward,
+                );
+              },
+            )
+          : Container(),
     );
   }
 }
