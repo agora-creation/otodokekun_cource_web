@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
-import 'package:otodokekun_cource_web/providers/app.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/screens/course.dart';
@@ -21,7 +20,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: AppProvider()),
         ChangeNotifierProvider.value(value: ShopProvider.initialize()),
         ChangeNotifierProvider.value(value: UserProvider()),
       ],
@@ -53,7 +51,7 @@ class SplashController extends StatelessWidget {
       case Status.Authenticating:
         return LoginScreen();
       case Status.Authenticated:
-        return UserScreen();
+        return NoticeScreen();
       default:
         return LoginScreen();
     }

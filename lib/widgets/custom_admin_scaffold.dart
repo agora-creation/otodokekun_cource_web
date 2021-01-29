@@ -2,23 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:otodokekun_cource_web/helpers/side_menu.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
-import 'package:otodokekun_cource_web/providers/app.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/screens/login.dart';
 import 'package:otodokekun_cource_web/widgets/border_round_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
-import 'package:otodokekun_cource_web/widgets/loading.dart';
 
 class CustomAdminScaffold extends StatelessWidget {
-  final AppProvider appProvider;
   final ShopProvider shopProvider;
   final String selectedRoute;
   final Widget body;
 
   CustomAdminScaffold({
-    this.appProvider,
     this.shopProvider,
     this.selectedRoute,
     this.body,
@@ -44,89 +40,80 @@ class CustomAdminScaffold extends StatelessWidget {
                 builder: (_) {
                   return CustomDialog(
                     title: '店舗情報',
-                    content: appProvider.isLoading
-                        ? LoadingWidget()
-                        : Container(
-                            width: 350.0,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomTextField(
-                                  controller: shopProvider.name,
-                                  obscureText: false,
-                                  labelText: '店舗名',
-                                  iconData: Icons.store,
-                                ),
-                                SizedBox(height: 8.0),
-                                CustomTextField(
-                                  controller: shopProvider.zip,
-                                  obscureText: false,
-                                  labelText: '郵便番号',
-                                  iconData: Icons.location_pin,
-                                ),
-                                SizedBox(height: 8.0),
-                                CustomTextField(
-                                  controller: shopProvider.address,
-                                  obscureText: false,
-                                  labelText: '住所',
-                                  iconData: Icons.business,
-                                ),
-                                SizedBox(height: 8.0),
-                                CustomTextField(
-                                  controller: shopProvider.tel,
-                                  obscureText: false,
-                                  labelText: '電話番号',
-                                  iconData: Icons.phone,
-                                ),
-                                SizedBox(height: 8.0),
-                                CustomTextField(
-                                  controller: shopProvider.staff,
-                                  obscureText: false,
-                                  labelText: '担当者名',
-                                  iconData: Icons.person,
-                                ),
-                              ],
-                            ),
+                    content: Container(
+                      width: 350.0,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomTextField(
+                            controller: shopProvider.name,
+                            obscureText: false,
+                            labelText: '店舗名',
+                            iconData: Icons.store,
                           ),
-                    actions: appProvider.isLoading
-                        ? []
-                        : [
-                            BorderRoundButton(
-                              labelText: 'ログアウト',
-                              labelColor: Colors.blueAccent,
-                              borderColor: Colors.blueAccent,
-                              onTap: () {
-                                appProvider.changeLoading();
-                                shopProvider.signOut();
-                                shopProvider.clearController();
-                                appProvider.changeLoading();
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => LoginScreen(),
-                                    fullscreenDialog: true,
-                                  ),
-                                );
-                              },
+                          SizedBox(height: 8.0),
+                          CustomTextField(
+                            controller: shopProvider.zip,
+                            obscureText: false,
+                            labelText: '郵便番号',
+                            iconData: Icons.location_pin,
+                          ),
+                          SizedBox(height: 8.0),
+                          CustomTextField(
+                            controller: shopProvider.address,
+                            obscureText: false,
+                            labelText: '住所',
+                            iconData: Icons.business,
+                          ),
+                          SizedBox(height: 8.0),
+                          CustomTextField(
+                            controller: shopProvider.tel,
+                            obscureText: false,
+                            labelText: '電話番号',
+                            iconData: Icons.phone,
+                          ),
+                          SizedBox(height: 8.0),
+                          CustomTextField(
+                            controller: shopProvider.staff,
+                            obscureText: false,
+                            labelText: '担当者名',
+                            iconData: Icons.person,
+                          ),
+                        ],
+                      ),
+                    ),
+                    actions: [
+                      BorderRoundButton(
+                        labelText: 'ログアウト',
+                        labelColor: Colors.blueAccent,
+                        borderColor: Colors.blueAccent,
+                        onTap: () {
+                          shopProvider.signOut();
+                          shopProvider.clearController();
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginScreen(),
+                              fullscreenDialog: true,
                             ),
-                            FillRoundButton(
-                              labelText: '変更を保存',
-                              labelColor: Colors.white,
-                              backgroundColor: Colors.blueAccent,
-                              onTap: () async {
-                                appProvider.changeLoading();
-                                if (!await shopProvider.updateShop()) {
-                                  appProvider.changeLoading();
-                                  return;
-                                }
-                                shopProvider.clearController();
-                                shopProvider.reloadShopModel();
-                                appProvider.changeLoading();
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
+                          );
+                        },
+                      ),
+                      FillRoundButton(
+                        labelText: '変更を保存',
+                        labelColor: Colors.white,
+                        backgroundColor: Colors.blueAccent,
+                        onTap: () async {
+                          if (!await shopProvider.updateShop()) {
+                            return;
+                          }
+                          shopProvider.clearController();
+                          shopProvider.reloadShopModel();
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
                   );
                 },
               );
@@ -161,11 +148,10 @@ class CustomAdminScaffold extends StatelessWidget {
             Container(
               margin: EdgeInsets.all(10.0),
               padding: EdgeInsets.all(0.0),
-              constraints: BoxConstraints(
-                maxHeight: 700.0,
-              ),
+              constraints: BoxConstraints(maxHeight: 700.0),
               child: Card(
-                elevation: 1.0,
+                elevation: 1,
+                shadowColor: Colors.black,
                 clipBehavior: Clip.none,
                 child: body,
               ),
