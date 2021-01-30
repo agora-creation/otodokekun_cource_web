@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
+import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/services/user.dart';
 
 class UserProvider with ChangeNotifier {
@@ -56,6 +57,55 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> updateUser({String id, ShopModel shop}) async {
+    if (name.text == null) return false;
+    if (zip.text == null) return false;
+    if (address.text == null) return false;
+    if (tel.text == null) return false;
+    try {
+      _userServices.updateUser({
+        'id': id,
+        'shopId': shop.id,
+        'name': name.text.trim(),
+        'zip': zip.text.trim(),
+        'address': address.text.trim(),
+        'tel': tel.text.trim(),
+      });
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> deleteUser(
+      {String id, ShopModel shop, String email, String password}) async {
+    await FirebaseAuth.instance.signOut();
+    Future.delayed(Duration.zero);
+    try {
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password)
+          .then((value) async {
+        _userServices.deleteUser({
+          'id': id,
+        });
+        await FirebaseAuth.instance.currentUser.delete();
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: shop.email,
+          password: shop.password,
+        );
+      });
+      return true;
+    } catch (e) {
+      print(e.toString());
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: shop.email,
+        password: shop.password,
+      );
+      return false;
+    }
+  }
+
   void clearController() {
     name.text = '';
     zip.text = '';
@@ -65,9 +115,13 @@ class UserProvider with ChangeNotifier {
     password.text = '';
   }
 
-  Future<List<Map<String, dynamic>>> getUsersList({String shopId}) async {
-    List<Map<String, dynamic>> users = [];
-    users = await _userServices.getUsersList(shopId: shopId);
-    return users;
+  Future<List<Map<String, dynamic>>> getUsersSource({String shopId}) async {
+    List<Map<String, dynamic>> source = [];
+    List<UserModel> users = [];
+    users = await _userServices.getUsers(shopId: shopId);
+    for (UserModel user in users) {
+      source.add(user.toMap());
+    }
+    return source;
   }
 }

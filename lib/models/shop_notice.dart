@@ -20,4 +20,12 @@ class ShopNoticeModel {
     _message = snapshot.data()['message'];
     _createdAt = snapshot.data()['createdAt'].toDate();
   }
+
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'shopId': shopId,
+        'title': title,
+        'message': message,
+        'createdAt': createdAt,
+      };
 }

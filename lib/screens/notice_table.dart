@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
+import 'package:otodokekun_cource_web/providers/shop_notice.dart';
+import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
+import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
+import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 
 class NoticeTable extends StatefulWidget {
   final ShopProvider shopProvider;
+  final ShopNoticeProvider shopNoticeProvider;
 
-  NoticeTable({@required this.shopProvider});
+  NoticeTable({@required this.shopProvider, @required this.shopNoticeProvider});
 
   @override
   _NoticeTableState createState() => _NoticeTableState();
@@ -54,17 +59,20 @@ class _NoticeTableState extends State<NoticeTable> {
   bool _sortAscending = true;
   bool _isLoading = true;
 
-  void _getSource() async {}
+  void _getSource() async {
+    _source.clear();
+    setState(() => _isLoading = true);
+    Future.delayed(Duration(seconds: 3)).then((value) async {
+      _source = await widget.shopNoticeProvider
+          .getNoticesSource(shopId: widget.shopProvider.shop?.id);
+      setState(() => _isLoading = false);
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _getSource();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -76,13 +84,125 @@ class _NoticeTableState extends State<NoticeTable> {
           labelText: '新規登録',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
-          onTap: () {},
+          onTap: () {
+            widget.shopNoticeProvider.clearController();
+            showDialog(
+              context: context,
+              builder: (_) {
+                return CustomDialog(
+                  title: '新規登録',
+                  content: Container(
+                    width: 350.0,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomTextField(
+                          controller: widget.shopNoticeProvider.title,
+                          obscureText: false,
+                          labelText: 'タイトル',
+                          iconData: Icons.title,
+                        ),
+                        SizedBox(height: 8.0),
+                        CustomTextField(
+                          controller: widget.shopNoticeProvider.message,
+                          obscureText: false,
+                          labelText: '内容',
+                          iconData: Icons.message,
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    FillRoundButton(
+                      labelText: '登録する',
+                      labelColor: Colors.white,
+                      backgroundColor: Colors.blueAccent,
+                      onTap: () async {
+                        if (!await widget.shopNoticeProvider.createNotice(
+                            shopId: widget.shopProvider.shop.id)) {
+                          return;
+                        }
+                        _getSource();
+                        widget.shopNoticeProvider.clearController();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          },
         ),
       ],
       headers: _headers,
       source: _source,
       selecteds: _selecteds,
-      onTabRow: (data) {},
+      onTabRow: (data) {
+        widget.shopNoticeProvider.clearController();
+        widget.shopNoticeProvider.title.text = data['title'];
+        widget.shopNoticeProvider.message.text = data['message'];
+        showDialog(
+          context: context,
+          builder: (_) {
+            return CustomDialog(
+              title: '${data['title']}',
+              content: Container(
+                width: 350.0,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomTextField(
+                      controller: widget.shopNoticeProvider.title,
+                      obscureText: false,
+                      labelText: 'タイトル',
+                      iconData: Icons.title,
+                    ),
+                    SizedBox(height: 8.0),
+                    CustomTextField(
+                      controller: widget.shopNoticeProvider.message,
+                      obscureText: false,
+                      labelText: '内容',
+                      iconData: Icons.title,
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                FillRoundButton(
+                  labelText: '削除する',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.redAccent,
+                  onTap: () async {
+                    if (!await widget.shopNoticeProvider.deleteNotice(
+                        id: data['id'], shopId: widget.shopProvider.shop.id)) {
+                      return;
+                    }
+                    _getSource();
+                    widget.shopNoticeProvider.clearController();
+                    Navigator.pop(context);
+                  },
+                ),
+                FillRoundButton(
+                  labelText: '変更を保存',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  onTap: () async {
+                    if (!await widget.shopNoticeProvider.updateNotice(
+                        id: data['id'], shopId: widget.shopProvider.shop.id)) {
+                      return;
+                    }
+                    _getSource();
+                    widget.shopNoticeProvider.clearController();
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
       onSort: (value) {
         setState(() {
           _sortColumn = value;

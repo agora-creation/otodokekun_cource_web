@@ -32,4 +32,16 @@ class UserModel {
     _password = snapshot.data()['password'];
     _createdAt = snapshot.data()['createdAt'].toDate();
   }
+
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'shopId': shopId,
+        'name': name,
+        'zip': zip,
+        'address': address,
+        'tel': tel,
+        'email': email,
+        'password': password,
+        'createdAt': createdAt,
+      };
 }

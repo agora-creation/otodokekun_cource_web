@@ -85,10 +85,11 @@ class _UserTableState extends State<UserTable> {
   bool _isLoading = true;
 
   void _getSource() async {
+    _source.clear();
     setState(() => _isLoading = true);
     Future.delayed(Duration(seconds: 3)).then((value) async {
       _source = await widget.userProvider
-          .getUsersList(shopId: widget.shopProvider.shop?.id);
+          .getUsersSource(shopId: widget.shopProvider.shop?.id);
       setState(() => _isLoading = false);
     });
   }
@@ -97,11 +98,6 @@ class _UserTableState extends State<UserTable> {
   void initState() {
     super.initState();
     _getSource();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -196,6 +192,11 @@ class _UserTableState extends State<UserTable> {
       source: _source,
       selecteds: _selecteds,
       onTabRow: (data) {
+        widget.userProvider.clearController();
+        widget.userProvider.name.text = data['name'];
+        widget.userProvider.zip.text = data['zip'];
+        widget.userProvider.address.text = data['address'];
+        widget.userProvider.tel.text = data['tel'];
         showDialog(
           context: context,
           builder: (_) {
@@ -206,10 +207,70 @@ class _UserTableState extends State<UserTable> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [],
+                  children: [
+                    CustomTextField(
+                      controller: widget.userProvider.name,
+                      obscureText: false,
+                      labelText: '名前',
+                      iconData: Icons.person,
+                    ),
+                    SizedBox(height: 8.0),
+                    CustomTextField(
+                      controller: widget.userProvider.zip,
+                      obscureText: false,
+                      labelText: '郵便番号',
+                      iconData: Icons.location_pin,
+                    ),
+                    SizedBox(height: 8.0),
+                    CustomTextField(
+                      controller: widget.userProvider.address,
+                      obscureText: false,
+                      labelText: '住所',
+                      iconData: Icons.business,
+                    ),
+                    SizedBox(height: 8.0),
+                    CustomTextField(
+                      controller: widget.userProvider.tel,
+                      obscureText: false,
+                      labelText: '電話番号',
+                      iconData: Icons.phone,
+                    ),
+                  ],
                 ),
               ),
-              actions: [],
+              actions: [
+                FillRoundButton(
+                  labelText: '削除する',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.redAccent,
+                  onTap: () async {
+                    if (!await widget.userProvider.deleteUser(
+                        id: data['id'],
+                        shop: widget.shopProvider.shop,
+                        email: data['email'],
+                        password: data['password'])) {
+                      return;
+                    }
+                    _getSource();
+                    widget.userProvider.clearController();
+                    Navigator.pop(context);
+                  },
+                ),
+                FillRoundButton(
+                  labelText: '変更を保存',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  onTap: () async {
+                    if (!await widget.userProvider.updateUser(
+                        id: data['id'], shop: widget.shopProvider.shop)) {
+                      return;
+                    }
+                    _getSource();
+                    widget.userProvider.clearController();
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
             );
           },
         );
