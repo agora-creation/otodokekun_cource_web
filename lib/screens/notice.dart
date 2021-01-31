@@ -15,7 +15,10 @@ class NoticeScreen extends StatelessWidget {
     return CustomAdminScaffold(
       shopProvider: shopProvider,
       selectedRoute: id,
-      body: NoticeTable(shopProvider: shopProvider),
+      body: NoticeTable(
+        shopProvider: shopProvider,
+        shopNoticeProvider: shopNoticeProvider,
+      ),
     );
   }
 }

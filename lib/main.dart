@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
+import 'package:otodokekun_cource_web/providers/shop_course.dart';
 import 'package:otodokekun_cource_web/providers/shop_notice.dart';
+import 'package:otodokekun_cource_web/providers/shop_order.dart';
+import 'package:otodokekun_cource_web/providers/shop_product.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/screens/course.dart';
 import 'package:otodokekun_cource_web/screens/login.dart';
@@ -22,7 +25,10 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: ShopProvider.initialize()),
+        ChangeNotifierProvider.value(value: ShopCourseProvider()),
         ChangeNotifierProvider.value(value: ShopNoticeProvider()),
+        ChangeNotifierProvider.value(value: ShopOrderProvider()),
+        ChangeNotifierProvider.value(value: ShopProductProvider()),
         ChangeNotifierProvider.value(value: UserProvider()),
       ],
       child: MaterialApp(

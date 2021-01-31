@@ -31,7 +31,7 @@ class ShopNoticeProvider with ChangeNotifier {
     if (title.text == null) return false;
     if (message.text == null) return false;
     try {
-      _shopNoticeService.updateUser({
+      _shopNoticeService.updateNotice({
         'id': id,
         'shopId': shopId,
         'title': title.text.trim(),
@@ -46,7 +46,7 @@ class ShopNoticeProvider with ChangeNotifier {
 
   Future<bool> deleteNotice({String id, String shopId}) async {
     try {
-      _shopNoticeService.deleteUser({
+      _shopNoticeService.deleteNotice({
         'id': id,
         'shopId': shopId,
       });

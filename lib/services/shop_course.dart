@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:otodokekun_cource_web/models/shop_notice.dart';
+import 'package:otodokekun_cource_web/models/shop_course.dart';
 
-class ShopNoticeService {
+class ShopCourseService {
   String _collection = 'shop';
-  String _subCollection = 'notice';
+  String _subCollection = 'course';
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
-  String getNewNoticeId({String shopId}) {
+  String getNewCourseId({String shopId}) {
     String id = _firebaseFirestore
         .collection(_collection)
         .doc(shopId)
@@ -16,7 +16,7 @@ class ShopNoticeService {
     return id;
   }
 
-  void createNotice(Map<String, dynamic> values) {
+  void createCourse(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])
@@ -25,7 +25,7 @@ class ShopNoticeService {
         .set(values);
   }
 
-  void updateNotice(Map<String, dynamic> values) {
+  void updateCourse(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])
@@ -34,7 +34,7 @@ class ShopNoticeService {
         .update(values);
   }
 
-  void deleteNotice(Map<String, dynamic> values) {
+  void deleteCourse(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])
@@ -43,17 +43,17 @@ class ShopNoticeService {
         .delete();
   }
 
-  Future<List<ShopNoticeModel>> getNotices({String shopId}) async {
-    List<ShopNoticeModel> notices = [];
+  Future<List<ShopCourseModel>> getCourses({String shopId}) async {
+    List<ShopCourseModel> courses = [];
     QuerySnapshot snapshot = await _firebaseFirestore
         .collection(_collection)
         .doc(shopId)
         .collection(_subCollection)
         .orderBy('createdAt', descending: true)
         .get();
-    for (DocumentSnapshot notice in snapshot.docs) {
-      notices.add(ShopNoticeModel.fromSnapshot(notice));
+    for (DocumentSnapshot course in snapshot.docs) {
+      courses.add(ShopCourseModel.fromSnapshot(course));
     }
-    return notices;
+    return courses;
   }
 }

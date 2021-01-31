@@ -29,4 +29,15 @@ class ShopProductModel {
     _published = snapshot.data()['published'];
     _createdAt = snapshot.data()['createdAt'].toDate();
   }
+
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'shopId': shopId,
+        'name': name,
+        'image': image,
+        'unit': unit,
+        'price': price,
+        'published': published,
+        'createdAt': createdAt,
+      };
 }

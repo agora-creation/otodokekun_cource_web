@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
+import 'package:otodokekun_cource_web/providers/shop_order.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
-import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 
 class OrderTable extends StatefulWidget {
   final ShopProvider shopProvider;
+  final ShopOrderProvider shopOrderProvider;
 
-  OrderTable({@required this.shopProvider});
+  OrderTable({@required this.shopProvider, @required this.shopOrderProvider});
 
   @override
   _OrderTableState createState() => _OrderTableState();
@@ -66,7 +67,15 @@ class _OrderTableState extends State<OrderTable> {
   bool _sortAscending = true;
   bool _isLoading = true;
 
-  void _getSource() async {}
+  void _getSource() async {
+    _source.clear();
+    setState(() => _isLoading = true);
+    Future.delayed(Duration(seconds: 3)).then((value) async {
+      _source = await widget.shopOrderProvider
+          .getOrdersSource(shopId: widget.shopProvider.shop?.id);
+      setState(() => _isLoading = false);
+    });
+  }
 
   @override
   void initState() {
@@ -75,22 +84,10 @@ class _OrderTableState extends State<OrderTable> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return CustomTable(
       title: '注文一覧',
-      actions: [
-        FillBoxButton(
-          labelText: '新規登録',
-          labelColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          onTap: () {},
-        ),
-      ],
+      actions: [],
       headers: _headers,
       source: _source,
       selecteds: _selecteds,

@@ -52,4 +52,20 @@ class ShopOrderModel {
     }
     return convertedCart;
   }
+
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'shopId': shopId,
+        'userId': userId,
+        'name': name,
+        'zip': zip,
+        'address': address,
+        'tel': tel,
+        'cart': cart,
+        'deliveryAt': deliveryAt,
+        'remarks': remarks,
+        'totalPrice': totalPrice,
+        'shipping': shipping,
+        'createdAt': createdAt,
+      };
 }

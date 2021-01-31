@@ -4,7 +4,7 @@ import 'package:otodokekun_cource_web/models/days.dart';
 class ShopCourseModel {
   String _id;
   String _shopId;
-  String _title;
+  String _name;
   DateTime _openedAt;
   DateTime _closedAt;
   List<DaysModel> days;
@@ -13,7 +13,7 @@ class ShopCourseModel {
 
   String get id => _id;
   String get shopId => _shopId;
-  String get title => _title;
+  String get name => _name;
   DateTime get openedAt => _openedAt;
   DateTime get closedAt => _closedAt;
   bool get published => _published;
@@ -22,7 +22,7 @@ class ShopCourseModel {
   ShopCourseModel.fromSnapshot(DocumentSnapshot snapshot) {
     _id = snapshot.data()['id'];
     _shopId = snapshot.data()['shopId'];
-    _title = snapshot.data()['title'];
+    _name = snapshot.data()['name'];
     _openedAt = snapshot.data()['openedAt'].toDate();
     _closedAt = snapshot.data()['closedAt'].toDate();
     days = _convertDays(days: snapshot.data()['days']) ?? [];
@@ -37,4 +37,15 @@ class ShopCourseModel {
     }
     return convertedDays;
   }
+
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'shopId': shopId,
+        'name': name,
+        'openedAt': openedAt,
+        'closedAt': closedAt,
+        'days': days,
+        'published': published,
+        'createdAt': createdAt,
+      };
 }

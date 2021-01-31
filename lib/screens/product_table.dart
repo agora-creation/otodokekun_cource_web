@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
+import 'package:otodokekun_cource_web/providers/shop_product.dart';
+import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
+import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
+import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 
 class ProductTable extends StatefulWidget {
   final ShopProvider shopProvider;
+  final ShopProductProvider shopProductProvider;
 
-  ProductTable({@required this.shopProvider});
+  ProductTable(
+      {@required this.shopProvider, @required this.shopProductProvider});
 
   @override
   _ProductTableState createState() => _ProductTableState();
@@ -72,17 +78,20 @@ class _ProductTableState extends State<ProductTable> {
   bool _sortAscending = true;
   bool _isLoading = true;
 
-  void _getSource() async {}
+  void _getSource() async {
+    _source.clear();
+    setState(() => _isLoading = true);
+    Future.delayed(Duration(seconds: 3)).then((value) async {
+      _source = await widget.shopProductProvider
+          .getProductsSource(shopId: widget.shopProvider.shop?.id);
+      setState(() => _isLoading = false);
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _getSource();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -94,13 +103,110 @@ class _ProductTableState extends State<ProductTable> {
           labelText: '新規登録',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
-          onTap: () {},
+          onTap: () {
+            widget.shopProductProvider.clearController();
+            showDialog(
+              context: context,
+              builder: (_) {
+                return CustomDialog(
+                  title: '新規登録',
+                  content: Container(
+                    width: 350.0,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomTextField(
+                          controller: widget.shopProductProvider.name,
+                          obscureText: false,
+                          labelText: '商品名',
+                          iconData: Icons.title,
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    FillRoundButton(
+                      labelText: '登録する',
+                      labelColor: Colors.white,
+                      backgroundColor: Colors.blueAccent,
+                      onTap: () async {
+                        if (!await widget.shopProductProvider.createProduct(
+                            shopId: widget.shopProvider.shop.id)) {
+                          return;
+                        }
+                        _getSource();
+                        widget.shopProductProvider.clearController();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          },
         ),
       ],
       headers: _headers,
       source: _source,
       selecteds: _selecteds,
-      onTabRow: (data) {},
+      onTabRow: (data) {
+        widget.shopProductProvider.clearController();
+        widget.shopProductProvider.name.text = data['name'];
+        showDialog(
+          context: context,
+          builder: (_) {
+            return CustomDialog(
+              title: '${data['name']}',
+              content: Container(
+                width: 350.0,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomTextField(
+                      controller: widget.shopProductProvider.name,
+                      obscureText: false,
+                      labelText: '商品名',
+                      iconData: Icons.title,
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                FillRoundButton(
+                  labelText: '削除する',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.redAccent,
+                  onTap: () async {
+                    if (!await widget.shopProductProvider.deleteProduct(
+                        id: data['id'], shopId: widget.shopProvider.shop.id)) {
+                      return;
+                    }
+                    _getSource();
+                    widget.shopProductProvider.clearController();
+                    Navigator.pop(context);
+                  },
+                ),
+                FillRoundButton(
+                  labelText: '変更を保存',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  onTap: () async {
+                    if (!await widget.shopProductProvider.updateProduct(
+                        id: data['id'], shopId: widget.shopProvider.shop.id)) {
+                      return;
+                    }
+                    _getSource();
+                    widget.shopProductProvider.clearController();
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
       onSort: (value) {
         setState(() {
           _sortColumn = value;
