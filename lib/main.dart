@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'お届けくん(期間配達)',
+        title: 'お届けくん(BtoC)',
         theme: theme(),
         home: SplashController(),
         routes: {

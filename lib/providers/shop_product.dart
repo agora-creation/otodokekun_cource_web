@@ -18,6 +18,7 @@ class ShopProductProvider with ChangeNotifier {
         'image': '',
         'unit': '',
         'price': 0,
+        'description': '',
         'published': true,
         'createdAt': DateTime.now(),
       });

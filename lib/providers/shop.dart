@@ -7,14 +7,14 @@ enum Status { Uninitialized, Authenticated, Authenticating, Unauthenticated }
 
 class ShopProvider with ChangeNotifier {
   FirebaseAuth _auth;
-  User _user;
+  User _fUser;
   Status _status = Status.Uninitialized;
   ShopServices _shopServices = ShopServices();
   ShopModel _shop;
 
   ShopModel get shop => _shop;
   Status get status => _status;
-  User get user => _user;
+  User get fUser => _fUser;
 
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
@@ -24,6 +24,7 @@ class ShopProvider with ChangeNotifier {
   TextEditingController address = TextEditingController();
   TextEditingController tel = TextEditingController();
   TextEditingController staff = TextEditingController();
+  TextEditingController cancelLimit = TextEditingController();
 
   ShopProvider.initialize() : _auth = FirebaseAuth.instance {
     _auth.authStateChanges().listen(_onStateChanged);
@@ -52,7 +53,6 @@ class ShopProvider with ChangeNotifier {
     if (name.text == null) return false;
     if (email.text == null) return false;
     if (password.text == null) return false;
-    if (cPassword.text == null) return false;
     if (password.text != cPassword.text) return false;
     try {
       _status = Status.Authenticating;
@@ -72,6 +72,7 @@ class ShopProvider with ChangeNotifier {
           'email': email.text.trim(),
           'password': password.text.trim(),
           'staff': '',
+          'cancelLimit': 3,
           'createdAt': DateTime.now(),
         });
       });
@@ -82,13 +83,6 @@ class ShopProvider with ChangeNotifier {
       print(e.toString());
       return false;
     }
-  }
-
-  Future signOut() async {
-    await _auth.signOut();
-    _status = Status.Unauthenticated;
-    notifyListeners();
-    return Future.delayed(Duration.zero);
   }
 
   Future<bool> updateShop() async {
@@ -108,6 +102,13 @@ class ShopProvider with ChangeNotifier {
     }
   }
 
+  Future signOut() async {
+    await _auth.signOut();
+    _status = Status.Unauthenticated;
+    notifyListeners();
+    return Future.delayed(Duration.zero);
+  }
+
   void clearController() {
     email.text = '';
     password.text = '';
@@ -117,18 +118,11 @@ class ShopProvider with ChangeNotifier {
     address.text = '';
     tel.text = '';
     staff.text = '';
-  }
-
-  void setController() {
-    name.text = _shop.name;
-    zip.text = _shop.zip;
-    address.text = _shop.address;
-    tel.text = _shop.tel;
-    staff.text = _shop.staff;
+    cancelLimit.text = '';
   }
 
   Future reloadShopModel() async {
-    _shop = await _shopServices.getShop(shopId: user.uid);
+    _shop = await _shopServices.getShop(shopId: _fUser.uid);
     notifyListeners();
   }
 
@@ -136,9 +130,9 @@ class ShopProvider with ChangeNotifier {
     if (firebaseUser == null) {
       _status = Status.Unauthenticated;
     } else {
-      _user = firebaseUser;
+      _fUser = firebaseUser;
       _status = Status.Authenticated;
-      _shop = await _shopServices.getShop(shopId: _user.uid);
+      _shop = await _shopServices.getShop(shopId: _fUser.uid);
     }
     notifyListeners();
   }

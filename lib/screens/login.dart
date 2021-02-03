@@ -36,7 +36,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 8.0),
                     Text(
-                      '期間配達サービス',
+                      'BtoCサービス',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16.0,
@@ -54,7 +54,7 @@ class LoginScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('店舗様ログインページ'),
+                          Text('店舗専用ログイン'),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -63,6 +63,8 @@ class LoginScreen extends StatelessWidget {
                                 child: CustomTextField(
                                   controller: shopProvider.email,
                                   obscureText: false,
+                                  textInputType: TextInputType.emailAddress,
+                                  maxLines: 1,
                                   labelText: 'メールアドレス',
                                   iconData: Icons.email,
                                 ),
@@ -73,6 +75,8 @@ class LoginScreen extends StatelessWidget {
                                 child: CustomTextField(
                                   controller: shopProvider.password,
                                   obscureText: true,
+                                  textInputType: null,
+                                  maxLines: 1,
                                   labelText: 'パスワード',
                                   iconData: Icons.lock,
                                 ),
@@ -93,7 +97,6 @@ class LoginScreen extends StatelessWidget {
                                       return;
                                     }
                                     shopProvider.clearController();
-
                                     Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
@@ -107,7 +110,7 @@ class LoginScreen extends StatelessWidget {
                             ],
                           ),
                           LinkButton(
-                            labelText: '店舗様新規登録ページへ',
+                            labelText: '初めての方はコチラ',
                             onTap: () {
                               shopProvider.clearController();
                               Navigator.push(

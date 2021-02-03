@@ -34,7 +34,6 @@ class CustomAdminScaffold extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.store),
             onPressed: () {
-              shopProvider.setController();
               showDialog(
                 context: context,
                 builder: (_) {
@@ -136,7 +135,7 @@ class CustomAdminScaffold extends StatelessWidget {
           width: double.infinity,
           color: kMainColor.withOpacity(0.5),
           child: Center(
-            child: Text('お届けくん(期間配達)', style: TextStyle(color: Colors.white)),
+            child: Text('お届けくん(BtoC)', style: TextStyle(color: Colors.white)),
           ),
         ),
       ),

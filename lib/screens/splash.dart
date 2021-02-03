@@ -24,7 +24,7 @@ class SplashScreen extends StatelessWidget {
               ),
               SizedBox(height: 8.0),
               Text(
-                '期間配達サービス',
+                'BtoCサービス',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16.0,

@@ -7,6 +7,7 @@ class ShopProductModel {
   String _image;
   String _unit;
   int _price;
+  String _description;
   bool _published;
   DateTime _createdAt;
 
@@ -16,6 +17,7 @@ class ShopProductModel {
   String get image => _image;
   String get unit => _unit;
   int get price => _price;
+  String get description => _description;
   bool get published => _published;
   DateTime get createdAt => _createdAt;
 
@@ -26,6 +28,7 @@ class ShopProductModel {
     _image = snapshot.data()['image'];
     _unit = snapshot.data()['unit'];
     _price = snapshot.data()['price'];
+    _description = snapshot.data()['description'];
     _published = snapshot.data()['published'];
     _createdAt = snapshot.data()['createdAt'].toDate();
   }
@@ -37,6 +40,7 @@ class ShopProductModel {
         'image': image,
         'unit': unit,
         'price': price,
+        'description': description,
         'published': published,
         'createdAt': createdAt,
       };

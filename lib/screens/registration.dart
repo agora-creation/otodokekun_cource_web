@@ -35,7 +35,7 @@ class RegistrationScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 8.0),
                     Text(
-                      '期間配達サービス',
+                      'BtoCサービス',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16.0,
@@ -53,7 +53,7 @@ class RegistrationScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('店舗様新規登録ページ'),
+                          Text('店舗専用新規登録'),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -62,6 +62,8 @@ class RegistrationScreen extends StatelessWidget {
                                 child: CustomTextField(
                                   controller: shopProvider.name,
                                   obscureText: false,
+                                  textInputType: TextInputType.name,
+                                  maxLines: 1,
                                   labelText: '店舗名',
                                   iconData: Icons.store_outlined,
                                 ),
@@ -72,6 +74,8 @@ class RegistrationScreen extends StatelessWidget {
                                 child: CustomTextField(
                                   controller: shopProvider.email,
                                   obscureText: false,
+                                  textInputType: TextInputType.emailAddress,
+                                  maxLines: 1,
                                   labelText: 'メールアドレス',
                                   iconData: Icons.email_outlined,
                                 ),
@@ -82,6 +86,8 @@ class RegistrationScreen extends StatelessWidget {
                                 child: CustomTextField(
                                   controller: shopProvider.password,
                                   obscureText: true,
+                                  textInputType: null,
+                                  maxLines: 1,
                                   labelText: 'パスワード',
                                   iconData: Icons.lock_outline,
                                 ),
@@ -92,6 +98,8 @@ class RegistrationScreen extends StatelessWidget {
                                 child: CustomTextField(
                                   controller: shopProvider.cPassword,
                                   obscureText: true,
+                                  textInputType: null,
+                                  maxLines: 1,
                                   labelText: 'パスワードの再入力',
                                   iconData: Icons.lock_outline,
                                 ),
@@ -125,7 +133,7 @@ class RegistrationScreen extends StatelessWidget {
                             ],
                           ),
                           LinkButton(
-                            labelText: '店舗様ログインページへ',
+                            labelText: 'ログインはコチラ',
                             onTap: () => Navigator.pop(context),
                           ),
                         ],

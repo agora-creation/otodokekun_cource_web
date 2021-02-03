@@ -9,6 +9,7 @@ class UserModel {
   String _tel;
   String _email;
   String _password;
+  bool _blacklist;
   DateTime _createdAt;
 
   String get id => _id;
@@ -19,6 +20,7 @@ class UserModel {
   String get tel => _tel;
   String get email => _email;
   String get password => _password;
+  bool get blacklist => _blacklist;
   DateTime get createdAt => _createdAt;
 
   UserModel.fromSnapshot(DocumentSnapshot snapshot) {
@@ -30,6 +32,7 @@ class UserModel {
     _tel = snapshot.data()['tel'];
     _email = snapshot.data()['email'];
     _password = snapshot.data()['password'];
+    _blacklist = snapshot.data()['blacklist'];
     _createdAt = snapshot.data()['createdAt'].toDate();
   }
 
@@ -42,6 +45,7 @@ class UserModel {
         'tel': tel,
         'email': email,
         'password': password,
+        'blacklist': blacklist,
         'createdAt': createdAt,
       };
 }

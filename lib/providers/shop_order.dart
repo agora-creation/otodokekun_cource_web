@@ -18,8 +18,6 @@ class ShopOrderProvider with ChangeNotifier {
     }
   }
 
-  void clearController() {}
-
   Future<List<Map<String, dynamic>>> getOrdersSource({String shopId}) async {
     List<Map<String, dynamic>> source = [];
     List<ShopOrderModel> orders = [];

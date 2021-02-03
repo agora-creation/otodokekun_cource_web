@@ -166,22 +166,7 @@ class _UserTableState extends State<UserTable> {
                       ],
                     ),
                   ),
-                  actions: [
-                    FillRoundButton(
-                      labelText: '登録する',
-                      labelColor: Colors.white,
-                      backgroundColor: Colors.blueAccent,
-                      onTap: () async {
-                        if (!await widget.userProvider
-                            .createUser(shop: widget.shopProvider.shop)) {
-                          return;
-                        }
-                        _getSource();
-                        widget.userProvider.clearController();
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
+                  actions: [],
                 );
               },
             );
@@ -239,23 +224,6 @@ class _UserTableState extends State<UserTable> {
                 ),
               ),
               actions: [
-                FillRoundButton(
-                  labelText: '削除する',
-                  labelColor: Colors.white,
-                  backgroundColor: Colors.redAccent,
-                  onTap: () async {
-                    if (!await widget.userProvider.deleteUser(
-                        id: data['id'],
-                        shop: widget.shopProvider.shop,
-                        email: data['email'],
-                        password: data['password'])) {
-                      return;
-                    }
-                    _getSource();
-                    widget.userProvider.clearController();
-                    Navigator.pop(context);
-                  },
-                ),
                 FillRoundButton(
                   labelText: '変更を保存',
                   labelColor: Colors.white,

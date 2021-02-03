@@ -57,7 +57,7 @@ class CustomTable extends StatelessWidget {
       headers: headers,
       source: source,
       selecteds: selecteds,
-      showSelect: true,
+      showSelect: false,
       autoHeight: false,
       onTabRow: onTabRow,
       onSort: onSort,
