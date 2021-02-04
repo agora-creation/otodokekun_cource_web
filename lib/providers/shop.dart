@@ -11,10 +11,14 @@ class ShopProvider with ChangeNotifier {
   Status _status = Status.Uninitialized;
   ShopServices _shopServices = ShopServices();
   ShopModel _shop;
+  bool isLoading = false;
+  List<int> items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  int _selectedItem;
 
   ShopModel get shop => _shop;
   Status get status => _status;
   User get fUser => _fUser;
+  int get selectedItem => _selectedItem;
 
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
@@ -24,7 +28,6 @@ class ShopProvider with ChangeNotifier {
   TextEditingController address = TextEditingController();
   TextEditingController tel = TextEditingController();
   TextEditingController staff = TextEditingController();
-  TextEditingController cancelLimit = TextEditingController();
 
   ShopProvider.initialize() : _auth = FirebaseAuth.instance {
     _auth.authStateChanges().listen(_onStateChanged);
@@ -86,14 +89,20 @@ class ShopProvider with ChangeNotifier {
   }
 
   Future<bool> updateShop() async {
+    if (name.text == null) return false;
+    if (email.text == null) return false;
     try {
-      _shopServices.updateShop({
-        'id': _auth.currentUser.uid,
-        'name': name.text.trim(),
-        'zip': zip.text.trim(),
-        'address': address.text.trim(),
-        'tel': tel.text.trim(),
-        'staff': staff.text.trim(),
+      await _auth.currentUser.updateEmail(email.text.trim()).then((value) {
+        _shopServices.updateShop({
+          'id': _auth.currentUser.uid,
+          'name': name.text.trim(),
+          'zip': zip.text.trim(),
+          'address': address.text.trim(),
+          'tel': tel.text.trim(),
+          'email': email.text.trim(),
+          'staff': staff.text.trim(),
+          'cancelLimit': _selectedItem,
+        });
       });
       return true;
     } catch (e) {
@@ -118,7 +127,6 @@ class ShopProvider with ChangeNotifier {
     address.text = '';
     tel.text = '';
     staff.text = '';
-    cancelLimit.text = '';
   }
 
   Future reloadShopModel() async {
@@ -134,6 +142,16 @@ class ShopProvider with ChangeNotifier {
       _status = Status.Authenticated;
       _shop = await _shopServices.getShop(shopId: _fUser.uid);
     }
+    notifyListeners();
+  }
+
+  void changeLoading() {
+    isLoading = !isLoading;
+    notifyListeners();
+  }
+
+  void changeItem(int value) {
+    _selectedItem = value;
     notifyListeners();
   }
 }

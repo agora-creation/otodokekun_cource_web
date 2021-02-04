@@ -7,6 +7,7 @@ class CustomTable extends StatelessWidget {
   final List<DatatableHeader> headers;
   final List<Map<String, dynamic>> source;
   final List<Map<String, dynamic>> selecteds;
+  final bool showSelect;
   final dynamic Function(dynamic) onTabRow;
   final dynamic Function(dynamic) onSort;
   final bool sortAscending;
@@ -28,6 +29,7 @@ class CustomTable extends StatelessWidget {
     this.headers,
     this.source,
     this.selecteds,
+    this.showSelect,
     this.onTabRow,
     this.onSort,
     this.sortAscending,
@@ -57,7 +59,7 @@ class CustomTable extends StatelessWidget {
       headers: headers,
       source: source,
       selecteds: selecteds,
-      showSelect: false,
+      showSelect: showSelect,
       autoHeight: false,
       onTabRow: onTabRow,
       onSort: onSort,

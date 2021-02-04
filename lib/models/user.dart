@@ -45,7 +45,7 @@ class UserModel {
         'tel': tel,
         'email': email,
         'password': password,
-        'blacklist': blacklist,
+        'blacklist': blacklist ? '有効' : '無効',
         'createdAt': createdAt,
       };
 }

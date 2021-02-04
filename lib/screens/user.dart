@@ -16,7 +16,7 @@ class UserScreen extends StatelessWidget {
       shopProvider: shopProvider,
       selectedRoute: id,
       body: UserTable(
-        shopProvider: shopProvider,
+        shop: shopProvider.shop,
         userProvider: userProvider,
       ),
     );

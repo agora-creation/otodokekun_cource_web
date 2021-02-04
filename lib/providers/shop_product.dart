@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:otodokekun_cource_web/models/shop_product.dart';
 import 'package:otodokekun_cource_web/services/shop_product.dart';
 
 class ShopProductProvider with ChangeNotifier {
@@ -59,15 +58,5 @@ class ShopProductProvider with ChangeNotifier {
 
   void clearController() {
     name.text = '';
-  }
-
-  Future<List<Map<String, dynamic>>> getProductsSource({String shopId}) async {
-    List<Map<String, dynamic>> source = [];
-    List<ShopProductModel> products = [];
-    products = await _shopProductService.getProducts(shopId: shopId);
-    for (ShopProductModel product in products) {
-      source.add(product.toMap());
-    }
-    return source;
   }
 }

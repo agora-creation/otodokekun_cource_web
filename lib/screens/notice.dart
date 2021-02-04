@@ -16,7 +16,7 @@ class NoticeScreen extends StatelessWidget {
       shopProvider: shopProvider,
       selectedRoute: id,
       body: NoticeTable(
-        shopProvider: shopProvider,
+        shop: shopProvider.shop,
         shopNoticeProvider: shopNoticeProvider,
       ),
     );

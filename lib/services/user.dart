@@ -10,15 +10,15 @@ class UserServices {
   }
 
   Future<List<UserModel>> getUsers({String shopId}) async {
-    List<UserModel> users = [];
+    List<UserModel> _users = [];
     QuerySnapshot snapshot = await _firebaseFirestore
         .collection(_collection)
         .where('shopId', isEqualTo: shopId)
         .orderBy('createdAt', descending: true)
         .get();
-    for (DocumentSnapshot user in snapshot.docs) {
-      users.add(UserModel.fromSnapshot(user));
+    for (DocumentSnapshot _user in snapshot.docs) {
+      _users.add(UserModel.fromSnapshot(_user));
     }
-    return users;
+    return _users;
   }
 }

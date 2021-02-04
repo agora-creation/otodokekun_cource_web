@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_course.dart';
@@ -33,6 +34,13 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: [
+          const Locale('ja'),
+        ],
         title: 'お届けくん(BtoC)',
         theme: theme(),
         home: SplashController(),
@@ -59,7 +67,7 @@ class SplashController extends StatelessWidget {
       case Status.Authenticating:
         return LoginScreen();
       case Status.Authenticated:
-        return NoticeScreen();
+        return UserScreen();
       default:
         return LoginScreen();
     }

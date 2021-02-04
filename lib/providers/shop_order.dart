@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:otodokekun_cource_web/models/shop_order.dart';
 import 'package:otodokekun_cource_web/services/shop_order.dart';
 
 class ShopOrderProvider with ChangeNotifier {
@@ -16,15 +15,5 @@ class ShopOrderProvider with ChangeNotifier {
       print(e.toString());
       return false;
     }
-  }
-
-  Future<List<Map<String, dynamic>>> getOrdersSource({String shopId}) async {
-    List<Map<String, dynamic>> source = [];
-    List<ShopOrderModel> orders = [];
-    orders = await _shopOrderService.getOrders(shopId: shopId);
-    for (ShopOrderModel order in orders) {
-      source.add(order.toMap());
-    }
-    return source;
   }
 }

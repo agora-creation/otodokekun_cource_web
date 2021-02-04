@@ -1,25 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:otodokekun_cource_web/providers/shop.dart';
+import 'package:intl/intl.dart';
+import 'package:otodokekun_cource_web/models/shop.dart';
+import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
+import 'package:otodokekun_cource_web/services/user.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
-import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
-import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 import 'package:responsive_table/responsive_table.dart';
 
 class UserTable extends StatefulWidget {
-  final ShopProvider shopProvider;
+  final ShopModel shop;
   final UserProvider userProvider;
 
-  UserTable({@required this.shopProvider, @required this.userProvider});
+  UserTable({@required this.shop, @required this.userProvider});
 
   @override
   _UserTableState createState() => _UserTableState();
 }
 
 class _UserTableState extends State<UserTable> {
+  final UserServices userServices = UserServices();
   List<DatatableHeader> _headers = [
     DatatableHeader(
       text: 'ID',
@@ -66,14 +69,20 @@ class _UserTableState extends State<UserTable> {
     DatatableHeader(
       text: 'パスワード',
       value: 'password',
+      show: false,
+      sortable: false,
+    ),
+    DatatableHeader(
+      text: 'ブラックリスト',
+      value: 'blacklist',
       show: true,
       sortable: true,
     ),
     DatatableHeader(
       text: '登録日時',
       value: 'createdAt',
-      show: true,
-      sortable: true,
+      show: false,
+      sortable: false,
     ),
   ];
   int _currentPerPage = 10;
@@ -84,15 +93,7 @@ class _UserTableState extends State<UserTable> {
   bool _sortAscending = true;
   bool _isLoading = true;
 
-  void _getSource() async {
-    _source.clear();
-    setState(() => _isLoading = true);
-    Future.delayed(Duration(seconds: 3)).then((value) async {
-      _source = await widget.userProvider
-          .getUsersSource(shopId: widget.shopProvider.shop?.id);
-      setState(() => _isLoading = false);
-    });
-  }
+  void _getSource() async {}
 
   @override
   void initState() {
@@ -102,198 +103,152 @@ class _UserTableState extends State<UserTable> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomTable(
-      title: '顧客一覧',
-      actions: [
-        FillBoxButton(
-          labelText: '新規登録',
-          labelColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          onTap: () {
-            widget.userProvider.clearController();
+    return StreamBuilder<QuerySnapshot>(
+      stream: userServices.getUsers(shopId: widget.shop?.id),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          _isLoading = true;
+        } else {
+          _isLoading = false;
+          _source.clear();
+          for (DocumentSnapshot user in snapshot.data.docs) {
+            UserModel _user = UserModel.fromSnapshot(user);
+            _source.add(_user.toMap());
+          }
+        }
+        return CustomTable(
+          title: '顧客一覧',
+          actions: [],
+          headers: _headers,
+          source: _source,
+          selecteds: _selecteds,
+          showSelect: false,
+          onTabRow: (data) {
             showDialog(
               context: context,
               builder: (_) {
                 return CustomDialog(
-                  title: '新規登録',
+                  title: '${data['name']}',
                   content: Container(
-                    width: 350.0,
+                    width: 400.0,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CustomTextField(
-                          controller: widget.userProvider.name,
-                          obscureText: false,
-                          labelText: '名前',
-                          iconData: Icons.person,
+                        Text(
+                          '住所',
+                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                        ),
+                        Text('〒${data['zip']}'),
+                        Text('${data['address']}'),
+                        SizedBox(height: 8.0),
+                        Text(
+                          '電話番号',
+                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                        ),
+                        Text('${data['tel']}'),
+                        SizedBox(height: 8.0),
+                        Text(
+                          'メールアドレス',
+                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                        ),
+                        Text('${data['email']}'),
+                        SizedBox(height: 8.0),
+                        Text(
+                          '登録日時',
+                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                        ),
+                        Text(
+                          '${DateFormat('yyyy/MM/dd HH:mm').format(data['createdAt'])}',
                         ),
                         SizedBox(height: 8.0),
-                        CustomTextField(
-                          controller: widget.userProvider.zip,
-                          obscureText: false,
-                          labelText: '郵便番号',
-                          iconData: Icons.location_pin,
+                        Text(
+                          'ブラックリスト',
+                          style: TextStyle(fontSize: 14.0, color: Colors.grey),
                         ),
-                        SizedBox(height: 8.0),
-                        CustomTextField(
-                          controller: widget.userProvider.address,
-                          obscureText: false,
-                          labelText: '住所',
-                          iconData: Icons.business,
-                        ),
-                        SizedBox(height: 8.0),
-                        CustomTextField(
-                          controller: widget.userProvider.tel,
-                          obscureText: false,
-                          labelText: '電話番号',
-                          iconData: Icons.phone,
-                        ),
-                        SizedBox(height: 8.0),
-                        CustomTextField(
-                          controller: widget.userProvider.email,
-                          obscureText: false,
-                          labelText: 'メールアドレス',
-                          iconData: Icons.email,
-                        ),
-                        SizedBox(height: 8.0),
-                        CustomTextField(
-                          controller: widget.userProvider.password,
-                          obscureText: true,
-                          labelText: 'パスワード',
-                          iconData: Icons.lock,
+                        DropdownButton<String>(
+                          value: '無効',
+                          onChanged: (value) {},
+                          items: [
+                            DropdownMenuItem<String>(
+                              value: '無効',
+                              child: Text('無効'),
+                            ),
+                            DropdownMenuItem<String>(
+                              value: '有効',
+                              child: Text('有効'),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                  actions: [],
+                  actions: [
+                    FillRoundButton(
+                      labelText: '変更を保存',
+                      labelColor: Colors.white,
+                      backgroundColor: Colors.blueAccent,
+                      onTap: () {},
+                    ),
+                  ],
                 );
               },
             );
           },
-        ),
-      ],
-      headers: _headers,
-      source: _source,
-      selecteds: _selecteds,
-      onTabRow: (data) {
-        widget.userProvider.clearController();
-        widget.userProvider.name.text = data['name'];
-        widget.userProvider.zip.text = data['zip'];
-        widget.userProvider.address.text = data['address'];
-        widget.userProvider.tel.text = data['tel'];
-        showDialog(
-          context: context,
-          builder: (_) {
-            return CustomDialog(
-              title: '${data['name']}',
-              content: Container(
-                width: 350.0,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomTextField(
-                      controller: widget.userProvider.name,
-                      obscureText: false,
-                      labelText: '名前',
-                      iconData: Icons.person,
-                    ),
-                    SizedBox(height: 8.0),
-                    CustomTextField(
-                      controller: widget.userProvider.zip,
-                      obscureText: false,
-                      labelText: '郵便番号',
-                      iconData: Icons.location_pin,
-                    ),
-                    SizedBox(height: 8.0),
-                    CustomTextField(
-                      controller: widget.userProvider.address,
-                      obscureText: false,
-                      labelText: '住所',
-                      iconData: Icons.business,
-                    ),
-                    SizedBox(height: 8.0),
-                    CustomTextField(
-                      controller: widget.userProvider.tel,
-                      obscureText: false,
-                      labelText: '電話番号',
-                      iconData: Icons.phone,
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                FillRoundButton(
-                  labelText: '変更を保存',
-                  labelColor: Colors.white,
-                  backgroundColor: Colors.blueAccent,
-                  onTap: () async {
-                    if (!await widget.userProvider.updateUser(
-                        id: data['id'], shop: widget.shopProvider.shop)) {
-                      return;
-                    }
-                    _getSource();
-                    widget.userProvider.clearController();
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            );
+          onSort: (value) {
+            setState(() {
+              _sortColumn = value;
+              _sortAscending = !_sortAscending;
+              if (_sortAscending) {
+                _source.sort(
+                    (a, b) => b['$_sortColumn'].compareTo(a['$_sortColumn']));
+              } else {
+                _source.sort(
+                    (a, b) => a['$_sortColumn'].compareTo(b['$_sortColumn']));
+              }
+            });
+          },
+          sortAscending: _sortAscending,
+          sortColumn: _sortColumn,
+          isLoading: _isLoading,
+          onSelect: (value, item) {
+            if (value) {
+              setState(() => _selecteds.add(item));
+            } else {
+              setState(() => _selecteds.removeAt(_selecteds.indexOf(item)));
+            }
+          },
+          onSelectAll: (value) {
+            if (value) {
+              setState(() =>
+                  _selecteds = _source.map((entry) => entry).toList().cast());
+            } else {
+              setState(() => _selecteds.clear());
+            }
+          },
+          currentPerPageOnChanged: (value) {
+            setState(() {
+              _currentPerPage = value;
+              //リセットデータ
+            });
+          },
+          currentPage: _currentPage,
+          currentPerPage: _currentPerPage,
+          total: _source.length,
+          currentPageBack: () {
+            var _nextSet = _currentPage - _currentPerPage;
+            setState(() {
+              _currentPage = _nextSet > 1 ? _nextSet : 1;
+            });
+          },
+          currentPageForward: () {
+            var _nextSet = _currentPage + _currentPerPage;
+            setState(() {
+              _currentPage =
+                  _nextSet < _source.length ? _nextSet : _source.length;
+            });
           },
         );
-      },
-      onSort: (value) {
-        setState(() {
-          _sortColumn = value;
-          _sortAscending = !_sortAscending;
-          if (_sortAscending) {
-            _source
-                .sort((a, b) => b['$_sortColumn'].compareTo(a['$_sortColumn']));
-          } else {
-            _source
-                .sort((a, b) => a['$_sortColumn'].compareTo(b['$_sortColumn']));
-          }
-        });
-      },
-      sortAscending: _sortAscending,
-      sortColumn: _sortColumn,
-      isLoading: _isLoading,
-      onSelect: (value, item) {
-        if (value) {
-          setState(() => _selecteds.add(item));
-        } else {
-          setState(() => _selecteds.removeAt(_selecteds.indexOf(item)));
-        }
-      },
-      onSelectAll: (value) {
-        if (value) {
-          setState(
-              () => _selecteds = _source.map((entry) => entry).toList().cast());
-        } else {
-          setState(() => _selecteds.clear());
-        }
-      },
-      currentPerPageOnChanged: (value) {
-        setState(() {
-          _currentPerPage = value;
-          //リセットデータ
-        });
-      },
-      currentPage: _currentPage,
-      currentPerPage: _currentPerPage,
-      total: _source.length,
-      currentPageBack: () {
-        var _nextSet = _currentPage - _currentPerPage;
-        setState(() {
-          _currentPage = _nextSet > 1 ? _nextSet : 1;
-        });
-      },
-      currentPageForward: () {
-        var _nextSet = _currentPage + _currentPerPage;
-        setState(() {
-          _currentPage = _nextSet < _source.length ? _nextSet : _source.length;
-        });
       },
     );
   }

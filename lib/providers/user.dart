@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
-import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/services/user.dart';
 
 class UserProvider with ChangeNotifier {
@@ -43,13 +42,10 @@ class UserProvider with ChangeNotifier {
     password.text = '';
   }
 
-  Future<List<Map<String, dynamic>>> getUsersSource({String shopId}) async {
-    List<Map<String, dynamic>> source = [];
-    List<UserModel> users = [];
-    users = await _userServices.getUsers(shopId: shopId);
-    for (UserModel user in users) {
-      source.add(user.toMap());
-    }
-    return source;
+  Future<List<Map<String, dynamic>>> getUsers({String shopId}) async {
+    List<Map<String, dynamic>> _source = [];
+    List<UserModel> _users = [];
+    _users = await _userService
+    return _source;
   }
 }
