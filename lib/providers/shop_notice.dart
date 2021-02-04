@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otodokekun_cource_web/models/shop_notice.dart';
 import 'package:otodokekun_cource_web/services/shop_notice.dart';
 
 class ShopNoticeProvider with ChangeNotifier {
@@ -65,5 +66,15 @@ class ShopNoticeProvider with ChangeNotifier {
   void changeLoading() {
     isLoading = !isLoading;
     notifyListeners();
+  }
+
+  Future<List<Map<String, dynamic>>> getNotices({String shopId}) async {
+    List<Map<String, dynamic>> _source = [];
+    await _shopNoticeService.getNotices(shopId: shopId).then((value) {
+      for (ShopNoticeModel _notice in value) {
+        _source.add(_notice.toMap());
+      }
+    });
+    return _source;
   }
 }

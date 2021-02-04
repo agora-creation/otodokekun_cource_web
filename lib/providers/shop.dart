@@ -33,6 +33,14 @@ class ShopProvider with ChangeNotifier {
     _auth.authStateChanges().listen(_onStateChanged);
   }
 
+  bool authCheck() {
+    if (_auth.currentUser == null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   Future<bool> signIn() async {
     if (email.text == null) return false;
     if (password.text == null) return false;

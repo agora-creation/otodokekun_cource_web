@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:otodokekun_cource_web/models/shop_product.dart';
 import 'package:otodokekun_cource_web/services/shop_product.dart';
 
 class ShopProductProvider with ChangeNotifier {
   ShopProductService _shopProductService = ShopProductService();
+  bool isLoading = false;
 
   TextEditingController name = TextEditingController();
 
@@ -58,5 +60,20 @@ class ShopProductProvider with ChangeNotifier {
 
   void clearController() {
     name.text = '';
+  }
+
+  void changeLoading() {
+    isLoading = !isLoading;
+    notifyListeners();
+  }
+
+  Future<List<Map<String, dynamic>>> getProducts({String shopId}) async {
+    List<Map<String, dynamic>> _source = [];
+    await _shopProductService.getProducts(shopId: shopId).then((value) {
+      for (ShopProductModel _product in value) {
+        _source.add(_product.toMap());
+      }
+    });
+    return _source;
   }
 }

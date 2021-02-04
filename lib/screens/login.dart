@@ -13,6 +13,15 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shopProvider = Provider.of<ShopProvider>(context);
+    if (shopProvider.authCheck()) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UserScreen(),
+          fullscreenDialog: true,
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: kMainColor,
       body: SingleChildScrollView(
