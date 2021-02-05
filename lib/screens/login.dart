@@ -77,7 +77,7 @@ class LoginScreen extends StatelessWidget {
                                 child: CustomTextField(
                                   controller: shopProvider.password,
                                   obscureText: true,
-                                  textInputType: null,
+                                  textInputType: TextInputType.visiblePassword,
                                   maxLines: 1,
                                   labelText: 'パスワード',
                                   iconData: Icons.lock,

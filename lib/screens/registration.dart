@@ -88,7 +88,7 @@ class RegistrationScreen extends StatelessWidget {
                                 child: CustomTextField(
                                   controller: shopProvider.password,
                                   obscureText: true,
-                                  textInputType: null,
+                                  textInputType: TextInputType.visiblePassword,
                                   maxLines: 1,
                                   labelText: 'パスワード',
                                   iconData: Icons.lock_outline,
@@ -100,7 +100,7 @@ class RegistrationScreen extends StatelessWidget {
                                 child: CustomTextField(
                                   controller: shopProvider.cPassword,
                                   obscureText: true,
-                                  textInputType: null,
+                                  textInputType: TextInputType.visiblePassword,
                                   maxLines: 1,
                                   labelText: 'パスワードの再入力',
                                   iconData: Icons.lock_outline,
