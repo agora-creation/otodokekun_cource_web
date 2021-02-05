@@ -89,153 +89,230 @@ class _UserTableState extends State<UserTable> {
   bool _sortAscending = true;
   bool _isLoading = true;
 
-  void _getSource() async {
-    setState(() => _isLoading = true);
-    await widget.userProvider.getUsers(shopId: widget.shop?.id).then((value) {
-      _source = value;
-      setState(() => _isLoading = false);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getSource();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return CustomTable(
-      title: '顧客一覧',
-      actions: [],
-      headers: _headers,
-      source: _source,
-      selecteds: _selecteds,
-      showSelect: false,
-      onTabRow: (data) {
-        showDialog(
-          context: context,
-          builder: (_) {
-            return CustomDialog(
-              title: '${data['name']}',
-              content: Container(
-                width: 400.0,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '住所',
-                      style: TextStyle(fontSize: 14.0, color: Colors.grey),
-                    ),
-                    Text('〒${data['zip']}'),
-                    Text('${data['address']}'),
-                    SizedBox(height: 8.0),
-                    Text(
-                      '電話番号',
-                      style: TextStyle(fontSize: 14.0, color: Colors.grey),
-                    ),
-                    Text('${data['tel']}'),
-                    SizedBox(height: 8.0),
-                    Text(
-                      'メールアドレス',
-                      style: TextStyle(fontSize: 14.0, color: Colors.grey),
-                    ),
-                    Text('${data['email']}'),
-                    SizedBox(height: 8.0),
-                    Text(
-                      '登録日時',
-                      style: TextStyle(fontSize: 14.0, color: Colors.grey),
-                    ),
-                    Text(
-                      '${DateFormat('yyyy/MM/dd HH:mm').format(data['createdAt'])}',
-                    ),
-                    SizedBox(height: 8.0),
-                    Text(
-                      'ブラックリスト',
-                      style: TextStyle(fontSize: 14.0, color: Colors.grey),
-                    ),
-                    DropdownButton<String>(
-                      value: '無効',
-                      onChanged: (value) {},
-                      items: [
-                        DropdownMenuItem<String>(
-                          value: '無効',
-                          child: Text('無効'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: '有効',
-                          child: Text('有効'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                FillRoundButton(
-                  labelText: '変更を保存',
-                  labelColor: Colors.white,
-                  backgroundColor: Colors.blueAccent,
-                  onTap: () {},
-                ),
-              ],
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: widget.userProvider.getUsers(shopId: widget.shop?.id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done ||
+            snapshot.hasError) {
+          _isLoading = true;
+          _source.clear();
+        }
+        if (!snapshot.hasData) {
+          _isLoading = false;
+          _source.clear();
+        } else {
+          _isLoading = false;
+          _source = snapshot.data;
+        }
+        return CustomTable(
+          title: '顧客一覧',
+          actions: [],
+          headers: _headers,
+          source: _source,
+          selecteds: _selecteds,
+          showSelect: false,
+          onTabRow: (data) {
+            widget.userProvider.blacklist = data['blacklist'];
+            showDialog(
+              context: context,
+              builder: (_) {
+                return UserCustomDialog(
+                  userProvider: widget.userProvider,
+                  data: data,
+                );
+              },
             );
+          },
+          onSort: (value) {
+            setState(() {
+              _sortColumn = value;
+              _sortAscending = !_sortAscending;
+              if (_sortAscending) {
+                _source.sort(
+                    (a, b) => b['$_sortColumn'].compareTo(a['$_sortColumn']));
+              } else {
+                _source.sort(
+                    (a, b) => a['$_sortColumn'].compareTo(b['$_sortColumn']));
+              }
+            });
+          },
+          sortAscending: _sortAscending,
+          sortColumn: _sortColumn,
+          isLoading: _isLoading,
+          onSelect: (value, item) {
+            if (value) {
+              setState(() => _selecteds.add(item));
+            } else {
+              setState(() => _selecteds.removeAt(_selecteds.indexOf(item)));
+            }
+          },
+          onSelectAll: (value) {
+            if (value) {
+              setState(() =>
+                  _selecteds = _source.map((entry) => entry).toList().cast());
+            } else {
+              setState(() => _selecteds.clear());
+            }
+          },
+          currentPerPageOnChanged: (value) {
+            setState(() {
+              _currentPerPage = value;
+              //リセットデータ
+            });
+          },
+          currentPage: _currentPage,
+          currentPerPage: _currentPerPage,
+          total: _source.length,
+          currentPageBack: () {
+            var _nextSet = _currentPage - _currentPerPage;
+            setState(() {
+              _currentPage = _nextSet > 1 ? _nextSet : 1;
+            });
+          },
+          currentPageForward: () {
+            var _nextSet = _currentPage + _currentPerPage;
+            setState(() {
+              _currentPage =
+                  _nextSet < _source.length ? _nextSet : _source.length;
+            });
           },
         );
       },
-      onSort: (value) {
-        setState(() {
-          _sortColumn = value;
-          _sortAscending = !_sortAscending;
-          if (_sortAscending) {
-            _source
-                .sort((a, b) => b['$_sortColumn'].compareTo(a['$_sortColumn']));
-          } else {
-            _source
-                .sort((a, b) => a['$_sortColumn'].compareTo(b['$_sortColumn']));
-          }
-        });
-      },
-      sortAscending: _sortAscending,
-      sortColumn: _sortColumn,
-      isLoading: _isLoading,
-      onSelect: (value, item) {
-        if (value) {
-          setState(() => _selecteds.add(item));
-        } else {
-          setState(() => _selecteds.removeAt(_selecteds.indexOf(item)));
-        }
-      },
-      onSelectAll: (value) {
-        if (value) {
-          setState(
-              () => _selecteds = _source.map((entry) => entry).toList().cast());
-        } else {
-          setState(() => _selecteds.clear());
-        }
-      },
-      currentPerPageOnChanged: (value) {
-        setState(() {
-          _currentPerPage = value;
-          //リセットデータ
-        });
-      },
-      currentPage: _currentPage,
-      currentPerPage: _currentPerPage,
-      total: _source.length,
-      currentPageBack: () {
-        var _nextSet = _currentPage - _currentPerPage;
-        setState(() {
-          _currentPage = _nextSet > 1 ? _nextSet : 1;
-        });
-      },
-      currentPageForward: () {
-        var _nextSet = _currentPage + _currentPerPage;
-        setState(() {
-          _currentPage = _nextSet < _source.length ? _nextSet : _source.length;
-        });
-      },
+    );
+  }
+}
+
+class UserCustomDialog extends StatefulWidget {
+  final UserProvider userProvider;
+  final dynamic data;
+
+  UserCustomDialog({@required this.userProvider, @required this.data});
+
+  @override
+  _UserCustomDialogState createState() => _UserCustomDialogState();
+}
+
+class _UserCustomDialogState extends State<UserCustomDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return CustomDialog(
+      title: '${widget.data['name']}',
+      content: Container(
+        width: 400.0,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Table(
+              border: TableBorder.all(width: 1.0, color: Colors.black54),
+              children: [
+                TableRow(
+                  children: [
+                    TableCell(
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('住所'),
+                      ),
+                    ),
+                    TableCell(
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('〒${widget.data['zip']}'),
+                            Text('${widget.data['address']}'),
+                            Text('${widget.data['tel']}'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                TableRow(
+                  children: [
+                    TableCell(
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('メールアドレス'),
+                      ),
+                    ),
+                    TableCell(
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('${widget.data['email']}'),
+                      ),
+                    ),
+                  ],
+                ),
+                TableRow(
+                  children: [
+                    TableCell(
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('登録日時'),
+                      ),
+                    ),
+                    TableCell(
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          '${DateFormat('yyyy/MM/dd HH:mm').format(widget.data['createdAt'])}',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                TableRow(
+                  children: [
+                    TableCell(
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('ブラックリスト'),
+                      ),
+                    ),
+                    TableCell(
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: DropdownButton<bool>(
+                          isExpanded: true,
+                          value: widget.userProvider.blacklist,
+                          onChanged: (value) {
+                            setState(() {
+                              widget.userProvider.blacklist = value;
+                            });
+                          },
+                          items: widget.userProvider.blacklistList.map((value) {
+                            return DropdownMenuItem(
+                              value: value,
+                              child: Text('$value'),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        FillRoundButton(
+          labelText: '変更を保存',
+          labelColor: Colors.white,
+          backgroundColor: Colors.blueAccent,
+          onTap: () async {
+            if (!await widget.userProvider.updateUser(id: widget.data['id'])) {
+              return;
+            }
+            Navigator.pop(context);
+          },
+        ),
+      ],
     );
   }
 }

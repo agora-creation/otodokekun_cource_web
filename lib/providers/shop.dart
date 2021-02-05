@@ -12,13 +12,10 @@ class ShopProvider with ChangeNotifier {
   ShopServices _shopServices = ShopServices();
   ShopModel _shop;
   bool isLoading = false;
-  List<int> items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  int _selectedItem;
 
   ShopModel get shop => _shop;
   Status get status => _status;
   User get fUser => _fUser;
-  int get selectedItem => _selectedItem;
 
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
@@ -28,17 +25,11 @@ class ShopProvider with ChangeNotifier {
   TextEditingController address = TextEditingController();
   TextEditingController tel = TextEditingController();
   TextEditingController staff = TextEditingController();
+  List<int> cancelLimitList = [3, 4, 5, 6, 7];
+  int cancelLimit;
 
   ShopProvider.initialize() : _auth = FirebaseAuth.instance {
     _auth.authStateChanges().listen(_onStateChanged);
-  }
-
-  bool authCheck() {
-    if (_auth.currentUser == null) {
-      return false;
-    } else {
-      return true;
-    }
   }
 
   Future<bool> signIn() async {
@@ -109,7 +100,7 @@ class ShopProvider with ChangeNotifier {
           'tel': tel.text.trim(),
           'email': email.text.trim(),
           'staff': staff.text.trim(),
-          'cancelLimit': _selectedItem,
+          'cancelLimit': cancelLimit,
         });
       });
       return true;
@@ -155,11 +146,6 @@ class ShopProvider with ChangeNotifier {
 
   void changeLoading() {
     isLoading = !isLoading;
-    notifyListeners();
-  }
-
-  void changeItem(int value) {
-    _selectedItem = value;
     notifyListeners();
   }
 }

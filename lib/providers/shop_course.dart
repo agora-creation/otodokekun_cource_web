@@ -22,9 +22,11 @@ class ShopCourseProvider with ChangeNotifier {
         'published': true,
         'createdAt': DateTime.now(),
       });
+      notifyListeners();
       return true;
     } catch (e) {
       print(e.toString());
+      notifyListeners();
       return false;
     }
   }
@@ -37,9 +39,11 @@ class ShopCourseProvider with ChangeNotifier {
         'shopId': shopId,
         'name': name.text.trim(),
       });
+      notifyListeners();
       return true;
     } catch (e) {
       print(e.toString());
+      notifyListeners();
       return false;
     }
   }
@@ -50,9 +54,11 @@ class ShopCourseProvider with ChangeNotifier {
         'id': id,
         'shopId': shopId,
       });
+      notifyListeners();
       return true;
     } catch (e) {
       print(e.toString());
+      notifyListeners();
       return false;
     }
   }

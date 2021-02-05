@@ -21,9 +21,11 @@ class ShopNoticeProvider with ChangeNotifier {
         'message': message.text,
         'createdAt': DateTime.now(),
       });
+      notifyListeners();
       return true;
     } catch (e) {
       print(e.toString());
+      notifyListeners();
       return false;
     }
   }
@@ -38,8 +40,10 @@ class ShopNoticeProvider with ChangeNotifier {
         'title': title.text.trim(),
         'message': message.text,
       });
+      notifyListeners();
       return true;
     } catch (e) {
+      notifyListeners();
       print(e.toString());
       return false;
     }
@@ -51,9 +55,11 @@ class ShopNoticeProvider with ChangeNotifier {
         'id': id,
         'shopId': shopId,
       });
+      notifyListeners();
       return true;
     } catch (e) {
       print(e.toString());
+      notifyListeners();
       return false;
     }
   }

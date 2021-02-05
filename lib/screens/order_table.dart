@@ -103,83 +103,85 @@ class _OrderTableState extends State<OrderTable> {
   bool _sortAscending = true;
   bool _isLoading = true;
 
-  void _getSource() async {
-    setState(() => _isLoading = true);
-    await widget.shopOrderProvider
-        .getOrders(shopId: widget.shop?.id)
-        .then((value) {
-      _source = value;
-      setState(() => _isLoading = false);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getSource();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return CustomTable(
-      title: '注文一覧',
-      actions: [],
-      headers: _headers,
-      source: _source,
-      selecteds: _selecteds,
-      showSelect: false,
-      onTabRow: (data) {},
-      onSort: (value) {
-        setState(() {
-          _sortColumn = value;
-          _sortAscending = !_sortAscending;
-          if (_sortAscending) {
-            _source
-                .sort((a, b) => b['$_sortColumn'].compareTo(a['$_sortColumn']));
-          } else {
-            _source
-                .sort((a, b) => a['$_sortColumn'].compareTo(b['$_sortColumn']));
-          }
-        });
-      },
-      sortAscending: _sortAscending,
-      sortColumn: _sortColumn,
-      isLoading: _isLoading,
-      onSelect: (value, item) {
-        if (value) {
-          setState(() => _selecteds.add(item));
-        } else {
-          setState(() => _selecteds.removeAt(_selecteds.indexOf(item)));
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: widget.shopOrderProvider.getOrders(shopId: widget.shop?.id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done ||
+            snapshot.hasError) {
+          _isLoading = true;
+          _source.clear();
         }
-      },
-      onSelectAll: (value) {
-        if (value) {
-          setState(
-              () => _selecteds = _source.map((entry) => entry).toList().cast());
+        if (!snapshot.hasData) {
+          _isLoading = false;
+          _source.clear();
         } else {
-          setState(() => _selecteds.clear());
+          _isLoading = false;
+          _source = snapshot.data;
         }
-      },
-      currentPerPageOnChanged: (value) {
-        setState(() {
-          _currentPerPage = value;
-          //リセットデータ
-        });
-      },
-      currentPage: _currentPage,
-      currentPerPage: _currentPerPage,
-      total: _source.length,
-      currentPageBack: () {
-        var _nextSet = _currentPage - _currentPerPage;
-        setState(() {
-          _currentPage = _nextSet > 1 ? _nextSet : 1;
-        });
-      },
-      currentPageForward: () {
-        var _nextSet = _currentPage + _currentPerPage;
-        setState(() {
-          _currentPage = _nextSet < _source.length ? _nextSet : _source.length;
-        });
+        return CustomTable(
+          title: '注文一覧',
+          actions: [],
+          headers: _headers,
+          source: _source,
+          selecteds: _selecteds,
+          showSelect: false,
+          onTabRow: (data) {},
+          onSort: (value) {
+            setState(() {
+              _sortColumn = value;
+              _sortAscending = !_sortAscending;
+              if (_sortAscending) {
+                _source.sort(
+                    (a, b) => b['$_sortColumn'].compareTo(a['$_sortColumn']));
+              } else {
+                _source.sort(
+                    (a, b) => a['$_sortColumn'].compareTo(b['$_sortColumn']));
+              }
+            });
+          },
+          sortAscending: _sortAscending,
+          sortColumn: _sortColumn,
+          isLoading: _isLoading,
+          onSelect: (value, item) {
+            if (value) {
+              setState(() => _selecteds.add(item));
+            } else {
+              setState(() => _selecteds.removeAt(_selecteds.indexOf(item)));
+            }
+          },
+          onSelectAll: (value) {
+            if (value) {
+              setState(() =>
+                  _selecteds = _source.map((entry) => entry).toList().cast());
+            } else {
+              setState(() => _selecteds.clear());
+            }
+          },
+          currentPerPageOnChanged: (value) {
+            setState(() {
+              _currentPerPage = value;
+              //リセットデータ
+            });
+          },
+          currentPage: _currentPage,
+          currentPerPage: _currentPerPage,
+          total: _source.length,
+          currentPageBack: () {
+            var _nextSet = _currentPage - _currentPerPage;
+            setState(() {
+              _currentPage = _nextSet > 1 ? _nextSet : 1;
+            });
+          },
+          currentPageForward: () {
+            var _nextSet = _currentPage + _currentPerPage;
+            setState(() {
+              _currentPage =
+                  _nextSet < _source.length ? _nextSet : _source.length;
+            });
+          },
+        );
       },
     );
   }

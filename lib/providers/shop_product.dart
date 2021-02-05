@@ -23,9 +23,11 @@ class ShopProductProvider with ChangeNotifier {
         'published': true,
         'createdAt': DateTime.now(),
       });
+      notifyListeners();
       return true;
     } catch (e) {
       print(e.toString());
+      notifyListeners();
       return false;
     }
   }
@@ -38,9 +40,11 @@ class ShopProductProvider with ChangeNotifier {
         'shopId': shopId,
         'name': name.text.trim(),
       });
+      notifyListeners();
       return true;
     } catch (e) {
       print(e.toString());
+      notifyListeners();
       return false;
     }
   }
@@ -51,9 +55,11 @@ class ShopProductProvider with ChangeNotifier {
         'id': id,
         'shopId': shopId,
       });
+      notifyListeners();
       return true;
     } catch (e) {
       print(e.toString());
+      notifyListeners();
       return false;
     }
   }

@@ -9,18 +9,11 @@ import 'package:otodokekun_cource_web/widgets/loading.dart';
 import 'package:provider/provider.dart';
 
 class RegistrationScreen extends StatelessWidget {
+  static const String id = 'registration';
+
   @override
   Widget build(BuildContext context) {
     final shopProvider = Provider.of<ShopProvider>(context);
-    if (shopProvider.authCheck()) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => UserScreen(),
-          fullscreenDialog: true,
-        ),
-      );
-    }
     return Scaffold(
       backgroundColor: kMainColor,
       body: SingleChildScrollView(
