@@ -4,7 +4,6 @@ import 'package:otodokekun_cource_web/services/user.dart';
 
 class UserProvider with ChangeNotifier {
   UserServices _userServices = UserServices();
-  bool isLoading = false;
 
   List<bool> blacklistList = [true, false];
   bool blacklist;
@@ -15,18 +14,11 @@ class UserProvider with ChangeNotifier {
         'id': id,
         'blacklist': blacklist,
       });
-      notifyListeners();
       return true;
     } catch (e) {
       print(e.toString());
-      notifyListeners();
       return false;
     }
-  }
-
-  void changeLoading() {
-    isLoading = !isLoading;
-    notifyListeners();
   }
 
   Future<List<Map<String, dynamic>>> getUsers({String shopId}) async {

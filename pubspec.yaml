@@ -15,13 +15,15 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.1
+  firebase: ^8.0.0
   firebase_core: ^0.5.2
   firebase_auth: ^0.18.3
   cloud_firestore: ^0.14.3
-  firebase_storage: ^5.0.1
   provider: ^4.3.3
   flutter_admin_scaffold: ^0.0.5
   responsive_table: ^0.1.1+8
+  image_picker_web: ^1.0.9
+  mime_type: ^0.3.2
   intl: ^0.16.1
 dependency_overrides:
   intl: ^0.17.0-nullsafety.2
@@ -35,3 +37,6 @@ dev_dependencies:
 flutter:
 
   uses-material-design: true
+
+  assets:
+    - assets/images/

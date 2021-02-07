@@ -4,7 +4,6 @@ import 'package:otodokekun_cource_web/services/shop_course.dart';
 
 class ShopCourseProvider with ChangeNotifier {
   ShopCourseService _shopCourseService = ShopCourseService();
-  bool isLoading = false;
 
   TextEditingController name = TextEditingController();
 
@@ -22,11 +21,9 @@ class ShopCourseProvider with ChangeNotifier {
         'published': true,
         'createdAt': DateTime.now(),
       });
-      notifyListeners();
       return true;
     } catch (e) {
       print(e.toString());
-      notifyListeners();
       return false;
     }
   }
@@ -39,11 +36,9 @@ class ShopCourseProvider with ChangeNotifier {
         'shopId': shopId,
         'name': name.text.trim(),
       });
-      notifyListeners();
       return true;
     } catch (e) {
       print(e.toString());
-      notifyListeners();
       return false;
     }
   }
@@ -54,22 +49,15 @@ class ShopCourseProvider with ChangeNotifier {
         'id': id,
         'shopId': shopId,
       });
-      notifyListeners();
       return true;
     } catch (e) {
       print(e.toString());
-      notifyListeners();
       return false;
     }
   }
 
   void clearController() {
     name.text = '';
-  }
-
-  void changeLoading() {
-    isLoading = !isLoading;
-    notifyListeners();
   }
 
   Future<List<Map<String, dynamic>>> getCourses({String shopId}) async {

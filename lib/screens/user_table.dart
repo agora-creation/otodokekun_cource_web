@@ -89,96 +89,93 @@ class _UserTableState extends State<UserTable> {
   bool _sortAscending = true;
   bool _isLoading = true;
 
+  void _getSource() async {
+    setState(() => _isLoading = true);
+    await widget.userProvider.getUsers(shopId: widget.shop?.id).then((value) {
+      _source = value;
+      setState(() => _isLoading = false);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getSource();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: widget.userProvider.getUsers(shopId: widget.shop?.id),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done ||
-            snapshot.hasError) {
-          _isLoading = true;
-          _source.clear();
-        }
-        if (!snapshot.hasData) {
-          _isLoading = false;
-          _source.clear();
-        } else {
-          _isLoading = false;
-          _source = snapshot.data;
-        }
-        return CustomTable(
-          title: '顧客一覧',
-          actions: [],
-          headers: _headers,
-          source: _source,
-          selecteds: _selecteds,
-          showSelect: false,
-          onTabRow: (data) {
-            widget.userProvider.blacklist = data['blacklist'];
-            showDialog(
-              context: context,
-              builder: (_) {
-                return UserCustomDialog(
-                  userProvider: widget.userProvider,
-                  data: data,
-                );
-              },
+    return CustomTable(
+      title: '顧客一覧',
+      actions: [],
+      headers: _headers,
+      source: _source,
+      selecteds: _selecteds,
+      showSelect: false,
+      onTabRow: (data) {
+        widget.userProvider.blacklist = data['blacklist'];
+        showDialog(
+          context: context,
+          builder: (_) {
+            return UserCustomDialog(
+              userProvider: widget.userProvider,
+              data: data,
+              getSource: _getSource,
             );
           },
-          onSort: (value) {
-            setState(() {
-              _sortColumn = value;
-              _sortAscending = !_sortAscending;
-              if (_sortAscending) {
-                _source.sort(
-                    (a, b) => b['$_sortColumn'].compareTo(a['$_sortColumn']));
-              } else {
-                _source.sort(
-                    (a, b) => a['$_sortColumn'].compareTo(b['$_sortColumn']));
-              }
-            });
-          },
-          sortAscending: _sortAscending,
-          sortColumn: _sortColumn,
-          isLoading: _isLoading,
-          onSelect: (value, item) {
-            if (value) {
-              setState(() => _selecteds.add(item));
-            } else {
-              setState(() => _selecteds.removeAt(_selecteds.indexOf(item)));
-            }
-          },
-          onSelectAll: (value) {
-            if (value) {
-              setState(() =>
-                  _selecteds = _source.map((entry) => entry).toList().cast());
-            } else {
-              setState(() => _selecteds.clear());
-            }
-          },
-          currentPerPageOnChanged: (value) {
-            setState(() {
-              _currentPerPage = value;
-              //リセットデータ
-            });
-          },
-          currentPage: _currentPage,
-          currentPerPage: _currentPerPage,
-          total: _source.length,
-          currentPageBack: () {
-            var _nextSet = _currentPage - _currentPerPage;
-            setState(() {
-              _currentPage = _nextSet > 1 ? _nextSet : 1;
-            });
-          },
-          currentPageForward: () {
-            var _nextSet = _currentPage + _currentPerPage;
-            setState(() {
-              _currentPage =
-                  _nextSet < _source.length ? _nextSet : _source.length;
-            });
-          },
         );
+      },
+      onSort: (value) {
+        setState(() {
+          _sortColumn = value;
+          _sortAscending = !_sortAscending;
+          if (_sortAscending) {
+            _source
+                .sort((a, b) => b['$_sortColumn'].compareTo(a['$_sortColumn']));
+          } else {
+            _source
+                .sort((a, b) => a['$_sortColumn'].compareTo(b['$_sortColumn']));
+          }
+        });
+      },
+      sortAscending: _sortAscending,
+      sortColumn: _sortColumn,
+      isLoading: _isLoading,
+      onSelect: (value, item) {
+        if (value) {
+          setState(() => _selecteds.add(item));
+        } else {
+          setState(() => _selecteds.removeAt(_selecteds.indexOf(item)));
+        }
+      },
+      onSelectAll: (value) {
+        if (value) {
+          setState(
+              () => _selecteds = _source.map((entry) => entry).toList().cast());
+        } else {
+          setState(() => _selecteds.clear());
+        }
+      },
+      currentPerPageOnChanged: (value) {
+        setState(() {
+          _currentPerPage = value;
+          //リセットデータ
+        });
+      },
+      currentPage: _currentPage,
+      currentPerPage: _currentPerPage,
+      total: _source.length,
+      currentPageBack: () {
+        var _nextSet = _currentPage - _currentPerPage;
+        setState(() {
+          _currentPage = _nextSet > 1 ? _nextSet : 1;
+        });
+      },
+      currentPageForward: () {
+        var _nextSet = _currentPage + _currentPerPage;
+        setState(() {
+          _currentPage = _nextSet < _source.length ? _nextSet : _source.length;
+        });
       },
     );
   }
@@ -187,8 +184,13 @@ class _UserTableState extends State<UserTable> {
 class UserCustomDialog extends StatefulWidget {
   final UserProvider userProvider;
   final dynamic data;
+  final Function getSource;
 
-  UserCustomDialog({@required this.userProvider, @required this.data});
+  UserCustomDialog({
+    @required this.userProvider,
+    @required this.data,
+    this.getSource,
+  });
 
   @override
   _UserCustomDialogState createState() => _UserCustomDialogState();
@@ -309,6 +311,7 @@ class _UserCustomDialogState extends State<UserCustomDialog> {
             if (!await widget.userProvider.updateUser(id: widget.data['id'])) {
               return;
             }
+            widget.getSource();
             Navigator.pop(context);
           },
         ),

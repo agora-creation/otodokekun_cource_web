@@ -4,7 +4,6 @@ import 'package:otodokekun_cource_web/services/shop_notice.dart';
 
 class ShopNoticeProvider with ChangeNotifier {
   ShopNoticeService _shopNoticeService = ShopNoticeService();
-  bool isLoading = false;
 
   TextEditingController title = TextEditingController();
   TextEditingController message = TextEditingController();
@@ -21,11 +20,9 @@ class ShopNoticeProvider with ChangeNotifier {
         'message': message.text,
         'createdAt': DateTime.now(),
       });
-      notifyListeners();
       return true;
     } catch (e) {
       print(e.toString());
-      notifyListeners();
       return false;
     }
   }
@@ -40,10 +37,8 @@ class ShopNoticeProvider with ChangeNotifier {
         'title': title.text.trim(),
         'message': message.text,
       });
-      notifyListeners();
       return true;
     } catch (e) {
-      notifyListeners();
       print(e.toString());
       return false;
     }
@@ -55,10 +50,8 @@ class ShopNoticeProvider with ChangeNotifier {
         'id': id,
         'shopId': shopId,
       });
-      notifyListeners();
       return true;
     } catch (e) {
-      print(e.toString());
       notifyListeners();
       return false;
     }
@@ -67,11 +60,6 @@ class ShopNoticeProvider with ChangeNotifier {
   void clearController() {
     title.text = '';
     message.text = '';
-  }
-
-  void changeLoading() {
-    isLoading = !isLoading;
-    notifyListeners();
   }
 
   Future<List<Map<String, dynamic>>> getNotices({String shopId}) async {

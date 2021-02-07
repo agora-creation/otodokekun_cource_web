@@ -4,7 +4,6 @@ import 'package:otodokekun_cource_web/services/shop_order.dart';
 
 class ShopOrderProvider with ChangeNotifier {
   ShopOrderService _shopOrderService = ShopOrderService();
-  bool isLoading = false;
 
   Future<bool> updateOrder({String id, String shopId}) async {
     try {
@@ -17,11 +16,6 @@ class ShopOrderProvider with ChangeNotifier {
       print(e.toString());
       return false;
     }
-  }
-
-  void changeLoading() {
-    isLoading = !isLoading;
-    notifyListeners();
   }
 
   Future<List<Map<String, dynamic>>> getOrders({String shopId}) async {
