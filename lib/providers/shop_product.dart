@@ -1,14 +1,12 @@
 import 'dart:html';
 
-import 'package:firebase/firebase.dart' as fb;
+import 'package:firebase/firebase.dart' as firebase;
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/models/shop_product.dart';
 import 'package:otodokekun_cource_web/services/shop_product.dart';
 
 class ShopProductProvider with ChangeNotifier {
   ShopProductService _shopProductService = ShopProductService();
-  var storageRef =
-      fb.storage().refFromURL('gs://otodokekun-cource.appspot.com/');
 
   TextEditingController name = TextEditingController();
   TextEditingController unit = TextEditingController();
@@ -20,22 +18,24 @@ class ShopProductProvider with ChangeNotifier {
     if (unit.text == null) return false;
     if (price.text == null) return false;
     String productId = _shopProductService.getNewProductId(shopId: shopId);
-    String _imagePath = '$shopId/$productId';
-    String _imageUrl = '';
+    String imagePath = '$shopId/$productId';
+    String imageUrl = '';
     try {
       if (imageFile != null) {
-        storageRef.child(_imagePath).put(imageFile).future.then((snapshot) {
-          snapshot.ref.getDownloadURL().then((uri) {
-            _imageUrl = uri.toString();
-            print(_imageUrl);
-          });
+        firebase.StorageReference ref = firebase
+            .storage()
+            .refFromURL('gs://otodokekun-cource.appspot.com/')
+            .child(imagePath);
+        await ref.put(imageFile).future.then((value) async {
+          var uri = await ref.getDownloadURL();
+          imageUrl = uri.toString();
         });
       }
       _shopProductService.createProduct({
         'id': productId,
         'shopId': shopId,
         'name': name.text.trim(),
-        'image': '',
+        'image': imageUrl,
         'unit': unit.text.trim(),
         'price': int.parse(price.text.trim()),
         'description': description.text,
@@ -53,22 +53,39 @@ class ShopProductProvider with ChangeNotifier {
     if (name.text == null) return false;
     if (unit.text == null) return false;
     if (price.text == null) return false;
-    String imagePath = '';
+    String imagePath = '$shopId/$id';
+    String imageUrl = '';
     try {
       if (imageFile != null) {
-        imagePath = '$shopId/$id';
-        storageRef.child(imagePath).put(imageFile);
+        firebase.StorageReference ref = firebase
+            .storage()
+            .refFromURL('gs://otodokekun-cource.appspot.com/')
+            .child(imagePath);
+        await ref.put(imageFile).future.then((value) async {
+          var uri = await ref.getDownloadURL();
+          imageUrl = uri.toString();
+        });
+        _shopProductService.updateProduct({
+          'id': id,
+          'shopId': shopId,
+          'name': name.text.trim(),
+          'image': imageUrl,
+          'unit': unit.text.trim(),
+          'price': int.parse(price.text.trim()),
+          'description': description.text,
+          'published': true,
+        });
+      } else {
+        _shopProductService.updateProduct({
+          'id': id,
+          'shopId': shopId,
+          'name': name.text.trim(),
+          'unit': unit.text.trim(),
+          'price': int.parse(price.text.trim()),
+          'description': description.text,
+          'published': true,
+        });
       }
-      _shopProductService.updateProduct({
-        'id': id,
-        'shopId': shopId,
-        'name': name.text.trim(),
-        'image': imagePath,
-        'unit': unit.text.trim(),
-        'price': int.parse(price.text.trim()),
-        'description': description.text,
-        'published': true,
-      });
       return true;
     } catch (e) {
       print(e.toString());
@@ -78,7 +95,11 @@ class ShopProductProvider with ChangeNotifier {
 
   Future<bool> deleteProduct({String id, String shopId}) async {
     String imagePath = '$shopId/$id';
-    storageRef.child(imagePath).delete();
+    firebase.StorageReference ref = firebase
+        .storage()
+        .refFromURL('gs://otodokekun-cource.appspot.com/')
+        .child(imagePath);
+    await ref.delete();
     try {
       _shopProductService.deleteProduct({
         'id': id,

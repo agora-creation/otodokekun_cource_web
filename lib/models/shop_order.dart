@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/models/cart.dart';
 
 class ShopOrderModel {
@@ -63,9 +64,11 @@ class ShopOrderModel {
         'tel': tel,
         'cart': cart,
         'deliveryAt': deliveryAt,
+        'deliveryAtText': DateFormat('yyyy/MM/dd').format(deliveryAt),
         'remarks': remarks,
         'totalPrice': totalPrice,
         'shipping': shipping,
+        'shippingText': shipping ? '配達済み' : '配達待ち',
         'createdAt': createdAt,
       };
 }

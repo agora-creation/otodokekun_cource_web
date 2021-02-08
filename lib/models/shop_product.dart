@@ -41,7 +41,7 @@ class ShopProductModel {
         'unit': unit,
         'price': price,
         'description': description,
-        'published': published,
+        'published': published ? '公開' : '非公開',
         'createdAt': createdAt,
       };
 }

@@ -22,8 +22,7 @@ dependencies:
   provider: ^4.3.3
   flutter_admin_scaffold: ^0.0.5
   responsive_table: ^0.1.1+8
-  image_picker_web: ^1.0.9
-  mime_type: ^0.3.2
+  date_range_picker: ^1.0.6
   intl: ^0.16.1
 dependency_overrides:
   intl: ^0.17.0-nullsafety.2

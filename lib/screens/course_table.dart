@@ -1,9 +1,12 @@
+import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_course.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
+import 'package:otodokekun_cource_web/widgets/days_list_tile.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
@@ -41,12 +44,24 @@ class _CourseTableState extends State<CourseTable> {
     DatatableHeader(
       text: '開始日',
       value: 'openedAt',
+      show: false,
+      sortable: false,
+    ),
+    DatatableHeader(
+      text: '開始日',
+      value: 'openedAtText',
       show: true,
       sortable: true,
     ),
     DatatableHeader(
       text: '終了日',
       value: 'closedAt',
+      show: false,
+      sortable: false,
+    ),
+    DatatableHeader(
+      text: '終了日',
+      value: 'closedAtText',
       show: true,
       sortable: true,
     ),
@@ -207,15 +222,19 @@ class AddCourseCustomDialog extends StatefulWidget {
 }
 
 class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
+  DateTime openedAt;
+  DateTime closedAt;
+  String rangeText;
+  List<DateTime> days = [];
+
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
       title: '新規登録',
       content: Container(
         width: 400.0,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          shrinkWrap: true,
           children: [
             CustomTextField(
               controller: widget.shopCourseProvider.name,
@@ -224,6 +243,41 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
               maxLines: 1,
               labelText: 'コース(セット)名',
               iconData: Icons.title,
+            ),
+            SizedBox(height: 8.0),
+            FillBoxButton(
+              labelText: rangeText == null ? '日付範囲選択' : rangeText,
+              labelColor: Colors.white,
+              backgroundColor: Colors.grey,
+              onTap: () async {
+                DateTime now = DateTime.now();
+                final List<DateTime> picked =
+                    await DateRagePicker.showDatePicker(
+                  context: context,
+                  initialFirstDate: now,
+                  initialLastDate: now.add(Duration(days: 7)),
+                  firstDate: DateTime(2021),
+                  lastDate: DateTime(2022),
+                );
+                if (picked != null && picked.length == 2) {
+                  setState(() {
+                    openedAt = picked.first;
+                    closedAt = picked.last;
+                    rangeText =
+                        '${DateFormat('yyyy/MM/dd').format(openedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(closedAt)}';
+                    days = _calculateDaysInterval(openedAt, closedAt);
+                  });
+                }
+              },
+            ),
+            SizedBox(height: 8.0),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: ScrollPhysics(),
+              itemCount: days.length,
+              itemBuilder: (_, index) {
+                return DaysListTile();
+              },
             ),
           ],
         ),
@@ -270,9 +324,8 @@ class _CourseCustomDialogState extends State<CourseCustomDialog> {
       title: '${widget.data['name']}',
       content: Container(
         width: 400.0,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          shrinkWrap: true,
           children: [
             CustomTextField(
               controller: widget.shopCourseProvider.name,
@@ -317,4 +370,12 @@ class _CourseCustomDialogState extends State<CourseCustomDialog> {
       ],
     );
   }
+}
+
+List<DateTime> _calculateDaysInterval(DateTime openedAt, DateTime closedAt) {
+  List<DateTime> days = [];
+  for (int i = 0; i <= closedAt.difference(openedAt).inDays; i++) {
+    days.add(openedAt.add(Duration(days: i)));
+  }
+  return days;
 }

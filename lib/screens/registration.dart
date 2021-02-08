@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
-import 'package:otodokekun_cource_web/screens/product.dart';
+import 'package:otodokekun_cource_web/screens/order.dart';
 import 'package:otodokekun_cource_web/widgets/border_round_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource_web/widgets/link_button.dart';
@@ -125,7 +125,7 @@ class RegistrationScreen extends StatelessWidget {
                                     Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => ProductScreen(),
+                                        builder: (context) => OrderScreen(),
                                         fullscreenDialog: true,
                                       ),
                                     );

@@ -197,9 +197,8 @@ class _AddNoticeCustomDialogState extends State<AddNoticeCustomDialog> {
       title: '新規登録',
       content: Container(
         width: 400.0,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          shrinkWrap: true,
           children: [
             CustomTextField(
               controller: widget.shopNoticeProvider.title,
@@ -263,9 +262,8 @@ class _NoticeCustomDialogState extends State<NoticeCustomDialog> {
       title: '${widget.data['title']}',
       content: Container(
         width: 400.0,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          shrinkWrap: true,
           children: [
             CustomTextField(
               controller: widget.shopNoticeProvider.title,

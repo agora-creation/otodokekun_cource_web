@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
-import 'package:otodokekun_cource_web/screens/product.dart';
+import 'package:otodokekun_cource_web/screens/order.dart';
 import 'package:otodokekun_cource_web/screens/registration.dart';
 import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
@@ -15,6 +15,8 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shopProvider = Provider.of<ShopProvider>(context);
+    shopProvider.email.text = 'info@agora-c.com';
+    shopProvider.password.text = 'agora1234';
     return Scaffold(
       backgroundColor: kMainColor,
       body: SingleChildScrollView(
@@ -102,7 +104,7 @@ class LoginScreen extends StatelessWidget {
                                     Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => ProductScreen(),
+                                        builder: (context) => OrderScreen(),
                                       ),
                                     );
                                   },

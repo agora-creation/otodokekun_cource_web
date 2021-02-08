@@ -65,8 +65,8 @@ class _UserTableState extends State<UserTable> {
     DatatableHeader(
       text: 'パスワード',
       value: 'password',
-      show: false,
-      sortable: false,
+      show: true,
+      sortable: true,
     ),
     DatatableHeader(
       text: 'ブラックリスト',
@@ -203,9 +203,8 @@ class _UserCustomDialogState extends State<UserCustomDialog> {
       title: '${widget.data['name']}',
       content: Container(
         width: 400.0,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          shrinkWrap: true,
           children: [
             Table(
               border: TableBorder.all(width: 1.0, color: Colors.black54),

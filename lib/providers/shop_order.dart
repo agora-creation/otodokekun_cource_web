@@ -5,11 +5,12 @@ import 'package:otodokekun_cource_web/services/shop_order.dart';
 class ShopOrderProvider with ChangeNotifier {
   ShopOrderService _shopOrderService = ShopOrderService();
 
-  Future<bool> updateOrder({String id, String shopId}) async {
+  Future<bool> updateOrder({String id, String shopId, bool shipping}) async {
     try {
       _shopOrderService.updateOrder({
         'id': id,
         'shopId': shopId,
+        'shipping': !shipping,
       });
       return true;
     } catch (e) {

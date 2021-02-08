@@ -110,9 +110,8 @@ class _ShopCustomDialogState extends State<ShopCustomDialog> {
       title: '店舗情報',
       content: Container(
         width: 400.0,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          shrinkWrap: true,
           children: [
             CustomTextField(
               controller: widget.shopProvider.name,
@@ -166,6 +165,15 @@ class _ShopCustomDialogState extends State<ShopCustomDialog> {
               maxLines: 1,
               labelText: '担当者名',
               iconData: Icons.person,
+            ),
+            SizedBox(height: 8.0),
+            CustomTextField(
+              controller: null,
+              obscureText: false,
+              textInputType: TextInputType.multiline,
+              maxLines: null,
+              labelText: '備考',
+              iconData: Icons.message,
             ),
             SizedBox(height: 8.0),
             DropdownButton<int>(

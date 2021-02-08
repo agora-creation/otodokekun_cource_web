@@ -229,9 +229,8 @@ class _AddProductCustomDialogState extends State<AddProductCustomDialog> {
       title: '新規登録',
       content: Container(
         width: 400.0,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          shrinkWrap: true,
           children: [
             CustomTextField(
               controller: widget.shopProductProvider.name,
@@ -250,20 +249,21 @@ class _AddProductCustomDialogState extends State<AddProductCustomDialog> {
             ),
             GestureDetector(
               onTap: () {
-                InputElement _imageInput = FileUploadInputElement()
+                InputElement _input = FileUploadInputElement()
                   ..accept = 'image/*';
-                _imageInput.click();
-                _imageInput.onChange.listen((event) {
-                  final _imageFile = _imageInput.files.first;
-                  final _reader = FileReader();
-                  _reader.readAsDataUrl(_imageFile);
-                  _reader.onLoadEnd.listen((event) {
-                    final _encoded = _reader.result as String;
-                    final _stripped = _encoded.replaceFirst(
-                        RegExp(r'data:image/[^;]+;base64,'), '');
+                _input.click();
+                _input.onChange.listen((e) {
+                  imageFile = _input.files.first;
+                  final reader = FileReader();
+                  reader.readAsDataUrl(imageFile);
+                  reader.onLoadEnd.listen((e) {
+                    final encoded = reader.result as String;
+                    final stripped = encoded.replaceFirst(
+                      RegExp(r'data:image/[^;]+;base64,'),
+                      '',
+                    );
                     setState(() {
-                      imageFile = _imageFile;
-                      imageData = base64.decode(_stripped);
+                      imageData = base64.decode(stripped);
                     });
                   });
                 });
@@ -353,9 +353,8 @@ class _ProductCustomDialogState extends State<ProductCustomDialog> {
       title: '${widget.data['name']}',
       content: Container(
         width: 400.0,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          shrinkWrap: true,
           children: [
             CustomTextField(
               controller: widget.shopProductProvider.name,
@@ -374,20 +373,21 @@ class _ProductCustomDialogState extends State<ProductCustomDialog> {
             ),
             GestureDetector(
               onTap: () {
-                InputElement _imageInput = FileUploadInputElement()
+                InputElement _input = FileUploadInputElement()
                   ..accept = 'image/*';
-                _imageInput.click();
-                _imageInput.onChange.listen((event) {
-                  final _imageFile = _imageInput.files.first;
-                  final _reader = FileReader();
-                  _reader.readAsDataUrl(_imageFile);
-                  _reader.onLoadEnd.listen((event) {
-                    final _encoded = _reader.result as String;
-                    final _stripped = _encoded.replaceFirst(
-                        RegExp(r'data:image/[^;]+;base64,'), '');
+                _input.click();
+                _input.onChange.listen((e) {
+                  imageFile = _input.files.first;
+                  final reader = FileReader();
+                  reader.readAsDataUrl(imageFile);
+                  reader.onLoadEnd.listen((e) {
+                    final encoded = reader.result as String;
+                    final stripped = encoded.replaceFirst(
+                      RegExp(r'data:image/[^;]+;base64,'),
+                      '',
+                    );
                     setState(() {
-                      imageFile = _imageFile;
-                      imageData = base64.decode(_stripped);
+                      imageData = base64.decode(stripped);
                     });
                   });
                 });

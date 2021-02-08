@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/models/days.dart';
 
 class ShopCourseModel {
@@ -43,9 +44,11 @@ class ShopCourseModel {
         'shopId': shopId,
         'name': name,
         'openedAt': openedAt,
+        'openedAtText': DateFormat('yyyy/MM/dd').format(openedAt),
         'closedAt': closedAt,
+        'closedAtText': DateFormat('yyyy/MM/dd').format(closedAt),
         'days': days,
-        'published': published,
+        'published': published ? '公開' : '非公開',
         'createdAt': createdAt,
       };
 }

@@ -67,7 +67,7 @@ class SplashController extends StatelessWidget {
       case Status.Authenticating:
         return LoginScreen();
       case Status.Authenticated:
-        return ProductScreen();
+        return OrderScreen();
       default:
         return LoginScreen();
     }
