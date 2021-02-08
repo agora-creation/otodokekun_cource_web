@@ -276,7 +276,9 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
               physics: ScrollPhysics(),
               itemCount: days.length,
               itemBuilder: (_, index) {
-                return DaysListTile();
+                return DaysListTile(
+                  deliveryAt: days[index],
+                );
               },
             ),
           ],
