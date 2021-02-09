@@ -122,13 +122,8 @@ class RegistrationScreen extends StatelessWidget {
                                       return;
                                     }
                                     shopProvider.clearController();
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => OrderScreen(),
-                                        fullscreenDialog: true,
-                                      ),
-                                    );
+                                    Navigator.pushNamed(
+                                        context, OrderScreen.id);
                                   },
                                 ),
                               ),

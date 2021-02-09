@@ -3,7 +3,7 @@ import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/services/user.dart';
 
 class UserProvider with ChangeNotifier {
-  UserServices _userServices = UserServices();
+  UserService _userServices = UserService();
 
   List<bool> blacklistList = [true, false];
   bool blacklist;

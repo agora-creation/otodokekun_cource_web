@@ -3,8 +3,12 @@ import 'package:intl/intl.dart';
 
 class DaysListTile extends StatelessWidget {
   final DateTime deliveryAt;
+  final Widget child;
 
-  DaysListTile({this.deliveryAt});
+  DaysListTile({
+    this.deliveryAt,
+    this.child,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +24,12 @@ class DaysListTile extends StatelessWidget {
             width: 50.0,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.black54.withOpacity(0.3),
+              color: Colors.black12.withOpacity(0.3),
             ),
             child: Center(
                 child: Text('${DateFormat('MM/dd').format(deliveryAt)}')),
           ),
-          title: Text('商品選択'),
-          trailing: Icon(Icons.arrow_drop_down_circle),
+          title: child,
           contentPadding: EdgeInsets.all(8.0),
         ),
       ),

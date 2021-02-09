@@ -9,7 +9,7 @@ class ShopProvider with ChangeNotifier {
   FirebaseAuth _auth;
   User _fUser;
   Status _status = Status.Uninitialized;
-  ShopServices _shopServices = ShopServices();
+  ShopService _shopServices = ShopService();
   ShopModel _shop;
   bool isLoading = false;
 

@@ -7,16 +7,21 @@ class ShopCourseProvider with ChangeNotifier {
 
   TextEditingController name = TextEditingController();
 
-  Future<bool> createCourse({String shopId}) async {
+  Future<bool> createCourse(
+      {String shopId,
+      DateTime openedAt,
+      DateTime closedAt,
+      List<Map<String, dynamic>> days}) async {
     if (name.text == null) return false;
     String courseId = _shopCourseService.getNewCourseId(shopId: shopId);
+    print(days);
     try {
       _shopCourseService.createCourse({
         'id': courseId,
         'shopId': shopId,
         'name': name.text.trim(),
-        'openedAt': DateTime.now(),
-        'closedAt': DateTime.now(),
+        'openedAt': openedAt,
+        'closedAt': closedAt,
         'days': [],
         'published': true,
         'createdAt': DateTime.now(),

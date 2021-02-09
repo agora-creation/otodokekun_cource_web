@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
@@ -12,11 +13,20 @@ import 'package:otodokekun_cource_web/screens/login.dart';
 import 'package:otodokekun_cource_web/screens/notice.dart';
 import 'package:otodokekun_cource_web/screens/order.dart';
 import 'package:otodokekun_cource_web/screens/product.dart';
+import 'package:otodokekun_cource_web/screens/registration.dart';
 import 'package:otodokekun_cource_web/screens/splash.dart';
 import 'package:otodokekun_cource_web/screens/user.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
+  if (FirebaseAuth.instance.currentUser == null) {
+    await Future.any([
+      FirebaseAuth.instance.userChanges().firstWhere((u) => u != null),
+      Future.delayed(Duration(milliseconds: 2000)),
+    ]);
+  }
   runApp(MyApp());
 }
 
@@ -46,9 +56,11 @@ class MyApp extends StatelessWidget {
         home: SplashController(),
         routes: {
           CourseScreen.id: (context) => CourseScreen(),
+          LoginScreen.id: (context) => LoginScreen(),
           NoticeScreen.id: (context) => NoticeScreen(),
           OrderScreen.id: (context) => OrderScreen(),
           ProductScreen.id: (context) => ProductScreen(),
+          RegistrationScreen.id: (context) => RegistrationScreen(),
           UserScreen.id: (context) => UserScreen(),
         },
       ),

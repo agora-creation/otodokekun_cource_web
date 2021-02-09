@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:otodokekun_cource_web/models/user.dart';
 
-class UserServices {
+class UserService {
   String _collection = 'user';
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 

@@ -128,4 +128,12 @@ class ShopProductProvider with ChangeNotifier {
     });
     return _source;
   }
+
+  Future<List<ShopProductModel>> getProductsModel({String shopId}) async {
+    List<ShopProductModel> _products = [];
+    await _shopProductService.getProducts(shopId: shopId).then((value) {
+      _products = value;
+    });
+    return _products;
+  }
 }

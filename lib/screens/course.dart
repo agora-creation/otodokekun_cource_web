@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_course.dart';
+import 'package:otodokekun_cource_web/providers/shop_product.dart';
 import 'package:otodokekun_cource_web/screens/course_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
 import 'package:provider/provider.dart';
@@ -12,12 +13,14 @@ class CourseScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final shopProvider = Provider.of<ShopProvider>(context);
     final shopCourseProvider = Provider.of<ShopCourseProvider>(context);
+    final shopProductProvider = Provider.of<ShopProductProvider>(context);
     return CustomAdminScaffold(
       shopProvider: shopProvider,
       selectedRoute: id,
       body: CourseTable(
         shop: shopProvider.shop,
         shopCourseProvider: shopCourseProvider,
+        shopProductProvider: shopProductProvider,
       ),
     );
   }

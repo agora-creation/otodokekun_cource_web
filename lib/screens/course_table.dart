@@ -1,8 +1,9 @@
 import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
+import 'package:otodokekun_cource_web/models/shop_product.dart';
 import 'package:otodokekun_cource_web/providers/shop_course.dart';
+import 'package:otodokekun_cource_web/providers/shop_product.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
@@ -14,8 +15,13 @@ import 'package:responsive_table/DatatableHeader.dart';
 class CourseTable extends StatefulWidget {
   final ShopModel shop;
   final ShopCourseProvider shopCourseProvider;
+  final ShopProductProvider shopProductProvider;
 
-  CourseTable({@required this.shop, @required this.shopCourseProvider});
+  CourseTable({
+    @required this.shop,
+    @required this.shopCourseProvider,
+    @required this.shopProductProvider,
+  });
 
   @override
   _CourseTableState createState() => _CourseTableState();
@@ -91,6 +97,7 @@ class _CourseTableState extends State<CourseTable> {
   String _sortColumn;
   bool _sortAscending = true;
   bool _isLoading = true;
+  List<ShopProductModel> _products = [];
 
   void _getSource() async {
     setState(() => _isLoading = true);
@@ -99,6 +106,11 @@ class _CourseTableState extends State<CourseTable> {
         .then((value) {
       _source = value;
       setState(() => _isLoading = false);
+    });
+    await widget.shopProductProvider
+        .getProductsModel(shopId: widget.shop?.id)
+        .then((value) {
+      _products = value;
     });
   }
 
@@ -125,6 +137,7 @@ class _CourseTableState extends State<CourseTable> {
                 return AddCourseCustomDialog(
                   shop: widget.shop,
                   shopCourseProvider: widget.shopCourseProvider,
+                  products: _products,
                   getSource: _getSource,
                 );
               },
@@ -209,11 +222,13 @@ class _CourseTableState extends State<CourseTable> {
 class AddCourseCustomDialog extends StatefulWidget {
   final ShopModel shop;
   final ShopCourseProvider shopCourseProvider;
+  final List<ShopProductModel> products;
   final Function getSource;
 
   AddCourseCustomDialog({
     @required this.shop,
     @required this.shopCourseProvider,
+    @required this.products,
     this.getSource,
   });
 
@@ -224,8 +239,12 @@ class AddCourseCustomDialog extends StatefulWidget {
 class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
   DateTime openedAt;
   DateTime closedAt;
-  String rangeText;
-  List<DateTime> days = [];
+  DateTime initialFirstDate = DateTime.now();
+  DateTime initialLastDate = DateTime.now().add(Duration(days: 5));
+  DateTime firstDate = DateTime.now().subtract(Duration(days: 365));
+  DateTime lastDate = DateTime.now().add(Duration(days: 365));
+  List<Map<String, dynamic>> days = [];
+  List<ShopProductModel> selectedProducts = [];
 
   @override
   Widget build(BuildContext context) {
@@ -246,26 +265,26 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
             ),
             SizedBox(height: 8.0),
             FillBoxButton(
-              labelText: rangeText == null ? '日付範囲選択' : rangeText,
+              labelText: '日付範囲選択',
               labelColor: Colors.white,
               backgroundColor: Colors.grey,
               onTap: () async {
-                DateTime now = DateTime.now();
                 final List<DateTime> picked =
                     await DateRagePicker.showDatePicker(
                   context: context,
-                  initialFirstDate: now,
-                  initialLastDate: now.add(Duration(days: 7)),
-                  firstDate: DateTime(2021),
-                  lastDate: DateTime(2022),
+                  initialFirstDate: initialFirstDate,
+                  initialLastDate: initialLastDate,
+                  firstDate: firstDate,
+                  lastDate: lastDate,
                 );
                 if (picked != null && picked.length == 2) {
                   setState(() {
                     openedAt = picked.first;
                     closedAt = picked.last;
-                    rangeText =
-                        '${DateFormat('yyyy/MM/dd').format(openedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(closedAt)}';
-                    days = _calculateDaysInterval(openedAt, closedAt);
+                    initialFirstDate = picked.first;
+                    initialLastDate = picked.last;
+                    days.clear();
+                    days = _createDays(openedAt, closedAt);
                   });
                 }
               },
@@ -277,7 +296,23 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
               itemCount: days.length,
               itemBuilder: (_, index) {
                 return DaysListTile(
-                  deliveryAt: days[index],
+                  deliveryAt: days[index]['deliveryAt'],
+                  child: DropdownButton<ShopProductModel>(
+                    isExpanded: true,
+                    icon: Icon(Icons.arrow_drop_down),
+                    value: days[index]['product'],
+                    onChanged: (value) {
+                      setState(() {
+                        days[index]['product'] = value;
+                      });
+                    },
+                    items: widget.products.map((product) {
+                      return DropdownMenuItem<ShopProductModel>(
+                        value: product,
+                        child: Text('${product.name}'),
+                      );
+                    }).toList(),
+                  ),
                 );
               },
             ),
@@ -290,8 +325,11 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
           onTap: () async {
-            if (!await widget.shopCourseProvider
-                .createCourse(shopId: widget.shop?.id)) {
+            if (!await widget.shopCourseProvider.createCourse(
+                shopId: widget.shop?.id,
+                openedAt: openedAt,
+                closedAt: closedAt,
+                days: days)) {
               return;
             }
             widget.shopCourseProvider.clearController();
@@ -374,10 +412,14 @@ class _CourseCustomDialogState extends State<CourseCustomDialog> {
   }
 }
 
-List<DateTime> _calculateDaysInterval(DateTime openedAt, DateTime closedAt) {
-  List<DateTime> days = [];
+List<Map<String, dynamic>> _createDays(DateTime openedAt, DateTime closedAt) {
+  List<Map<String, dynamic>> days = [];
   for (int i = 0; i <= closedAt.difference(openedAt).inDays; i++) {
-    days.add(openedAt.add(Duration(days: i)));
+    Map<String, dynamic> _day = {
+      'deliveryAt': openedAt.add(Duration(days: i)),
+      'product': null,
+    };
+    days.add(_day);
   }
   return days;
 }

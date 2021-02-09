@@ -101,12 +101,8 @@ class LoginScreen extends StatelessWidget {
                                       return;
                                     }
                                     shopProvider.clearController();
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => OrderScreen(),
-                                      ),
-                                    );
+                                    Navigator.pushNamed(
+                                        context, OrderScreen.id);
                                   },
                                 ),
                               ),
@@ -116,12 +112,8 @@ class LoginScreen extends StatelessWidget {
                             labelText: '初めての方はコチラ',
                             onTap: () {
                               shopProvider.clearController();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => RegistrationScreen(),
-                                ),
-                              );
+                              Navigator.pushNamed(
+                                  context, RegistrationScreen.id);
                             },
                           ),
                         ],

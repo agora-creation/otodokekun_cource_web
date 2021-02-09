@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 
-class ShopServices {
+class ShopService {
   String _collection = 'shop';
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
