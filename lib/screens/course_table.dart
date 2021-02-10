@@ -103,14 +103,11 @@ class _CourseTableState extends State<CourseTable> {
     setState(() => _isLoading = true);
     await widget.shopCourseProvider
         .getCourses(shopId: widget.shop?.id)
-        .then((value) {
+        .then((value) async {
       _source = value;
+      _products =
+          await widget.shopProductProvider.getProducts(shopId: widget.shop?.id);
       setState(() => _isLoading = false);
-    });
-    await widget.shopProductProvider
-        .getProducts(shopId: widget.shop?.id)
-        .then((value) {
-      _products = value;
     });
   }
 
@@ -244,6 +241,7 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
   DateTime firstDate = DateTime.now().subtract(Duration(days: 365));
   DateTime lastDate = DateTime.now().add(Duration(days: 365));
   List<DaysModel> days = [];
+  List selected = [];
 
   @override
   Widget build(BuildContext context) {
@@ -307,6 +305,7 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
                       days[index].unit = value['unit'].toString();
                       days[index].price = int.parse(value['price'].toString());
                       days[index].exist = true;
+                      print(value);
                     },
                     items: widget.products.map((e) {
                       return DropdownMenuItem(
@@ -334,8 +333,8 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
                 days: days)) {
               return;
             }
-            widget.shopCourseProvider.clearController();
             widget.getSource();
+            widget.shopCourseProvider.clearController();
             Navigator.pop(context);
           },
         ),
@@ -369,13 +368,16 @@ class _CourseCustomDialogState extends State<CourseCustomDialog> {
         child: ListView(
           shrinkWrap: true,
           children: [
-            CustomTextField(
-              controller: widget.shopCourseProvider.name,
-              obscureText: false,
-              textInputType: TextInputType.name,
-              maxLines: 1,
-              labelText: 'コース(セット)名',
-              iconData: Icons.title,
+            ListView.builder(
+              shrinkWrap: true,
+              physics: ScrollPhysics(),
+              itemCount: widget.data['days'].length,
+              itemBuilder: (_, index) {
+                return DaysListTile(
+                  deliveryAt: widget.data['days'][index].deliveryAt,
+                  child: Text(widget.data['days'][index].name),
+                );
+              },
             ),
           ],
         ),
@@ -390,22 +392,8 @@ class _CourseCustomDialogState extends State<CourseCustomDialog> {
                 id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
-            widget.shopCourseProvider.clearController();
             widget.getSource();
-            Navigator.pop(context);
-          },
-        ),
-        FillRoundButton(
-          labelText: '変更を保存',
-          labelColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          onTap: () async {
-            if (!await widget.shopCourseProvider.updateCourse(
-                id: widget.data['id'], shopId: widget.data['shopId'])) {
-              return;
-            }
             widget.shopCourseProvider.clearController();
-            widget.getSource();
             Navigator.pop(context);
           },
         ),

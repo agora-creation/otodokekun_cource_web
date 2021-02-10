@@ -230,8 +230,8 @@ class _AddNoticeCustomDialogState extends State<AddNoticeCustomDialog> {
                 .createNotice(shopId: widget.shop?.id)) {
               return;
             }
-            widget.shopNoticeProvider.clearController();
             widget.getSource();
+            widget.shopNoticeProvider.clearController();
             Navigator.pop(context);
           },
         ),
@@ -303,8 +303,8 @@ class _NoticeCustomDialogState extends State<NoticeCustomDialog> {
                 id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
-            widget.shopNoticeProvider.clearController();
             widget.getSource();
+            widget.shopNoticeProvider.clearController();
             Navigator.pop(context);
           },
         ),
@@ -317,8 +317,8 @@ class _NoticeCustomDialogState extends State<NoticeCustomDialog> {
                 id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
-            widget.shopNoticeProvider.clearController();
             widget.getSource();
+            widget.shopNoticeProvider.clearController();
             Navigator.pop(context);
           },
         ),

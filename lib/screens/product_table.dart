@@ -318,8 +318,8 @@ class _AddProductCustomDialogState extends State<AddProductCustomDialog> {
                 .createProduct(shopId: widget.shop?.id, imageFile: imageFile)) {
               return;
             }
-            widget.shopProductProvider.clearController();
             widget.getSource();
+            widget.shopProductProvider.clearController();
             Navigator.pop(context);
           },
         ),
@@ -447,8 +447,8 @@ class _ProductCustomDialogState extends State<ProductCustomDialog> {
                 id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
-            widget.shopProductProvider.clearController();
             widget.getSource();
+            widget.shopProductProvider.clearController();
             Navigator.pop(context);
           },
         ),
@@ -463,8 +463,8 @@ class _ProductCustomDialogState extends State<ProductCustomDialog> {
                 imageFile: imageFile)) {
               return;
             }
-            widget.shopProductProvider.clearController();
             widget.getSource();
+            widget.shopProductProvider.clearController();
             Navigator.pop(context);
           },
         ),
