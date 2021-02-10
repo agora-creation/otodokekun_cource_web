@@ -35,12 +35,14 @@ class CustomAdminScaffold extends StatelessWidget {
             icon: Icon(Icons.store),
             onPressed: () {
               shopProvider.clearController();
+              shopProvider.code.text = shopProvider.shop?.code;
               shopProvider.name.text = shopProvider.shop?.name;
               shopProvider.zip.text = shopProvider.shop?.zip;
               shopProvider.address.text = shopProvider.shop?.address;
               shopProvider.tel.text = shopProvider.shop?.tel;
               shopProvider.email.text = shopProvider.shop?.email;
               shopProvider.staff.text = shopProvider.shop?.staff;
+              shopProvider.remarks.text = shopProvider.shop?.remarks;
               shopProvider.cancelLimit = shopProvider.shop?.cancelLimit;
               showDialog(
                 context: context,
@@ -114,6 +116,15 @@ class _ShopCustomDialogState extends State<ShopCustomDialog> {
           shrinkWrap: true,
           children: [
             CustomTextField(
+              controller: widget.shopProvider.code,
+              obscureText: false,
+              textInputType: null,
+              maxLines: 1,
+              labelText: '店舗コード',
+              iconData: Icons.label,
+            ),
+            SizedBox(height: 8.0),
+            CustomTextField(
               controller: widget.shopProvider.name,
               obscureText: false,
               textInputType: TextInputType.name,
@@ -168,7 +179,7 @@ class _ShopCustomDialogState extends State<ShopCustomDialog> {
             ),
             SizedBox(height: 8.0),
             CustomTextField(
-              controller: null,
+              controller: widget.shopProvider.remarks,
               obscureText: false,
               textInputType: TextInputType.multiline,
               maxLines: null,

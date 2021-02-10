@@ -20,11 +20,13 @@ class ShopProvider with ChangeNotifier {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController cPassword = TextEditingController();
+  TextEditingController code = TextEditingController();
   TextEditingController name = TextEditingController();
   TextEditingController zip = TextEditingController();
   TextEditingController address = TextEditingController();
   TextEditingController tel = TextEditingController();
   TextEditingController staff = TextEditingController();
+  TextEditingController remarks = TextEditingController();
   List<int> cancelLimitList = [3, 4, 5, 6, 7];
   int cancelLimit;
 
@@ -67,6 +69,7 @@ class ShopProvider with ChangeNotifier {
           .then((value) {
         _shopServices.createShop({
           'id': value.user.uid,
+          'code': '',
           'name': name.text.trim(),
           'zip': '',
           'address': '',
@@ -74,6 +77,7 @@ class ShopProvider with ChangeNotifier {
           'email': email.text.trim(),
           'password': password.text.trim(),
           'staff': '',
+          'remarks': '',
           'cancelLimit': 3,
           'createdAt': DateTime.now(),
         });
@@ -94,12 +98,14 @@ class ShopProvider with ChangeNotifier {
       await _auth.currentUser.updateEmail(email.text.trim()).then((value) {
         _shopServices.updateShop({
           'id': _auth.currentUser.uid,
+          'code': code.text.trim(),
           'name': name.text.trim(),
           'zip': zip.text.trim(),
           'address': address.text.trim(),
           'tel': tel.text.trim(),
           'email': email.text.trim(),
           'staff': staff.text.trim(),
+          'remarks': remarks.text,
           'cancelLimit': cancelLimit,
         });
       });
@@ -121,11 +127,13 @@ class ShopProvider with ChangeNotifier {
     email.text = '';
     password.text = '';
     cPassword.text = '';
+    code.text = '';
     name.text = '';
     zip.text = '';
     address.text = '';
     tel.text = '';
     staff.text = '';
+    remarks.text = '';
   }
 
   Future reloadShopModel() async {

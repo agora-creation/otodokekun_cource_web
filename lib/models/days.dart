@@ -1,23 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class DaysModel {
-  String _id;
-  String _name;
-  String _image;
-  String _unit;
-  int _price;
+  String id;
+  String name;
+  String image;
+  String unit;
+  int price;
+  bool exist;
   DateTime deliveryAt;
 
-  String get id => _id;
-  String get name => _name;
-  String get image => _image;
-  String get unit => _unit;
-  int get price => _price;
-
   DaysModel.fromMap(Map data) {
-    _id = data['id'];
-    _name = data['name'];
-    _image = data['image'];
-    _unit = data['unit'];
-    _price = data['price'];
+    id = data['id'];
+    name = data['name'];
+    image = data['image'];
+    unit = data['unit'];
+    price = data['price'];
+    exist = data['exist'];
     deliveryAt = data['deliveryAt'].toDate();
   }
 
@@ -27,6 +25,24 @@ class DaysModel {
         'image': image,
         'unit': unit,
         'price': price,
+        'exist': exist,
         'deliveryAt': deliveryAt,
       };
+}
+
+List<DaysModel> createDays(DateTime openedAt, DateTime closedAt) {
+  List<DaysModel> days = [];
+  for (int i = 0; i <= closedAt.difference(openedAt).inDays; i++) {
+    Map day = {
+      'id': '',
+      'name': '',
+      'image': '',
+      'unit': '',
+      'price': 0,
+      'exist': false,
+      'deliveryAt': Timestamp.fromDate(openedAt.add(Duration(days: i))),
+    };
+    days.add(DaysModel.fromMap(day));
+  }
+  return days;
 }

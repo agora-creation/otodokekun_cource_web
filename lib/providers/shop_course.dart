@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otodokekun_cource_web/models/days.dart';
 import 'package:otodokekun_cource_web/models/shop_course.dart';
 import 'package:otodokekun_cource_web/services/shop_course.dart';
 
@@ -11,10 +12,13 @@ class ShopCourseProvider with ChangeNotifier {
       {String shopId,
       DateTime openedAt,
       DateTime closedAt,
-      List<Map<String, dynamic>> days}) async {
+      List<DaysModel> days}) async {
     if (name.text == null) return false;
     String courseId = _shopCourseService.getNewCourseId(shopId: shopId);
-    print(days);
+    List<Map> convertedDays = [];
+    for (DaysModel day in days) {
+      convertedDays.add(day.toMap());
+    }
     try {
       _shopCourseService.createCourse({
         'id': courseId,
@@ -22,7 +26,7 @@ class ShopCourseProvider with ChangeNotifier {
         'name': name.text.trim(),
         'openedAt': openedAt,
         'closedAt': closedAt,
-        'days': [],
+        'days': convertedDays,
         'published': true,
         'createdAt': DateTime.now(),
       });

@@ -1,7 +1,7 @@
 import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
 import 'package:flutter/material.dart';
+import 'package:otodokekun_cource_web/models/days.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
-import 'package:otodokekun_cource_web/models/shop_product.dart';
 import 'package:otodokekun_cource_web/providers/shop_course.dart';
 import 'package:otodokekun_cource_web/providers/shop_product.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
@@ -97,7 +97,7 @@ class _CourseTableState extends State<CourseTable> {
   String _sortColumn;
   bool _sortAscending = true;
   bool _isLoading = true;
-  List<ShopProductModel> _products = [];
+  List<Map<String, dynamic>> _products = [];
 
   void _getSource() async {
     setState(() => _isLoading = true);
@@ -108,7 +108,7 @@ class _CourseTableState extends State<CourseTable> {
       setState(() => _isLoading = false);
     });
     await widget.shopProductProvider
-        .getProductsModel(shopId: widget.shop?.id)
+        .getProducts(shopId: widget.shop?.id)
         .then((value) {
       _products = value;
     });
@@ -222,7 +222,7 @@ class _CourseTableState extends State<CourseTable> {
 class AddCourseCustomDialog extends StatefulWidget {
   final ShopModel shop;
   final ShopCourseProvider shopCourseProvider;
-  final List<ShopProductModel> products;
+  final List<Map<String, dynamic>> products;
   final Function getSource;
 
   AddCourseCustomDialog({
@@ -243,8 +243,7 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
   DateTime initialLastDate = DateTime.now().add(Duration(days: 5));
   DateTime firstDate = DateTime.now().subtract(Duration(days: 365));
   DateTime lastDate = DateTime.now().add(Duration(days: 365));
-  List<Map<String, dynamic>> days = [];
-  List<ShopProductModel> selectedProducts = [];
+  List<DaysModel> days = [];
 
   @override
   Widget build(BuildContext context) {
@@ -284,7 +283,7 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
                     initialFirstDate = picked.first;
                     initialLastDate = picked.last;
                     days.clear();
-                    days = _createDays(openedAt, closedAt);
+                    days = createDays(openedAt, closedAt);
                   });
                 }
               },
@@ -296,20 +295,23 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
               itemCount: days.length,
               itemBuilder: (_, index) {
                 return DaysListTile(
-                  deliveryAt: days[index]['deliveryAt'],
-                  child: DropdownButton<ShopProductModel>(
+                  deliveryAt: days[index].deliveryAt,
+                  child: DropdownButton(
                     isExpanded: true,
                     icon: Icon(Icons.arrow_drop_down),
-                    value: days[index]['product'],
+                    value: null,
                     onChanged: (value) {
-                      setState(() {
-                        days[index]['product'] = value;
-                      });
+                      days[index].id = value['id'].toString();
+                      days[index].name = value['name'].toString();
+                      days[index].image = value['image'].toString();
+                      days[index].unit = value['unit'].toString();
+                      days[index].price = int.parse(value['price'].toString());
+                      days[index].exist = true;
                     },
-                    items: widget.products.map((product) {
-                      return DropdownMenuItem<ShopProductModel>(
-                        value: product,
-                        child: Text('${product.name}'),
+                    items: widget.products.map((e) {
+                      return DropdownMenuItem(
+                        value: e,
+                        child: Text('${e['name']}'),
                       );
                     }).toList(),
                   ),
@@ -410,16 +412,4 @@ class _CourseCustomDialogState extends State<CourseCustomDialog> {
       ],
     );
   }
-}
-
-List<Map<String, dynamic>> _createDays(DateTime openedAt, DateTime closedAt) {
-  List<Map<String, dynamic>> days = [];
-  for (int i = 0; i <= closedAt.difference(openedAt).inDays; i++) {
-    Map<String, dynamic> _day = {
-      'deliveryAt': openedAt.add(Duration(days: i)),
-      'product': null,
-    };
-    days.add(_day);
-  }
-  return days;
 }
