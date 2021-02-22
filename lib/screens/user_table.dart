@@ -11,8 +11,13 @@ import 'package:responsive_table/responsive_table.dart';
 class UserTable extends StatefulWidget {
   final ShopModel shop;
   final UserProvider userProvider;
+  final List<Map<String, dynamic>> source;
 
-  UserTable({@required this.shop, @required this.userProvider});
+  UserTable({
+    @required this.shop,
+    @required this.userProvider,
+    @required this.source,
+  });
 
   @override
   _UserTableState createState() => _UserTableState();
@@ -71,8 +76,20 @@ class _UserTableState extends State<UserTable> {
     DatatableHeader(
       text: 'ブラックリスト',
       value: 'blacklist',
+      show: false,
+      sortable: false,
+    ),
+    DatatableHeader(
+      text: 'ブラックリスト',
+      value: 'blacklistText',
       show: true,
       sortable: true,
+    ),
+    DatatableHeader(
+      text: 'トークン',
+      value: 'token',
+      show: false,
+      sortable: false,
     ),
     DatatableHeader(
       text: '登録日時',
@@ -83,25 +100,9 @@ class _UserTableState extends State<UserTable> {
   ];
   int _currentPerPage = 10;
   int _currentPage = 1;
-  List<Map<String, dynamic>> _source = [];
   List<Map<String, dynamic>> _selecteds = [];
   String _sortColumn;
   bool _sortAscending = true;
-  bool _isLoading = true;
-
-  void _getSource() async {
-    setState(() => _isLoading = true);
-    await widget.userProvider.getUsers(shopId: widget.shop?.id).then((value) {
-      _source = value;
-      setState(() => _isLoading = false);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getSource();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,18 +110,17 @@ class _UserTableState extends State<UserTable> {
       title: '顧客一覧',
       actions: [],
       headers: _headers,
-      source: _source,
+      source: widget.source,
       selecteds: _selecteds,
       showSelect: false,
       onTabRow: (data) {
-        widget.userProvider.blacklist = data['blacklist'];
         showDialog(
           context: context,
           builder: (_) {
+            widget.userProvider.blacklist = data['blacklist'];
             return UserCustomDialog(
               userProvider: widget.userProvider,
               data: data,
-              getSource: _getSource,
             );
           },
         );
@@ -130,17 +130,17 @@ class _UserTableState extends State<UserTable> {
           _sortColumn = value;
           _sortAscending = !_sortAscending;
           if (_sortAscending) {
-            _source
+            widget.source
                 .sort((a, b) => b['$_sortColumn'].compareTo(a['$_sortColumn']));
           } else {
-            _source
+            widget.source
                 .sort((a, b) => a['$_sortColumn'].compareTo(b['$_sortColumn']));
           }
         });
       },
       sortAscending: _sortAscending,
       sortColumn: _sortColumn,
-      isLoading: _isLoading,
+      isLoading: false,
       onSelect: (value, item) {
         if (value) {
           setState(() => _selecteds.add(item));
@@ -150,8 +150,8 @@ class _UserTableState extends State<UserTable> {
       },
       onSelectAll: (value) {
         if (value) {
-          setState(
-              () => _selecteds = _source.map((entry) => entry).toList().cast());
+          setState(() =>
+              _selecteds = widget.source.map((entry) => entry).toList().cast());
         } else {
           setState(() => _selecteds.clear());
         }
@@ -164,7 +164,7 @@ class _UserTableState extends State<UserTable> {
       },
       currentPage: _currentPage,
       currentPerPage: _currentPerPage,
-      total: _source.length,
+      total: widget.source.length,
       currentPageBack: () {
         var _nextSet = _currentPage - _currentPerPage;
         setState(() {
@@ -174,7 +174,8 @@ class _UserTableState extends State<UserTable> {
       currentPageForward: () {
         var _nextSet = _currentPage + _currentPerPage;
         setState(() {
-          _currentPage = _nextSet < _source.length ? _nextSet : _source.length;
+          _currentPage =
+              _nextSet < widget.source.length ? _nextSet : widget.source.length;
         });
       },
     );
@@ -184,12 +185,10 @@ class _UserTableState extends State<UserTable> {
 class UserCustomDialog extends StatefulWidget {
   final UserProvider userProvider;
   final dynamic data;
-  final Function getSource;
 
   UserCustomDialog({
     @required this.userProvider,
     @required this.data,
-    this.getSource,
   });
 
   @override
@@ -202,7 +201,7 @@ class _UserCustomDialogState extends State<UserCustomDialog> {
     return CustomDialog(
       title: '${widget.data['name']}',
       content: Container(
-        width: 400.0,
+        width: 450.0,
         child: ListView(
           shrinkWrap: true,
           children: [
@@ -277,7 +276,7 @@ class _UserCustomDialogState extends State<UserCustomDialog> {
                     TableCell(
                       child: Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: DropdownButton<bool>(
+                        child: DropdownButton(
                           isExpanded: true,
                           value: widget.userProvider.blacklist,
                           onChanged: (value) {
@@ -285,12 +284,16 @@ class _UserCustomDialogState extends State<UserCustomDialog> {
                               widget.userProvider.blacklist = value;
                             });
                           },
-                          items: widget.userProvider.blacklistList.map((value) {
-                            return DropdownMenuItem(
-                              value: value,
-                              child: Text('$value'),
-                            );
-                          }).toList(),
+                          items: [
+                            DropdownMenuItem(
+                              value: false,
+                              child: Text('設定なし'),
+                            ),
+                            DropdownMenuItem(
+                              value: true,
+                              child: Text('設定済み'),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -310,7 +313,6 @@ class _UserCustomDialogState extends State<UserCustomDialog> {
             if (!await widget.userProvider.updateUser(id: widget.data['id'])) {
               return;
             }
-            widget.getSource();
             Navigator.pop(context);
           },
         ),

@@ -16,11 +16,13 @@ class CourseTable extends StatefulWidget {
   final ShopModel shop;
   final ShopCourseProvider shopCourseProvider;
   final ShopProductProvider shopProductProvider;
+  final List<Map<String, dynamic>> source;
 
   CourseTable({
     @required this.shop,
     @required this.shopCourseProvider,
     @required this.shopProductProvider,
+    @required this.source,
   });
 
   @override
@@ -92,22 +94,16 @@ class _CourseTableState extends State<CourseTable> {
   ];
   int _currentPerPage = 10;
   int _currentPage = 1;
-  List<Map<String, dynamic>> _source = [];
   List<Map<String, dynamic>> _selecteds = [];
   String _sortColumn;
   bool _sortAscending = true;
-  bool _isLoading = true;
   List<Map<String, dynamic>> _products = [];
 
   void _getSource() async {
-    setState(() => _isLoading = true);
-    await widget.shopCourseProvider
-        .getCourses(shopId: widget.shop?.id)
-        .then((value) async {
-      _source = value;
-      _products =
-          await widget.shopProductProvider.getProducts(shopId: widget.shop?.id);
-      setState(() => _isLoading = false);
+    await widget.shopProductProvider
+        .getProducts(shopId: widget.shop?.id)
+        .then((value) {
+      _products = value;
     });
   }
 
@@ -135,7 +131,6 @@ class _CourseTableState extends State<CourseTable> {
                   shop: widget.shop,
                   shopCourseProvider: widget.shopCourseProvider,
                   products: _products,
-                  getSource: _getSource,
                 );
               },
             );
@@ -143,9 +138,9 @@ class _CourseTableState extends State<CourseTable> {
         ),
       ],
       headers: _headers,
-      source: _source,
+      source: widget.source,
       selecteds: _selecteds,
-      showSelect: true,
+      showSelect: false,
       onTabRow: (data) {
         widget.shopCourseProvider.clearController();
         widget.shopCourseProvider.name.text = data['name'];
@@ -155,7 +150,6 @@ class _CourseTableState extends State<CourseTable> {
             return CourseCustomDialog(
               shopCourseProvider: widget.shopCourseProvider,
               data: data,
-              getSource: _getSource,
             );
           },
         );
@@ -165,17 +159,17 @@ class _CourseTableState extends State<CourseTable> {
           _sortColumn = value;
           _sortAscending = !_sortAscending;
           if (_sortAscending) {
-            _source
+            widget.source
                 .sort((a, b) => b['$_sortColumn'].compareTo(a['$_sortColumn']));
           } else {
-            _source
+            widget.source
                 .sort((a, b) => a['$_sortColumn'].compareTo(b['$_sortColumn']));
           }
         });
       },
       sortAscending: _sortAscending,
       sortColumn: _sortColumn,
-      isLoading: _isLoading,
+      isLoading: false,
       onSelect: (value, item) {
         if (value) {
           setState(() => _selecteds.add(item));
@@ -185,8 +179,8 @@ class _CourseTableState extends State<CourseTable> {
       },
       onSelectAll: (value) {
         if (value) {
-          setState(
-              () => _selecteds = _source.map((entry) => entry).toList().cast());
+          setState(() =>
+              _selecteds = widget.source.map((entry) => entry).toList().cast());
         } else {
           setState(() => _selecteds.clear());
         }
@@ -199,7 +193,7 @@ class _CourseTableState extends State<CourseTable> {
       },
       currentPage: _currentPage,
       currentPerPage: _currentPerPage,
-      total: _source.length,
+      total: widget.source.length,
       currentPageBack: () {
         var _nextSet = _currentPage - _currentPerPage;
         setState(() {
@@ -209,7 +203,8 @@ class _CourseTableState extends State<CourseTable> {
       currentPageForward: () {
         var _nextSet = _currentPage + _currentPerPage;
         setState(() {
-          _currentPage = _nextSet < _source.length ? _nextSet : _source.length;
+          _currentPage =
+              _nextSet < widget.source.length ? _nextSet : widget.source.length;
         });
       },
     );
@@ -220,13 +215,11 @@ class AddCourseCustomDialog extends StatefulWidget {
   final ShopModel shop;
   final ShopCourseProvider shopCourseProvider;
   final List<Map<String, dynamic>> products;
-  final Function getSource;
 
   AddCourseCustomDialog({
     @required this.shop,
     @required this.shopCourseProvider,
     @required this.products,
-    this.getSource,
   });
 
   @override
@@ -248,7 +241,7 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
     return CustomDialog(
       title: '新規登録',
       content: Container(
-        width: 400.0,
+        width: 450.0,
         child: ListView(
           shrinkWrap: true,
           children: [
@@ -284,6 +277,7 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
                     days = createDays(openedAt, closedAt);
                   });
                 }
+                print(days.length);
               },
             ),
             SizedBox(height: 8.0),
@@ -333,7 +327,6 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
                 days: days)) {
               return;
             }
-            widget.getSource();
             widget.shopCourseProvider.clearController();
             Navigator.pop(context);
           },
@@ -346,12 +339,10 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
 class CourseCustomDialog extends StatefulWidget {
   final ShopCourseProvider shopCourseProvider;
   final dynamic data;
-  final Function getSource;
 
   CourseCustomDialog({
     @required this.shopCourseProvider,
     @required this.data,
-    this.getSource,
   });
 
   @override
@@ -364,7 +355,7 @@ class _CourseCustomDialogState extends State<CourseCustomDialog> {
     return CustomDialog(
       title: '${widget.data['name']}',
       content: Container(
-        width: 400.0,
+        width: 450.0,
         child: ListView(
           shrinkWrap: true,
           children: [
@@ -392,7 +383,6 @@ class _CourseCustomDialogState extends State<CourseCustomDialog> {
                 id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
-            widget.getSource();
             widget.shopCourseProvider.clearController();
             Navigator.pop(context);
           },

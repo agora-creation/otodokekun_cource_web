@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/models/cart.dart';
-import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_order.dart';
 import 'package:otodokekun_cource_web/widgets/border_round_button.dart';
 import 'package:otodokekun_cource_web/widgets/cart_list_tile.dart';
@@ -11,10 +10,13 @@ import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 
 class OrderTable extends StatefulWidget {
-  final ShopModel shop;
   final ShopOrderProvider shopOrderProvider;
+  final List<Map<String, dynamic>> source;
 
-  OrderTable({@required this.shop, @required this.shopOrderProvider});
+  OrderTable({
+    @required this.shopOrderProvider,
+    @required this.source,
+  });
 
   @override
   _OrderTableState createState() => _OrderTableState();
@@ -115,27 +117,9 @@ class _OrderTableState extends State<OrderTable> {
   ];
   int _currentPerPage = 10;
   int _currentPage = 1;
-  List<Map<String, dynamic>> _source = [];
   List<Map<String, dynamic>> _selecteds = [];
   String _sortColumn;
   bool _sortAscending = true;
-  bool _isLoading = true;
-
-  void _getSource() async {
-    setState(() => _isLoading = true);
-    await widget.shopOrderProvider
-        .getOrders(shopId: widget.shop?.id)
-        .then((value) {
-      _source = value;
-      setState(() => _isLoading = false);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getSource();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +127,7 @@ class _OrderTableState extends State<OrderTable> {
       title: '注文一覧',
       actions: [],
       headers: _headers,
-      source: _source,
+      source: widget.source,
       selecteds: _selecteds,
       showSelect: false,
       onTabRow: (data) {
@@ -153,7 +137,6 @@ class _OrderTableState extends State<OrderTable> {
             return OrderCustomDialog(
               shopOrderProvider: widget.shopOrderProvider,
               data: data,
-              getSource: _getSource,
             );
           },
         );
@@ -163,17 +146,17 @@ class _OrderTableState extends State<OrderTable> {
           _sortColumn = value;
           _sortAscending = !_sortAscending;
           if (_sortAscending) {
-            _source
+            widget.source
                 .sort((a, b) => b['$_sortColumn'].compareTo(a['$_sortColumn']));
           } else {
-            _source
+            widget.source
                 .sort((a, b) => a['$_sortColumn'].compareTo(b['$_sortColumn']));
           }
         });
       },
       sortAscending: _sortAscending,
       sortColumn: _sortColumn,
-      isLoading: _isLoading,
+      isLoading: false,
       onSelect: (value, item) {
         if (value) {
           setState(() => _selecteds.add(item));
@@ -183,8 +166,8 @@ class _OrderTableState extends State<OrderTable> {
       },
       onSelectAll: (value) {
         if (value) {
-          setState(
-              () => _selecteds = _source.map((entry) => entry).toList().cast());
+          setState(() =>
+              _selecteds = widget.source.map((entry) => entry).toList().cast());
         } else {
           setState(() => _selecteds.clear());
         }
@@ -197,7 +180,7 @@ class _OrderTableState extends State<OrderTable> {
       },
       currentPage: _currentPage,
       currentPerPage: _currentPerPage,
-      total: _source.length,
+      total: widget.source.length,
       currentPageBack: () {
         var _nextSet = _currentPage - _currentPerPage;
         setState(() {
@@ -207,7 +190,8 @@ class _OrderTableState extends State<OrderTable> {
       currentPageForward: () {
         var _nextSet = _currentPage + _currentPerPage;
         setState(() {
-          _currentPage = _nextSet < _source.length ? _nextSet : _source.length;
+          _currentPage =
+              _nextSet < widget.source.length ? _nextSet : widget.source.length;
         });
       },
     );
@@ -217,12 +201,10 @@ class _OrderTableState extends State<OrderTable> {
 class OrderCustomDialog extends StatefulWidget {
   final ShopOrderProvider shopOrderProvider;
   final dynamic data;
-  final Function getSource;
 
   OrderCustomDialog({
     @required this.shopOrderProvider,
     @required this.data,
-    this.getSource,
   });
 
   @override
@@ -236,7 +218,7 @@ class _OrderCustomDialogState extends State<OrderCustomDialog> {
     return CustomDialog(
       title: '注文詳細',
       content: Container(
-        width: 400.0,
+        width: 450.0,
         child: ListView(
           shrinkWrap: true,
           children: [
@@ -342,7 +324,7 @@ class _OrderCustomDialogState extends State<OrderCustomDialog> {
                     TableCell(
                       child: Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Text('${widget.data['totalPrice']}'),
+                        child: Text('¥ ${widget.data['totalPrice']}'),
                       ),
                     ),
                   ],
@@ -399,7 +381,6 @@ class _OrderCustomDialogState extends State<OrderCustomDialog> {
                       shipping: widget.data['shipping'])) {
                     return;
                   }
-                  widget.getSource();
                   Navigator.pop(context);
                 },
               )
@@ -414,7 +395,6 @@ class _OrderCustomDialogState extends State<OrderCustomDialog> {
                       shipping: widget.data['shipping'])) {
                     return;
                   }
-                  widget.getSource();
                   Navigator.pop(context);
                 },
               ),

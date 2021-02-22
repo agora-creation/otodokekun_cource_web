@@ -111,7 +111,7 @@ class _ShopCustomDialogState extends State<ShopCustomDialog> {
     return CustomDialog(
       title: '店舗情報',
       content: Container(
-        width: 400.0,
+        width: 450.0,
         child: ListView(
           shrinkWrap: true,
           children: [

@@ -12,8 +12,13 @@ import 'package:responsive_table/DatatableHeader.dart';
 class NoticeTable extends StatefulWidget {
   final ShopModel shop;
   final ShopNoticeProvider shopNoticeProvider;
+  final List<Map<String, dynamic>> source;
 
-  NoticeTable({@required this.shop, @required this.shopNoticeProvider});
+  NoticeTable({
+    @required this.shop,
+    @required this.shopNoticeProvider,
+    @required this.source,
+  });
 
   @override
   _NoticeTableState createState() => _NoticeTableState();
@@ -54,27 +59,9 @@ class _NoticeTableState extends State<NoticeTable> {
   ];
   int _currentPerPage = 10;
   int _currentPage = 1;
-  List<Map<String, dynamic>> _source = [];
   List<Map<String, dynamic>> _selecteds = [];
   String _sortColumn;
   bool _sortAscending = true;
-  bool _isLoading = true;
-
-  void _getSource() async {
-    setState(() => _isLoading = true);
-    await widget.shopNoticeProvider
-        .getNotices(shopId: widget.shop?.id)
-        .then((value) {
-      _source = value;
-      setState(() => _isLoading = false);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getSource();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +80,6 @@ class _NoticeTableState extends State<NoticeTable> {
                 return AddNoticeCustomDialog(
                   shop: widget.shop,
                   shopNoticeProvider: widget.shopNoticeProvider,
-                  getSource: _getSource,
                 );
               },
             );
@@ -101,9 +87,9 @@ class _NoticeTableState extends State<NoticeTable> {
         ),
       ],
       headers: _headers,
-      source: _source,
+      source: widget.source,
       selecteds: _selecteds,
-      showSelect: true,
+      showSelect: false,
       onTabRow: (data) {
         widget.shopNoticeProvider.clearController();
         widget.shopNoticeProvider.title.text = data['title'];
@@ -114,7 +100,6 @@ class _NoticeTableState extends State<NoticeTable> {
             return NoticeCustomDialog(
               shopNoticeProvider: widget.shopNoticeProvider,
               data: data,
-              getSource: _getSource,
             );
           },
         );
@@ -124,17 +109,17 @@ class _NoticeTableState extends State<NoticeTable> {
           _sortColumn = value;
           _sortAscending = !_sortAscending;
           if (_sortAscending) {
-            _source
+            widget.source
                 .sort((a, b) => b['$_sortColumn'].compareTo(a['$_sortColumn']));
           } else {
-            _source
+            widget.source
                 .sort((a, b) => a['$_sortColumn'].compareTo(b['$_sortColumn']));
           }
         });
       },
       sortAscending: _sortAscending,
       sortColumn: _sortColumn,
-      isLoading: _isLoading,
+      isLoading: false,
       onSelect: (value, item) {
         if (value) {
           setState(() => _selecteds.add(item));
@@ -144,8 +129,8 @@ class _NoticeTableState extends State<NoticeTable> {
       },
       onSelectAll: (value) {
         if (value) {
-          setState(
-              () => _selecteds = _source.map((entry) => entry).toList().cast());
+          setState(() =>
+              _selecteds = widget.source.map((entry) => entry).toList().cast());
         } else {
           setState(() => _selecteds.clear());
         }
@@ -158,7 +143,7 @@ class _NoticeTableState extends State<NoticeTable> {
       },
       currentPage: _currentPage,
       currentPerPage: _currentPerPage,
-      total: _source.length,
+      total: widget.source.length,
       currentPageBack: () {
         var _nextSet = _currentPage - _currentPerPage;
         setState(() {
@@ -168,7 +153,8 @@ class _NoticeTableState extends State<NoticeTable> {
       currentPageForward: () {
         var _nextSet = _currentPage + _currentPerPage;
         setState(() {
-          _currentPage = _nextSet < _source.length ? _nextSet : _source.length;
+          _currentPage =
+              _nextSet < widget.source.length ? _nextSet : widget.source.length;
         });
       },
     );
@@ -178,12 +164,10 @@ class _NoticeTableState extends State<NoticeTable> {
 class AddNoticeCustomDialog extends StatefulWidget {
   final ShopModel shop;
   final ShopNoticeProvider shopNoticeProvider;
-  final Function getSource;
 
   AddNoticeCustomDialog({
     @required this.shop,
     @required this.shopNoticeProvider,
-    this.getSource,
   });
 
   @override
@@ -196,7 +180,7 @@ class _AddNoticeCustomDialogState extends State<AddNoticeCustomDialog> {
     return CustomDialog(
       title: '新規登録',
       content: Container(
-        width: 400.0,
+        width: 450.0,
         child: ListView(
           shrinkWrap: true,
           children: [
@@ -230,7 +214,6 @@ class _AddNoticeCustomDialogState extends State<AddNoticeCustomDialog> {
                 .createNotice(shopId: widget.shop?.id)) {
               return;
             }
-            widget.getSource();
             widget.shopNoticeProvider.clearController();
             Navigator.pop(context);
           },
@@ -243,12 +226,10 @@ class _AddNoticeCustomDialogState extends State<AddNoticeCustomDialog> {
 class NoticeCustomDialog extends StatefulWidget {
   final ShopNoticeProvider shopNoticeProvider;
   final dynamic data;
-  final Function getSource;
 
   NoticeCustomDialog({
     @required this.shopNoticeProvider,
     @required this.data,
-    this.getSource,
   });
 
   @override
@@ -261,7 +242,7 @@ class _NoticeCustomDialogState extends State<NoticeCustomDialog> {
     return CustomDialog(
       title: '${widget.data['title']}',
       content: Container(
-        width: 400.0,
+        width: 450.0,
         child: ListView(
           shrinkWrap: true,
           children: [
@@ -303,7 +284,6 @@ class _NoticeCustomDialogState extends State<NoticeCustomDialog> {
                 id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
-            widget.getSource();
             widget.shopNoticeProvider.clearController();
             Navigator.pop(context);
           },
@@ -317,7 +297,6 @@ class _NoticeCustomDialogState extends State<NoticeCustomDialog> {
                 id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
-            widget.getSource();
             widget.shopNoticeProvider.clearController();
             Navigator.pop(context);
           },

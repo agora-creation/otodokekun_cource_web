@@ -10,6 +10,7 @@ class UserModel {
   String _email;
   String _password;
   bool _blacklist;
+  String _token;
   DateTime _createdAt;
 
   String get id => _id;
@@ -21,6 +22,7 @@ class UserModel {
   String get email => _email;
   String get password => _password;
   bool get blacklist => _blacklist;
+  String get token => _token;
   DateTime get createdAt => _createdAt;
 
   UserModel.fromSnapshot(DocumentSnapshot snapshot) {
@@ -33,6 +35,7 @@ class UserModel {
     _email = snapshot.data()['email'];
     _password = snapshot.data()['password'];
     _blacklist = snapshot.data()['blacklist'];
+    _token = snapshot.data()['token'];
     _createdAt = snapshot.data()['createdAt'].toDate();
   }
 
@@ -46,6 +49,8 @@ class UserModel {
         'email': email,
         'password': password,
         'blacklist': blacklist,
+        'blacklistText': blacklist ? '設定済み' : '設定なし',
+        'token': token,
         'createdAt': createdAt,
       };
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/models/days.dart';
-import 'package:otodokekun_cource_web/models/shop_course.dart';
 import 'package:otodokekun_cource_web/services/shop_course.dart';
 
 class ShopCourseProvider with ChangeNotifier {
@@ -67,15 +66,5 @@ class ShopCourseProvider with ChangeNotifier {
 
   void clearController() {
     name.text = '';
-  }
-
-  Future<List<Map<String, dynamic>>> getCourses({String shopId}) async {
-    List<Map<String, dynamic>> _source = [];
-    await _shopCourseService.getCourses(shopId: shopId).then((value) {
-      for (ShopCourseModel _course in value) {
-        _source.add(_course.toMap());
-      }
-    });
-    return _source;
   }
 }

@@ -15,8 +15,13 @@ import 'package:responsive_table/DatatableHeader.dart';
 class ProductTable extends StatefulWidget {
   final ShopModel shop;
   final ShopProductProvider shopProductProvider;
+  final List<Map<String, dynamic>> source;
 
-  ProductTable({@required this.shop, @required this.shopProductProvider});
+  ProductTable({
+    @required this.shop,
+    @required this.shopProductProvider,
+    @required this.source,
+  });
 
   @override
   _ProductTableState createState() => _ProductTableState();
@@ -81,27 +86,9 @@ class _ProductTableState extends State<ProductTable> {
   ];
   int _currentPerPage = 10;
   int _currentPage = 1;
-  List<Map<String, dynamic>> _source = [];
   List<Map<String, dynamic>> _selecteds = [];
   String _sortColumn;
   bool _sortAscending = true;
-  bool _isLoading = true;
-
-  void _getSource() async {
-    setState(() => _isLoading = true);
-    await widget.shopProductProvider
-        .getProducts(shopId: widget.shop?.id)
-        .then((value) {
-      _source = value;
-      setState(() => _isLoading = false);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getSource();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +107,6 @@ class _ProductTableState extends State<ProductTable> {
                 return AddProductCustomDialog(
                   shop: widget.shop,
                   shopProductProvider: widget.shopProductProvider,
-                  getSource: _getSource,
                 );
               },
             );
@@ -128,9 +114,9 @@ class _ProductTableState extends State<ProductTable> {
         ),
       ],
       headers: _headers,
-      source: _source,
+      source: widget.source,
       selecteds: _selecteds,
-      showSelect: true,
+      showSelect: false,
       onTabRow: (data) {
         widget.shopProductProvider.clearController();
         widget.shopProductProvider.name.text = data['name'];
@@ -143,7 +129,6 @@ class _ProductTableState extends State<ProductTable> {
             return ProductCustomDialog(
               shopProductProvider: widget.shopProductProvider,
               data: data,
-              getSource: _getSource,
             );
           },
         );
@@ -153,17 +138,17 @@ class _ProductTableState extends State<ProductTable> {
           _sortColumn = value;
           _sortAscending = !_sortAscending;
           if (_sortAscending) {
-            _source
+            widget.source
                 .sort((a, b) => b['$_sortColumn'].compareTo(a['$_sortColumn']));
           } else {
-            _source
+            widget.source
                 .sort((a, b) => a['$_sortColumn'].compareTo(b['$_sortColumn']));
           }
         });
       },
       sortAscending: _sortAscending,
       sortColumn: _sortColumn,
-      isLoading: _isLoading,
+      isLoading: false,
       onSelect: (value, item) {
         if (value) {
           setState(() => _selecteds.add(item));
@@ -173,8 +158,8 @@ class _ProductTableState extends State<ProductTable> {
       },
       onSelectAll: (value) {
         if (value) {
-          setState(
-              () => _selecteds = _source.map((entry) => entry).toList().cast());
+          setState(() =>
+              _selecteds = widget.source.map((entry) => entry).toList().cast());
         } else {
           setState(() => _selecteds.clear());
         }
@@ -187,7 +172,7 @@ class _ProductTableState extends State<ProductTable> {
       },
       currentPage: _currentPage,
       currentPerPage: _currentPerPage,
-      total: _source.length,
+      total: widget.source.length,
       currentPageBack: () {
         var _nextSet = _currentPage - _currentPerPage;
         setState(() {
@@ -197,7 +182,8 @@ class _ProductTableState extends State<ProductTable> {
       currentPageForward: () {
         var _nextSet = _currentPage + _currentPerPage;
         setState(() {
-          _currentPage = _nextSet < _source.length ? _nextSet : _source.length;
+          _currentPage =
+              _nextSet < widget.source.length ? _nextSet : widget.source.length;
         });
       },
     );
@@ -207,12 +193,10 @@ class _ProductTableState extends State<ProductTable> {
 class AddProductCustomDialog extends StatefulWidget {
   final ShopModel shop;
   final ShopProductProvider shopProductProvider;
-  final Function getSource;
 
   AddProductCustomDialog({
     @required this.shop,
     @required this.shopProductProvider,
-    this.getSource,
   });
 
   @override
@@ -228,7 +212,7 @@ class _AddProductCustomDialogState extends State<AddProductCustomDialog> {
     return CustomDialog(
       title: '新規登録',
       content: Container(
-        width: 400.0,
+        width: 450.0,
         child: ListView(
           shrinkWrap: true,
           children: [
@@ -318,7 +302,6 @@ class _AddProductCustomDialogState extends State<AddProductCustomDialog> {
                 .createProduct(shopId: widget.shop?.id, imageFile: imageFile)) {
               return;
             }
-            widget.getSource();
             widget.shopProductProvider.clearController();
             Navigator.pop(context);
           },
@@ -331,12 +314,10 @@ class _AddProductCustomDialogState extends State<AddProductCustomDialog> {
 class ProductCustomDialog extends StatefulWidget {
   final ShopProductProvider shopProductProvider;
   final dynamic data;
-  final Function getSource;
 
   ProductCustomDialog({
     @required this.shopProductProvider,
     @required this.data,
-    this.getSource,
   });
 
   @override
@@ -352,7 +333,7 @@ class _ProductCustomDialogState extends State<ProductCustomDialog> {
     return CustomDialog(
       title: '${widget.data['name']}',
       content: Container(
-        width: 400.0,
+        width: 450.0,
         child: ListView(
           shrinkWrap: true,
           children: [
@@ -447,7 +428,6 @@ class _ProductCustomDialogState extends State<ProductCustomDialog> {
                 id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
-            widget.getSource();
             widget.shopProductProvider.clearController();
             Navigator.pop(context);
           },
@@ -463,7 +443,6 @@ class _ProductCustomDialogState extends State<ProductCustomDialog> {
                 imageFile: imageFile)) {
               return;
             }
-            widget.getSource();
             widget.shopProductProvider.clearController();
             Navigator.pop(context);
           },
