@@ -277,7 +277,6 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
                     days = createDays(openedAt, closedAt);
                   });
                 }
-                print(days.length);
               },
             ),
             SizedBox(height: 8.0),
@@ -291,15 +290,17 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
                   child: DropdownButton(
                     isExpanded: true,
                     icon: Icon(Icons.arrow_drop_down),
-                    value: null,
+                    value: days[index].id,
                     onChanged: (value) {
-                      days[index].id = value['id'].toString();
-                      days[index].name = value['name'].toString();
-                      days[index].image = value['image'].toString();
-                      days[index].unit = value['unit'].toString();
-                      days[index].price = int.parse(value['price'].toString());
-                      days[index].exist = true;
-                      print(value);
+                      setState(() {
+                        days[index].id = value['id'].toString();
+                        days[index].name = value['name'].toString();
+                        days[index].image = value['image'].toString();
+                        days[index].unit = value['unit'].toString();
+                        days[index].price =
+                            int.parse(value['price'].toString());
+                        days[index].exist = true;
+                      });
                     },
                     items: widget.products.map((e) {
                       return DropdownMenuItem(
