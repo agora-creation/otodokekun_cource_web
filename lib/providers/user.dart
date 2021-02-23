@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/services/user.dart';
 
 class UserProvider with ChangeNotifier {
@@ -17,5 +18,13 @@ class UserProvider with ChangeNotifier {
       print(e.toString());
       return false;
     }
+  }
+
+  Future<List<UserModel>> getUsers({String shopId}) async {
+    List<UserModel> _users = [];
+    await _userServices.getUsers(shopId: shopId).then((value) {
+      _users = value;
+    });
+    return _users;
   }
 }

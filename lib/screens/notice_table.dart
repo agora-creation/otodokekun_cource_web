@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
+import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/providers/shop_notice.dart';
+import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/widgets/border_round_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
@@ -12,11 +14,13 @@ import 'package:responsive_table/DatatableHeader.dart';
 class NoticeTable extends StatefulWidget {
   final ShopModel shop;
   final ShopNoticeProvider shopNoticeProvider;
+  final UserProvider userProvider;
   final List<Map<String, dynamic>> source;
 
   NoticeTable({
     @required this.shop,
     @required this.shopNoticeProvider,
+    @required this.userProvider,
     @required this.source,
   });
 
@@ -62,6 +66,19 @@ class _NoticeTableState extends State<NoticeTable> {
   List<Map<String, dynamic>> _selecteds = [];
   String _sortColumn;
   bool _sortAscending = true;
+  List<UserModel> _users = [];
+
+  void _getUser() async {
+    await widget.userProvider.getUsers(shopId: widget.shop?.id).then((value) {
+      _users = value;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getUser();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +117,7 @@ class _NoticeTableState extends State<NoticeTable> {
             return NoticeCustomDialog(
               shopNoticeProvider: widget.shopNoticeProvider,
               data: data,
+              users: _users,
             );
           },
         );
@@ -226,10 +244,12 @@ class _AddNoticeCustomDialogState extends State<AddNoticeCustomDialog> {
 class NoticeCustomDialog extends StatefulWidget {
   final ShopNoticeProvider shopNoticeProvider;
   final dynamic data;
+  final List<UserModel> users;
 
   NoticeCustomDialog({
     @required this.shopNoticeProvider,
     @required this.data,
+    @required this.users,
   });
 
   @override
@@ -237,6 +257,9 @@ class NoticeCustomDialog extends StatefulWidget {
 }
 
 class _NoticeCustomDialogState extends State<NoticeCustomDialog> {
+  final ScrollController _scrollController = ScrollController();
+  List<UserModel> selecteds = [];
+
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
@@ -263,8 +286,45 @@ class _NoticeCustomDialogState extends State<NoticeCustomDialog> {
               labelText: '内容',
               iconData: Icons.message,
             ),
-            SizedBox(height: 24.0),
-            Text('顧客一覧'),
+            SizedBox(height: 16.0),
+            Text('送信先選択'),
+            SizedBox(height: 8.0),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              height: 300.0,
+              child: Scrollbar(
+                isAlwaysShown: true,
+                controller: _scrollController,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: ScrollPhysics(),
+                  controller: _scrollController,
+                  itemCount: widget.users.length,
+                  itemBuilder: (context, index) {
+                    UserModel _user = widget.users[index];
+                    var contain = selecteds.where((e) => e.id == _user.id);
+                    return CheckboxListTile(
+                      title: Text('${_user.name}'),
+                      value: contain.isNotEmpty,
+                      activeColor: Colors.blueAccent,
+                      onChanged: (value) {
+                        var contain = selecteds.where((e) => e.id == _user.id);
+                        setState(() {
+                          if (contain.isEmpty) {
+                            selecteds.add(_user);
+                          } else {
+                            selecteds.removeWhere((e) => e.id == _user.id);
+                          }
+                        });
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
           ],
         ),
       ),

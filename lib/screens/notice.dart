@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/models/shop_notice.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_notice.dart';
+import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/screens/notice_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +15,7 @@ class NoticeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final shopProvider = Provider.of<ShopProvider>(context);
     final shopNoticeProvider = Provider.of<ShopNoticeProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
     final Stream<QuerySnapshot> streamNotice = FirebaseFirestore.instance
         .collection('shop')
         .doc(shopProvider.shop?.id)
@@ -38,6 +40,7 @@ class NoticeScreen extends StatelessWidget {
           return NoticeTable(
             shop: shopProvider.shop,
             shopNoticeProvider: shopNoticeProvider,
+            userProvider: userProvider,
             source: _source,
           );
         },

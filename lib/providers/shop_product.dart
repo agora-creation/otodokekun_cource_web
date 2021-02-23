@@ -119,13 +119,11 @@ class ShopProductProvider with ChangeNotifier {
     description.text = '';
   }
 
-  Future<List<Map<String, dynamic>>> getProducts({String shopId}) async {
-    List<Map<String, dynamic>> _source = [];
+  Future<List<ShopProductModel>> getProducts({String shopId}) async {
+    List<ShopProductModel> _products = [];
     await _shopProductService.getProducts(shopId: shopId).then((value) {
-      for (ShopProductModel _product in value) {
-        _source.add(_product.toMap());
-      }
+      _products = value;
     });
-    return _source;
+    return _products;
   }
 }

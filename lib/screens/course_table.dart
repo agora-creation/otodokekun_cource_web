@@ -2,6 +2,7 @@ import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/models/days.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
+import 'package:otodokekun_cource_web/models/shop_product.dart';
 import 'package:otodokekun_cource_web/providers/shop_course.dart';
 import 'package:otodokekun_cource_web/providers/shop_product.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
@@ -97,9 +98,9 @@ class _CourseTableState extends State<CourseTable> {
   List<Map<String, dynamic>> _selecteds = [];
   String _sortColumn;
   bool _sortAscending = true;
-  List<Map<String, dynamic>> _products = [];
+  List<ShopProductModel> _products = [];
 
-  void _getSource() async {
+  void _getProduct() async {
     await widget.shopProductProvider
         .getProducts(shopId: widget.shop?.id)
         .then((value) {
@@ -110,7 +111,7 @@ class _CourseTableState extends State<CourseTable> {
   @override
   void initState() {
     super.initState();
-    _getSource();
+    _getProduct();
   }
 
   @override
@@ -214,7 +215,7 @@ class _CourseTableState extends State<CourseTable> {
 class AddCourseCustomDialog extends StatefulWidget {
   final ShopModel shop;
   final ShopCourseProvider shopCourseProvider;
-  final List<Map<String, dynamic>> products;
+  final List<ShopProductModel> products;
 
   AddCourseCustomDialog({
     @required this.shop,
@@ -234,7 +235,7 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
   DateTime firstDate = DateTime.now().subtract(Duration(days: 365));
   DateTime lastDate = DateTime.now().add(Duration(days: 365));
   List<DaysModel> days = [];
-  List selected = [];
+  List<ShopProductModel> selecteds = [];
 
   @override
   Widget build(BuildContext context) {
@@ -275,6 +276,7 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
                     initialLastDate = picked.last;
                     days.clear();
                     days = createDays(openedAt, closedAt);
+                    selecteds = []..length = days.length;
                   });
                 }
               },
@@ -287,25 +289,25 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
               itemBuilder: (_, index) {
                 return DaysListTile(
                   deliveryAt: days[index].deliveryAt,
-                  child: DropdownButton(
+                  child: DropdownButton<ShopProductModel>(
                     isExpanded: true,
                     icon: Icon(Icons.arrow_drop_down),
-                    value: days[index].id,
-                    onChanged: (value) {
+                    value: selecteds[index],
+                    onChanged: (product) {
                       setState(() {
-                        days[index].id = value['id'].toString();
-                        days[index].name = value['name'].toString();
-                        days[index].image = value['image'].toString();
-                        days[index].unit = value['unit'].toString();
-                        days[index].price =
-                            int.parse(value['price'].toString());
+                        days[index].id = product.id;
+                        days[index].name = product.name;
+                        days[index].image = product.image;
+                        days[index].unit = product.unit;
+                        days[index].price = product.price;
                         days[index].exist = true;
+                        selecteds[index] = product;
                       });
                     },
-                    items: widget.products.map((e) {
-                      return DropdownMenuItem(
-                        value: e,
-                        child: Text('${e['name']}'),
+                    items: widget.products.map((product) {
+                      return DropdownMenuItem<ShopProductModel>(
+                        value: product,
+                        child: Text('${product.name}'),
                       );
                     }).toList(),
                   ),
