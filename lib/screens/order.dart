@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/models/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_order.dart';
+import 'package:otodokekun_cource_web/providers/shop_staff.dart';
 import 'package:otodokekun_cource_web/screens/order_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +15,7 @@ class OrderScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final shopProvider = Provider.of<ShopProvider>(context);
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
+    final shopStaffProvider = Provider.of<ShopStaffProvider>(context);
     final Stream<QuerySnapshot> streamOrder = FirebaseFirestore.instance
         .collection('shop')
         .doc(shopProvider.shop?.id)
@@ -36,7 +38,9 @@ class OrderScreen extends StatelessWidget {
             }
           }
           return OrderTable(
+            shop: shopProvider.shop,
             shopOrderProvider: shopOrderProvider,
+            shopStaffProvider: shopStaffProvider,
             source: _source,
           );
         },

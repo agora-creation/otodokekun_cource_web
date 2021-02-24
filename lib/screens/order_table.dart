@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/models/cart.dart';
+import 'package:otodokekun_cource_web/models/shop.dart';
+import 'package:otodokekun_cource_web/models/shop_staff.dart';
 import 'package:otodokekun_cource_web/providers/shop_order.dart';
-import 'package:otodokekun_cource_web/widgets/border_round_button.dart';
+import 'package:otodokekun_cource_web/providers/shop_staff.dart';
 import 'package:otodokekun_cource_web/widgets/cart_list_tile.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
@@ -10,11 +12,15 @@ import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 
 class OrderTable extends StatefulWidget {
+  final ShopModel shop;
   final ShopOrderProvider shopOrderProvider;
+  final ShopStaffProvider shopStaffProvider;
   final List<Map<String, dynamic>> source;
 
   OrderTable({
+    @required this.shop,
     @required this.shopOrderProvider,
+    @required this.shopStaffProvider,
     @required this.source,
   });
 
@@ -126,6 +132,21 @@ class _OrderTableState extends State<OrderTable> {
   List<Map<String, dynamic>> _selecteds = [];
   String _sortColumn;
   bool _sortAscending = true;
+  List<ShopStaffModel> _staffs = [];
+
+  void _getStaff() async {
+    await widget.shopStaffProvider
+        .getStaffs(shopId: widget.shop?.id)
+        .then((value) {
+      _staffs = value;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getStaff();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -137,12 +158,15 @@ class _OrderTableState extends State<OrderTable> {
       selecteds: _selecteds,
       showSelect: false,
       onTabRow: (data) {
+        widget.shopOrderProvider.staff = data['staff'];
+        widget.shopOrderProvider.shipping = data['shipping'];
         showDialog(
           context: context,
           builder: (_) {
             return EditOrderCustomDialog(
               shopOrderProvider: widget.shopOrderProvider,
               data: data,
+              staffs: _staffs,
             );
           },
         );
@@ -207,10 +231,12 @@ class _OrderTableState extends State<OrderTable> {
 class EditOrderCustomDialog extends StatefulWidget {
   final ShopOrderProvider shopOrderProvider;
   final dynamic data;
+  final List<ShopStaffModel> staffs;
 
   EditOrderCustomDialog({
     @required this.shopOrderProvider,
     @required this.data,
+    @required this.staffs,
   });
 
   @override
@@ -218,6 +244,21 @@ class EditOrderCustomDialog extends StatefulWidget {
 }
 
 class _EditOrderCustomDialogState extends State<EditOrderCustomDialog> {
+  List<String> staffs = [];
+
+  void _createStaff() {
+    for (ShopStaffModel staff in widget.staffs) {
+      staffs.add(staff.name);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _createStaff();
+    staffs.insert(0, '');
+  }
+
   @override
   Widget build(BuildContext context) {
     List<CartModel> cart = widget.data['cart'];
@@ -248,6 +289,24 @@ class _EditOrderCustomDialogState extends State<EditOrderCustomDialog> {
             Table(
               border: TableBorder.all(width: 1.0, color: Colors.black54),
               children: [
+                TableRow(
+                  children: [
+                    TableCell(
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('注文日時'),
+                      ),
+                    ),
+                    TableCell(
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          '${DateFormat('yyyy/MM/dd HH:mm').format(widget.data['createdAt'])}',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 TableRow(
                   children: [
                     TableCell(
@@ -330,7 +389,38 @@ class _EditOrderCustomDialogState extends State<EditOrderCustomDialog> {
                     TableCell(
                       child: Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Text('¥ ${widget.data['totalPrice']}'),
+                        child: Text('${widget.data['totalPrice']}'),
+                      ),
+                    ),
+                  ],
+                ),
+                TableRow(
+                  children: [
+                    TableCell(
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('担当者'),
+                      ),
+                    ),
+                    TableCell(
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          icon: Icon(Icons.arrow_drop_down),
+                          value: widget.shopOrderProvider.staff,
+                          onChanged: (value) {
+                            setState(() {
+                              widget.shopOrderProvider.staff = value;
+                            });
+                          },
+                          items: staffs.map((value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text('$value'),
+                            );
+                          }).toList(),
+                        ),
                       ),
                     ),
                   ],
@@ -346,24 +436,24 @@ class _EditOrderCustomDialogState extends State<EditOrderCustomDialog> {
                     TableCell(
                       child: Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Text('${widget.data['shippingText']}'),
-                      ),
-                    ),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('注文日時'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          '${DateFormat('yyyy/MM/dd HH:mm').format(widget.data['createdAt'])}',
+                        child: DropdownButton(
+                          isExpanded: true,
+                          value: widget.shopOrderProvider.shipping,
+                          onChanged: (value) {
+                            setState(() {
+                              widget.shopOrderProvider.shipping = value;
+                            });
+                          },
+                          items: [
+                            DropdownMenuItem(
+                              value: false,
+                              child: Text('配達待ち'),
+                            ),
+                            DropdownMenuItem(
+                              value: true,
+                              child: Text('配達済み'),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -375,41 +465,21 @@ class _EditOrderCustomDialogState extends State<EditOrderCustomDialog> {
         ),
       ),
       actions: [
-        widget.data['shipping']
-            ? BorderRoundButton(
-                labelText: '配達待ちにする',
-                labelColor: Colors.blueAccent,
-                borderColor: Colors.blueAccent,
-                onTap: () async {
-                  if (!await widget.shopOrderProvider.updateOrder(
-                      id: widget.data['id'],
-                      shopId: widget.data['shopId'],
-                      shipping: widget.data['shipping'])) {
-                    return;
-                  }
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('配達状況を「配達待ち」にしました')),
-                  );
-                  Navigator.pop(context);
-                },
-              )
-            : FillRoundButton(
-                labelText: '配達済みにする',
-                labelColor: Colors.white,
-                backgroundColor: Colors.blueAccent,
-                onTap: () async {
-                  if (!await widget.shopOrderProvider.updateOrder(
-                      id: widget.data['id'],
-                      shopId: widget.data['shopId'],
-                      shipping: widget.data['shipping'])) {
-                    return;
-                  }
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('配達状況を「配達済み」にしました')),
-                  );
-                  Navigator.pop(context);
-                },
-              ),
+        FillRoundButton(
+          labelText: '変更を保存',
+          labelColor: Colors.white,
+          backgroundColor: Colors.blueAccent,
+          onTap: () async {
+            if (!await widget.shopOrderProvider.updateOrder(
+                id: widget.data['id'], shopId: widget.data['shopId'])) {
+              return;
+            }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('変更が完了しました')),
+            );
+            Navigator.pop(context);
+          },
+        ),
       ],
     );
   }

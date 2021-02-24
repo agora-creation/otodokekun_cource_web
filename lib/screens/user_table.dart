@@ -114,10 +114,10 @@ class _UserTableState extends State<UserTable> {
       selecteds: _selecteds,
       showSelect: false,
       onTabRow: (data) {
+        widget.userProvider.blacklist = data['blacklist'];
         showDialog(
           context: context,
           builder: (_) {
-            widget.userProvider.blacklist = data['blacklist'];
             return EditUserCustomDialog(
               userProvider: widget.userProvider,
               data: data,
