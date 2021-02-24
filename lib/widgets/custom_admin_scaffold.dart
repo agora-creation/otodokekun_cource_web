@@ -47,7 +47,7 @@ class CustomAdminScaffold extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (_) {
-                  return ShopCustomDialog(shopProvider: shopProvider);
+                  return EditShopCustomDialog(shopProvider: shopProvider);
                 },
               );
             },
@@ -96,16 +96,16 @@ class CustomAdminScaffold extends StatelessWidget {
   }
 }
 
-class ShopCustomDialog extends StatefulWidget {
+class EditShopCustomDialog extends StatefulWidget {
   final ShopProvider shopProvider;
 
-  ShopCustomDialog({@required this.shopProvider});
+  EditShopCustomDialog({@required this.shopProvider});
 
   @override
-  _ShopCustomDialogState createState() => _ShopCustomDialogState();
+  _EditShopCustomDialogState createState() => _EditShopCustomDialogState();
 }
 
-class _ShopCustomDialogState extends State<ShopCustomDialog> {
+class _EditShopCustomDialogState extends State<EditShopCustomDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
@@ -230,6 +230,9 @@ class _ShopCustomDialogState extends State<ShopCustomDialog> {
             if (!await widget.shopProvider.updateShop()) {
               return;
             }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('変更が完了しました')),
+            );
             widget.shopProvider.clearController();
             widget.shopProvider.reloadShopModel();
             Navigator.pop(context);

@@ -4,6 +4,7 @@ import 'package:otodokekun_cource_web/screens/course.dart';
 import 'package:otodokekun_cource_web/screens/notice.dart';
 import 'package:otodokekun_cource_web/screens/order.dart';
 import 'package:otodokekun_cource_web/screens/product.dart';
+import 'package:otodokekun_cource_web/screens/staff.dart';
 import 'package:otodokekun_cource_web/screens/user.dart';
 
 const List<MenuItem> kSideMenu = [
@@ -25,6 +26,11 @@ const List<MenuItem> kSideMenu = [
   MenuItem(
     title: '顧客',
     route: UserScreen.id,
+    icon: Icons.supervisor_account,
+  ),
+  MenuItem(
+    title: '担当者',
+    route: StaffScreen.id,
     icon: Icons.supervisor_account,
   ),
   MenuItem(

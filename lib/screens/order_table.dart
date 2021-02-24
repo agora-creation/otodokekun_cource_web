@@ -97,6 +97,12 @@ class _OrderTableState extends State<OrderTable> {
       sortable: true,
     ),
     DatatableHeader(
+      text: '担当者',
+      value: 'staff',
+      show: true,
+      sortable: true,
+    ),
+    DatatableHeader(
       text: '配達状況',
       value: 'shipping',
       show: false,

@@ -36,13 +36,19 @@ class ShopCourseProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateCourse({String id, String shopId}) async {
+  Future<bool> updateCourse(
+      {String id, String shopId, List<DaysModel> days}) async {
     if (name.text == null) return false;
+    List<Map> convertedDays = [];
+    for (DaysModel day in days) {
+      convertedDays.add(day.toMap());
+    }
     try {
       _shopCourseService.updateCourse({
         'id': id,
         'shopId': shopId,
         'name': name.text.trim(),
+        'days': convertedDays,
       });
       return true;
     } catch (e) {

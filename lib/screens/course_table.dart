@@ -375,8 +375,14 @@ class _EditCourseCustomDialogState extends State<EditCourseCustomDialog> {
   List<ShopProductModel> selecteds = [];
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     days = widget.data['days'];
+    selecteds = []..length = days.length;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return CustomDialog(
       title: '${widget.data['name']}',
       content: Container(
@@ -404,7 +410,11 @@ class _EditCourseCustomDialogState extends State<EditCourseCustomDialog> {
                     isExpanded: true,
                     icon: Icon(Icons.arrow_drop_down),
                     value: selecteds[index],
-                    onChanged: (product) {},
+                    onChanged: (product) {
+                      setState(() {
+                        selecteds[index] = product;
+                      });
+                    },
                     items: widget.products.map((product) {
                       return DropdownMenuItem<ShopProductModel>(
                         value: product,
@@ -439,7 +449,19 @@ class _EditCourseCustomDialogState extends State<EditCourseCustomDialog> {
           labelText: '変更を保存',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
-          onTap: () {},
+          onTap: () async {
+            if (!await widget.shopCourseProvider.updateCourse(
+                id: widget.data['id'],
+                shopId: widget.data['shopId'],
+                days: days)) {
+              return;
+            }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('変更が完了しました')),
+            );
+            widget.shopCourseProvider.clearController();
+            Navigator.pop(context);
+          },
         ),
       ],
     );
