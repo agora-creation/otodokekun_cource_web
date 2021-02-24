@@ -134,7 +134,7 @@ class _OrderTableState extends State<OrderTable> {
         showDialog(
           context: context,
           builder: (_) {
-            return OrderCustomDialog(
+            return EditOrderCustomDialog(
               shopOrderProvider: widget.shopOrderProvider,
               data: data,
             );
@@ -198,20 +198,20 @@ class _OrderTableState extends State<OrderTable> {
   }
 }
 
-class OrderCustomDialog extends StatefulWidget {
+class EditOrderCustomDialog extends StatefulWidget {
   final ShopOrderProvider shopOrderProvider;
   final dynamic data;
 
-  OrderCustomDialog({
+  EditOrderCustomDialog({
     @required this.shopOrderProvider,
     @required this.data,
   });
 
   @override
-  _OrderCustomDialogState createState() => _OrderCustomDialogState();
+  _EditOrderCustomDialogState createState() => _EditOrderCustomDialogState();
 }
 
-class _OrderCustomDialogState extends State<OrderCustomDialog> {
+class _EditOrderCustomDialogState extends State<EditOrderCustomDialog> {
   @override
   Widget build(BuildContext context) {
     List<CartModel> cart = widget.data['cart'];
@@ -381,6 +381,9 @@ class _OrderCustomDialogState extends State<OrderCustomDialog> {
                       shipping: widget.data['shipping'])) {
                     return;
                   }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('配達状況を「配達待ち」にしました')),
+                  );
                   Navigator.pop(context);
                 },
               )
@@ -395,6 +398,9 @@ class _OrderCustomDialogState extends State<OrderCustomDialog> {
                       shipping: widget.data['shipping'])) {
                     return;
                   }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('配達状況を「配達済み」にしました')),
+                  );
                   Navigator.pop(context);
                 },
               ),

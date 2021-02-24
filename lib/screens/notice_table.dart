@@ -3,6 +3,7 @@ import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/providers/shop_notice.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
+import 'package:otodokekun_cource_web/providers/user_notice.dart';
 import 'package:otodokekun_cource_web/widgets/border_round_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
@@ -15,12 +16,14 @@ class NoticeTable extends StatefulWidget {
   final ShopModel shop;
   final ShopNoticeProvider shopNoticeProvider;
   final UserProvider userProvider;
+  final UserNoticeProvider userNoticeProvider;
   final List<Map<String, dynamic>> source;
 
   NoticeTable({
     @required this.shop,
     @required this.shopNoticeProvider,
     @required this.userProvider,
+    @required this.userNoticeProvider,
     @required this.source,
   });
 
@@ -57,6 +60,12 @@ class _NoticeTableState extends State<NoticeTable> {
     DatatableHeader(
       text: '登録日時',
       value: 'createdAt',
+      show: false,
+      sortable: false,
+    ),
+    DatatableHeader(
+      text: '登録日時',
+      value: 'createdAtText',
       show: true,
       sortable: true,
     ),
@@ -114,8 +123,9 @@ class _NoticeTableState extends State<NoticeTable> {
         showDialog(
           context: context,
           builder: (_) {
-            return NoticeCustomDialog(
+            return EditNoticeCustomDialog(
               shopNoticeProvider: widget.shopNoticeProvider,
+              userNoticeProvider: widget.userNoticeProvider,
               data: data,
               users: _users,
             );
@@ -232,6 +242,9 @@ class _AddNoticeCustomDialogState extends State<AddNoticeCustomDialog> {
                 .createNotice(shopId: widget.shop?.id)) {
               return;
             }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('登録が完了しました')),
+            );
             widget.shopNoticeProvider.clearController();
             Navigator.pop(context);
           },
@@ -241,22 +254,24 @@ class _AddNoticeCustomDialogState extends State<AddNoticeCustomDialog> {
   }
 }
 
-class NoticeCustomDialog extends StatefulWidget {
+class EditNoticeCustomDialog extends StatefulWidget {
   final ShopNoticeProvider shopNoticeProvider;
+  final UserNoticeProvider userNoticeProvider;
   final dynamic data;
   final List<UserModel> users;
 
-  NoticeCustomDialog({
+  EditNoticeCustomDialog({
     @required this.shopNoticeProvider,
+    @required this.userNoticeProvider,
     @required this.data,
     @required this.users,
   });
 
   @override
-  _NoticeCustomDialogState createState() => _NoticeCustomDialogState();
+  _EditNoticeCustomDialogState createState() => _EditNoticeCustomDialogState();
 }
 
-class _NoticeCustomDialogState extends State<NoticeCustomDialog> {
+class _EditNoticeCustomDialogState extends State<EditNoticeCustomDialog> {
   final ScrollController _scrollController = ScrollController();
   List<UserModel> selecteds = [];
 
@@ -329,12 +344,25 @@ class _NoticeCustomDialogState extends State<NoticeCustomDialog> {
         ),
       ),
       actions: [
-        BorderRoundButton(
-          labelText: '送信する',
-          labelColor: Colors.blueAccent,
-          borderColor: Colors.blueAccent,
-          onTap: () {},
-        ),
+        selecteds.length > 0
+            ? BorderRoundButton(
+                labelText: '送信する',
+                labelColor: Colors.blueAccent,
+                borderColor: Colors.blueAccent,
+                onTap: () async {
+                  if (!await widget.userNoticeProvider.createNotice(
+                      selecteds: selecteds,
+                      title: widget.shopNoticeProvider.title.text.trim(),
+                      message: widget.shopNoticeProvider.message.text)) {
+                    return;
+                  }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('送信が完了しました')),
+                  );
+                  Navigator.pop(context);
+                },
+              )
+            : Container(),
         FillRoundButton(
           labelText: '削除する',
           labelColor: Colors.white,
@@ -344,6 +372,9 @@ class _NoticeCustomDialogState extends State<NoticeCustomDialog> {
                 id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('削除が完了しました')),
+            );
             widget.shopNoticeProvider.clearController();
             Navigator.pop(context);
           },
@@ -357,6 +388,9 @@ class _NoticeCustomDialogState extends State<NoticeCustomDialog> {
                 id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('変更が完了しました')),
+            );
             widget.shopNoticeProvider.clearController();
             Navigator.pop(context);
           },

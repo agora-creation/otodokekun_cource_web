@@ -74,6 +74,12 @@ class _ProductTableState extends State<ProductTable> {
     DatatableHeader(
       text: '公開設定',
       value: 'published',
+      show: false,
+      sortable: false,
+    ),
+    DatatableHeader(
+      text: '公開設定',
+      value: 'publishedText',
       show: true,
       sortable: true,
     ),
@@ -82,6 +88,12 @@ class _ProductTableState extends State<ProductTable> {
       value: 'createdAt',
       show: false,
       sortable: false,
+    ),
+    DatatableHeader(
+      text: '登録日時',
+      value: 'createdAtText',
+      show: true,
+      sortable: true,
     ),
   ];
   int _currentPerPage = 10;
@@ -126,7 +138,7 @@ class _ProductTableState extends State<ProductTable> {
         showDialog(
           context: context,
           builder: (_) {
-            return ProductCustomDialog(
+            return EditProductCustomDialog(
               shopProductProvider: widget.shopProductProvider,
               data: data,
             );
@@ -302,6 +314,9 @@ class _AddProductCustomDialogState extends State<AddProductCustomDialog> {
                 .createProduct(shopId: widget.shop?.id, imageFile: imageFile)) {
               return;
             }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('登録が完了しました')),
+            );
             widget.shopProductProvider.clearController();
             Navigator.pop(context);
           },
@@ -311,20 +326,21 @@ class _AddProductCustomDialogState extends State<AddProductCustomDialog> {
   }
 }
 
-class ProductCustomDialog extends StatefulWidget {
+class EditProductCustomDialog extends StatefulWidget {
   final ShopProductProvider shopProductProvider;
   final dynamic data;
 
-  ProductCustomDialog({
+  EditProductCustomDialog({
     @required this.shopProductProvider,
     @required this.data,
   });
 
   @override
-  _ProductCustomDialogState createState() => _ProductCustomDialogState();
+  _EditProductCustomDialogState createState() =>
+      _EditProductCustomDialogState();
 }
 
-class _ProductCustomDialogState extends State<ProductCustomDialog> {
+class _EditProductCustomDialogState extends State<EditProductCustomDialog> {
   File imageFile;
   Uint8List imageData;
 
@@ -378,7 +394,7 @@ class _ProductCustomDialogState extends State<ProductCustomDialog> {
                       imageData,
                       fit: BoxFit.cover,
                     )
-                  : widget.data['image'] != null
+                  : widget.data['image'] != ''
                       ? Image.network(
                           widget.data['image'],
                           fit: BoxFit.cover,
@@ -428,6 +444,9 @@ class _ProductCustomDialogState extends State<ProductCustomDialog> {
                 id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('削除が完了しました')),
+            );
             widget.shopProductProvider.clearController();
             Navigator.pop(context);
           },
@@ -443,6 +462,9 @@ class _ProductCustomDialogState extends State<ProductCustomDialog> {
                 imageFile: imageFile)) {
               return;
             }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('変更が完了しました')),
+            );
             widget.shopProductProvider.clearController();
             Navigator.pop(context);
           },

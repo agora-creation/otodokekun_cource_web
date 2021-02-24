@@ -118,7 +118,7 @@ class _UserTableState extends State<UserTable> {
           context: context,
           builder: (_) {
             widget.userProvider.blacklist = data['blacklist'];
-            return UserCustomDialog(
+            return EditUserCustomDialog(
               userProvider: widget.userProvider,
               data: data,
             );
@@ -182,20 +182,20 @@ class _UserTableState extends State<UserTable> {
   }
 }
 
-class UserCustomDialog extends StatefulWidget {
+class EditUserCustomDialog extends StatefulWidget {
   final UserProvider userProvider;
   final dynamic data;
 
-  UserCustomDialog({
+  EditUserCustomDialog({
     @required this.userProvider,
     @required this.data,
   });
 
   @override
-  _UserCustomDialogState createState() => _UserCustomDialogState();
+  _EditUserCustomDialogState createState() => _EditUserCustomDialogState();
 }
 
-class _UserCustomDialogState extends State<UserCustomDialog> {
+class _EditUserCustomDialogState extends State<EditUserCustomDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
@@ -313,6 +313,9 @@ class _UserCustomDialogState extends State<UserCustomDialog> {
             if (!await widget.userProvider.updateUser(id: widget.data['id'])) {
               return;
             }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('変更が完了しました')),
+            );
             Navigator.pop(context);
           },
         ),

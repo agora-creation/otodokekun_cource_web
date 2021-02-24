@@ -13,6 +13,12 @@ import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 
+import '../models/days.dart';
+import '../models/shop_product.dart';
+import '../widgets/custom_text_field.dart';
+import '../widgets/days_list_tile.dart';
+import '../widgets/fill_round_button.dart';
+
 class CourseTable extends StatefulWidget {
   final ShopModel shop;
   final ShopCourseProvider shopCourseProvider;
@@ -57,20 +63,14 @@ class _CourseTableState extends State<CourseTable> {
       sortable: false,
     ),
     DatatableHeader(
-      text: '開始日',
-      value: 'openedAtText',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
       text: '終了日',
       value: 'closedAt',
       show: false,
       sortable: false,
     ),
     DatatableHeader(
-      text: '終了日',
-      value: 'closedAtText',
+      text: 'コース期間',
+      value: 'openedClosed',
       show: true,
       sortable: true,
     ),
@@ -81,8 +81,20 @@ class _CourseTableState extends State<CourseTable> {
       sortable: false,
     ),
     DatatableHeader(
+      text: '商品(一部)',
+      value: 'daysText',
+      show: true,
+      sortable: true,
+    ),
+    DatatableHeader(
       text: '公開設定',
       value: 'published',
+      show: false,
+      sortable: false,
+    ),
+    DatatableHeader(
+      text: '公開設定',
+      value: 'publishedText',
       show: true,
       sortable: true,
     ),
@@ -148,9 +160,10 @@ class _CourseTableState extends State<CourseTable> {
         showDialog(
           context: context,
           builder: (_) {
-            return CourseCustomDialog(
+            return EditCourseCustomDialog(
               shopCourseProvider: widget.shopCourseProvider,
               data: data,
+              products: _products,
             );
           },
         );
@@ -330,6 +343,9 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
                 days: days)) {
               return;
             }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('登録が完了しました')),
+            );
             widget.shopCourseProvider.clearController();
             Navigator.pop(context);
           },
@@ -339,22 +355,28 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
   }
 }
 
-class CourseCustomDialog extends StatefulWidget {
+class EditCourseCustomDialog extends StatefulWidget {
   final ShopCourseProvider shopCourseProvider;
   final dynamic data;
+  final List<ShopProductModel> products;
 
-  CourseCustomDialog({
+  EditCourseCustomDialog({
     @required this.shopCourseProvider,
     @required this.data,
+    @required this.products,
   });
 
   @override
-  _CourseCustomDialogState createState() => _CourseCustomDialogState();
+  _EditCourseCustomDialogState createState() => _EditCourseCustomDialogState();
 }
 
-class _CourseCustomDialogState extends State<CourseCustomDialog> {
+class _EditCourseCustomDialogState extends State<EditCourseCustomDialog> {
+  List<DaysModel> days = [];
+  List<ShopProductModel> selecteds = [];
+
   @override
   Widget build(BuildContext context) {
+    days = widget.data['days'];
     return CustomDialog(
       title: '${widget.data['name']}',
       content: Container(
@@ -362,14 +384,34 @@ class _CourseCustomDialogState extends State<CourseCustomDialog> {
         child: ListView(
           shrinkWrap: true,
           children: [
+            CustomTextField(
+              controller: widget.shopCourseProvider.name,
+              obscureText: false,
+              textInputType: TextInputType.name,
+              maxLines: 1,
+              labelText: 'コース(セット)名',
+              iconData: Icons.title,
+            ),
+            SizedBox(height: 8.0),
             ListView.builder(
               shrinkWrap: true,
               physics: ScrollPhysics(),
-              itemCount: widget.data['days'].length,
+              itemCount: days.length,
               itemBuilder: (_, index) {
                 return DaysListTile(
-                  deliveryAt: widget.data['days'][index].deliveryAt,
-                  child: Text(widget.data['days'][index].name),
+                  deliveryAt: days[index].deliveryAt,
+                  child: DropdownButton<ShopProductModel>(
+                    isExpanded: true,
+                    icon: Icon(Icons.arrow_drop_down),
+                    value: selecteds[index],
+                    onChanged: (product) {},
+                    items: widget.products.map((product) {
+                      return DropdownMenuItem<ShopProductModel>(
+                        value: product,
+                        child: Text('${product.name}'),
+                      );
+                    }).toList(),
+                  ),
                 );
               },
             ),
@@ -386,9 +428,18 @@ class _CourseCustomDialogState extends State<CourseCustomDialog> {
                 id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('削除が完了しました')),
+            );
             widget.shopCourseProvider.clearController();
             Navigator.pop(context);
           },
+        ),
+        FillRoundButton(
+          labelText: '変更を保存',
+          labelColor: Colors.white,
+          backgroundColor: Colors.blueAccent,
+          onTap: () {},
         ),
       ],
     );

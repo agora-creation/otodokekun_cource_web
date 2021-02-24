@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class ShopProductModel {
   String _id;
@@ -41,7 +42,9 @@ class ShopProductModel {
         'unit': unit,
         'price': price,
         'description': description,
-        'published': published ? '公開' : '非公開',
+        'published': published,
+        'publishedText': published ? '公開' : '非公開',
         'createdAt': createdAt,
+        'createdAtText': DateFormat('yyyy/MM/dd HH:mm').format(createdAt),
       };
 }

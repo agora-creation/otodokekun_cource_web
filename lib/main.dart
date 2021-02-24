@@ -8,6 +8,7 @@ import 'package:otodokekun_cource_web/providers/shop_notice.dart';
 import 'package:otodokekun_cource_web/providers/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/shop_product.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
+import 'package:otodokekun_cource_web/providers/user_notice.dart';
 import 'package:otodokekun_cource_web/screens/course.dart';
 import 'package:otodokekun_cource_web/screens/login.dart';
 import 'package:otodokekun_cource_web/screens/notice.dart';
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: ShopOrderProvider()),
         ChangeNotifierProvider.value(value: ShopProductProvider()),
         ChangeNotifierProvider.value(value: UserProvider()),
+        ChangeNotifierProvider.value(value: UserNoticeProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

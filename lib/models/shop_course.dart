@@ -44,11 +44,13 @@ class ShopCourseModel {
         'shopId': shopId,
         'name': name,
         'openedAt': openedAt,
-        'openedAtText': DateFormat('yyyy/MM/dd').format(openedAt),
         'closedAt': closedAt,
-        'closedAtText': DateFormat('yyyy/MM/dd').format(closedAt),
+        'openedClosed':
+            '${DateFormat('yyyy/MM/dd').format(openedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(closedAt)}',
         'days': days,
-        'published': published ? '公開' : '非公開',
+        'daysText': '${days[0].name}など',
+        'published': published,
+        'publishedText': published ? '公開' : '非公開',
         'createdAt': createdAt,
       };
 }

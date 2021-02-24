@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class ShopNoticeModel {
   String _id;
@@ -27,5 +28,6 @@ class ShopNoticeModel {
         'title': title,
         'message': message,
         'createdAt': createdAt,
+        'createdAtText': DateFormat('yyyy/MM/dd HH:mm').format(createdAt),
       };
 }
