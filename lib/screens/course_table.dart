@@ -405,6 +405,8 @@ class _EditCourseCustomDialogState extends State<EditCourseCustomDialog> {
   void initState() {
     super.initState();
     days = widget.data['days'];
+    openedAt = widget.data['openedAt'];
+    closedAt = widget.data['closedAt'];
     products = []..length = days.length;
     int _count = 0;
     for (DaysModel day in days) {
@@ -441,7 +443,21 @@ class _EditCourseCustomDialogState extends State<EditCourseCustomDialog> {
                   '${DateFormat('yyyy/MM/dd').format(openedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(closedAt)}',
               labelColor: Colors.white,
               backgroundColor: Colors.lightBlueAccent,
-              onTap: () {},
+              onTap: () async {
+                final List<DateTime> picked =
+                    await DateRagePicker.showDatePicker(
+                  context: context,
+                  initialFirstDate: openedAt,
+                  initialLastDate: closedAt,
+                  firstDate: firstDate,
+                  lastDate: lastDate,
+                );
+                if (picked != null && picked.length == 2) {
+                  openedAt = picked.first;
+                  closedAt = picked.last;
+                  _generateDays(openedAt, closedAt);
+                }
+              },
             ),
             SizedBox(height: 8.0),
             ListView.builder(
@@ -486,6 +502,22 @@ class _EditCourseCustomDialogState extends State<EditCourseCustomDialog> {
                   },
                 );
               },
+            ),
+            SizedBox(height: 8.0),
+            DropdownButton<bool>(
+              isExpanded: true,
+              value: true,
+              onChanged: (value) {},
+              items: [
+                DropdownMenuItem<bool>(
+                  value: false,
+                  child: Text('非公開'),
+                ),
+                DropdownMenuItem<bool>(
+                  value: true,
+                  child: Text('公開'),
+                ),
+              ],
             ),
           ],
         ),

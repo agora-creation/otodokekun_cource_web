@@ -81,6 +81,12 @@ class _OrderTableState extends State<OrderTable> {
       sortable: false,
     ),
     DatatableHeader(
+      text: '注文商品',
+      value: 'cartText',
+      show: true,
+      sortable: true,
+    ),
+    DatatableHeader(
       text: 'お届け予定日',
       value: 'deliveryAt',
       show: false,
@@ -166,7 +172,7 @@ class _OrderTableState extends State<OrderTable> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '表示期間',
+                  '表示期間(お届け予定日)',
                   style: TextStyle(color: Colors.grey, fontSize: 12.0),
                 ),
                 FillBoxIconButton(

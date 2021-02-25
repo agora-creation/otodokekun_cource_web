@@ -66,6 +66,7 @@ class ShopOrderModel {
         'address': address,
         'tel': tel,
         'cart': cart,
+        'cartText': '${cart[0].name} (${cart[0].quantity}${cart[0].unit})',
         'deliveryAt': deliveryAt,
         'deliveryAtText': DateFormat('yyyy/MM/dd').format(deliveryAt),
         'remarks': remarks,

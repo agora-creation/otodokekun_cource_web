@@ -431,6 +431,22 @@ class _EditProductCustomDialogState extends State<EditProductCustomDialog> {
               labelText: '説明',
               iconData: Icons.description,
             ),
+            SizedBox(height: 8.0),
+            DropdownButton<bool>(
+              isExpanded: true,
+              value: true,
+              onChanged: (value) {},
+              items: [
+                DropdownMenuItem<bool>(
+                  value: false,
+                  child: Text('非公開'),
+                ),
+                DropdownMenuItem<bool>(
+                  value: true,
+                  child: Text('公開'),
+                ),
+              ],
+            ),
           ],
         ),
       ),

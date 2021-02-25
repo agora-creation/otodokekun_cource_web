@@ -94,7 +94,8 @@ class ShopProductProvider with ChangeNotifier {
   }
 
   Future<bool> deleteProduct({String id, String shopId, String image}) async {
-    if (image != null) {
+    print(image);
+    if (image != '') {
       String imagePath = '$shopId/$id';
       firebase.StorageReference ref = firebase
           .storage()

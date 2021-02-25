@@ -202,6 +202,18 @@ class _EditShopCustomDialogState extends State<EditShopCustomDialog> {
                 );
               }).toList(),
             ),
+            SizedBox(height: 8.0),
+            DropdownButton<String>(
+              isExpanded: true,
+              value: '締日は末日です',
+              onChanged: (value) {},
+              items: [
+                DropdownMenuItem<String>(
+                  value: '締日は末日です',
+                  child: Text('締日は末日です'),
+                ),
+              ],
+            ),
           ],
         ),
       ),
