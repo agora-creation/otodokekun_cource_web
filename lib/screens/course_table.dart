@@ -1,5 +1,6 @@
 import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/models/days.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/shop_product.dart';
@@ -10,14 +11,9 @@ import 'package:otodokekun_cource_web/widgets/custom_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource_web/widgets/days_list_tile.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
+import 'package:otodokekun_cource_web/widgets/fill_box_icon_button.dart';
 import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
-
-import '../models/days.dart';
-import '../models/shop_product.dart';
-import '../widgets/custom_text_field.dart';
-import '../widgets/days_list_tile.dart';
-import '../widgets/fill_round_button.dart';
 
 class CourseTable extends StatefulWidget {
   final ShopModel shop;
@@ -241,14 +237,26 @@ class AddCourseCustomDialog extends StatefulWidget {
 }
 
 class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
-  DateTime openedAt;
-  DateTime closedAt;
-  DateTime initialFirstDate = DateTime.now();
-  DateTime initialLastDate = DateTime.now().add(Duration(days: 5));
+  DateTime openedAt = DateTime.now();
+  DateTime closedAt = DateTime.now().add(Duration(days: 5));
   DateTime firstDate = DateTime.now().subtract(Duration(days: 365));
   DateTime lastDate = DateTime.now().add(Duration(days: 365));
   List<DaysModel> days = [];
   List<ShopProductModel> products = [];
+
+  void _generateDays(DateTime openedAt, DateTime closedAt) {
+    setState(() {
+      days.clear();
+      days = createDays(openedAt, closedAt);
+      products = []..length = days.length;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _generateDays(openedAt, closedAt);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -268,29 +276,25 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
               iconData: Icons.title,
             ),
             SizedBox(height: 8.0),
-            FillBoxButton(
-              labelText: '日付範囲選択',
+            FillBoxIconButton(
+              iconData: Icons.calendar_today,
+              labelText:
+                  '${DateFormat('yyyy/MM/dd').format(openedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(closedAt)}',
               labelColor: Colors.white,
-              backgroundColor: Colors.grey,
+              backgroundColor: Colors.lightBlueAccent,
               onTap: () async {
                 final List<DateTime> picked =
                     await DateRagePicker.showDatePicker(
                   context: context,
-                  initialFirstDate: initialFirstDate,
-                  initialLastDate: initialLastDate,
+                  initialFirstDate: openedAt,
+                  initialLastDate: closedAt,
                   firstDate: firstDate,
                   lastDate: lastDate,
                 );
                 if (picked != null && picked.length == 2) {
-                  setState(() {
-                    openedAt = picked.first;
-                    closedAt = picked.last;
-                    initialFirstDate = picked.first;
-                    initialLastDate = picked.last;
-                    days.clear();
-                    days = createDays(openedAt, closedAt);
-                    products = []..length = days.length;
-                  });
+                  openedAt = picked.first;
+                  closedAt = picked.last;
+                  _generateDays(openedAt, closedAt);
                 }
               },
             ),
@@ -326,6 +330,12 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
                   ),
                   onTap: () {
                     setState(() {
+                      days[index].id = '';
+                      days[index].name = '';
+                      days[index].image = '';
+                      days[index].unit = '';
+                      days[index].price = 0;
+                      days[index].exist = false;
                       products[index] = null;
                     });
                   },
@@ -377,13 +387,22 @@ class EditCourseCustomDialog extends StatefulWidget {
 
 class _EditCourseCustomDialogState extends State<EditCourseCustomDialog> {
   List<DaysModel> days = [];
-  List<ShopProductModel> selecteds = [];
+  List<ShopProductModel> products = [];
 
   @override
   void initState() {
     super.initState();
     days = widget.data['days'];
-    selecteds = []..length = days.length;
+    products = []..length = days.length;
+    int _count = 0;
+    for (DaysModel day in days) {
+      for (ShopProductModel product in widget.products) {
+        if (day.name == product.name) {
+          products.insert(_count, product);
+        }
+      }
+      _count++;
+    }
   }
 
   @override
@@ -414,10 +433,16 @@ class _EditCourseCustomDialogState extends State<EditCourseCustomDialog> {
                   child: DropdownButton<ShopProductModel>(
                     isExpanded: true,
                     icon: Icon(Icons.arrow_drop_down),
-                    value: selecteds[index],
+                    value: products[index],
                     onChanged: (product) {
                       setState(() {
-                        selecteds[index] = product;
+                        days[index].id = product.id;
+                        days[index].name = product.name;
+                        days[index].image = product.image;
+                        days[index].unit = product.unit;
+                        days[index].price = product.price;
+                        days[index].exist = true;
+                        products[index] = product;
                       });
                     },
                     items: widget.products.map((product) {
@@ -427,6 +452,17 @@ class _EditCourseCustomDialogState extends State<EditCourseCustomDialog> {
                       );
                     }).toList(),
                   ),
+                  onTap: () {
+                    setState(() {
+                      days[index].id = '';
+                      days[index].name = '';
+                      days[index].image = '';
+                      days[index].unit = '';
+                      days[index].price = 0;
+                      days[index].exist = false;
+                      products[index] = null;
+                    });
+                  },
                 );
               },
             ),

@@ -19,10 +19,12 @@ dependencies:
   firebase_core: ^0.5.2
   firebase_auth: ^0.18.3
   cloud_firestore: ^0.14.3
+  firebase_messaging: ^7.0.3
   provider: ^4.3.3
   flutter_admin_scaffold: ^0.0.5
   responsive_table: ^0.1.1+8
   date_range_picker: ^1.0.6
+  month_picker_dialog: ^0.3.3
   intl: ^0.16.1
 dependency_overrides:
   intl: ^0.17.0-nullsafety.2

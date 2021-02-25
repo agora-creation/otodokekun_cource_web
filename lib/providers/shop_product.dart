@@ -93,13 +93,15 @@ class ShopProductProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> deleteProduct({String id, String shopId}) async {
-    String imagePath = '$shopId/$id';
-    firebase.StorageReference ref = firebase
-        .storage()
-        .refFromURL('gs://otodokekun-cource.appspot.com/')
-        .child(imagePath);
-    await ref.delete();
+  Future<bool> deleteProduct({String id, String shopId, String image}) async {
+    if (image != null) {
+      String imagePath = '$shopId/$id';
+      firebase.StorageReference ref = firebase
+          .storage()
+          .refFromURL('gs://otodokekun-cource.appspot.com/')
+          .child(imagePath);
+      await ref.delete();
+    }
     try {
       _shopProductService.deleteProduct({
         'id': id,

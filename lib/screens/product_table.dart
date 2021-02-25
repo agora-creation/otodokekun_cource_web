@@ -441,7 +441,9 @@ class _EditProductCustomDialogState extends State<EditProductCustomDialog> {
           backgroundColor: Colors.redAccent,
           onTap: () async {
             if (!await widget.shopProductProvider.deleteProduct(
-                id: widget.data['id'], shopId: widget.data['shopId'])) {
+                id: widget.data['id'],
+                shopId: widget.data['shopId'],
+                image: widget.data['image'])) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(

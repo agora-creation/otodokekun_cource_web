@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:otodokekun_cource_web/models/cart.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/shop_staff.dart';
@@ -8,6 +9,7 @@ import 'package:otodokekun_cource_web/providers/shop_staff.dart';
 import 'package:otodokekun_cource_web/widgets/cart_list_tile.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
+import 'package:otodokekun_cource_web/widgets/fill_box_icon_button.dart';
 import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 
@@ -133,6 +135,10 @@ class _OrderTableState extends State<OrderTable> {
   String _sortColumn;
   bool _sortAscending = true;
   List<ShopStaffModel> _staffs = [];
+  DateTime selectMonth = DateTime.now();
+  DateTime firstDate = DateTime(DateTime.now().year - 1);
+  DateTime lastDate = DateTime(DateTime.now().year + 1);
+  String selectShipping = '配達待ち';
 
   void _getStaff() async {
     await widget.shopStaffProvider
@@ -152,7 +158,68 @@ class _OrderTableState extends State<OrderTable> {
   Widget build(BuildContext context) {
     return CustomTable(
       title: '注文一覧',
-      actions: [],
+      actions: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '表示期間',
+                  style: TextStyle(color: Colors.grey, fontSize: 12.0),
+                ),
+                FillBoxIconButton(
+                  iconData: Icons.calendar_today,
+                  labelText: '${DateFormat('yyyy年MM月').format(selectMonth)}',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.lightBlueAccent,
+                  onTap: () async {
+                    var selected = await showMonthPicker(
+                      context: context,
+                      initialDate: selectMonth,
+                      firstDate: firstDate,
+                      lastDate: lastDate,
+                    );
+                    if (selected == null) return;
+                    setState(() {
+                      selectMonth = selected;
+                    });
+                  },
+                ),
+              ],
+            ),
+            SizedBox(width: 16.0),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '配達状況',
+                  style: TextStyle(color: Colors.grey, fontSize: 12.0),
+                ),
+                DropdownButton<String>(
+                  value: selectShipping,
+                  onChanged: (value) {
+                    setState(() {
+                      selectShipping = value;
+                    });
+                  },
+                  items: [
+                    DropdownMenuItem<String>(
+                      value: '配達待ち',
+                      child: Text('配達待ち'),
+                    ),
+                    DropdownMenuItem(
+                      value: '配達済み',
+                      child: Text('配達済み'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
       headers: _headers,
       source: widget.source,
       selecteds: _selecteds,
