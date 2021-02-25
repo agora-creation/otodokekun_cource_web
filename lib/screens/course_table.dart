@@ -386,8 +386,20 @@ class EditCourseCustomDialog extends StatefulWidget {
 }
 
 class _EditCourseCustomDialogState extends State<EditCourseCustomDialog> {
+  DateTime openedAt = DateTime.now();
+  DateTime closedAt = DateTime.now().add(Duration(days: 5));
+  DateTime firstDate = DateTime.now().subtract(Duration(days: 365));
+  DateTime lastDate = DateTime.now().add(Duration(days: 365));
   List<DaysModel> days = [];
   List<ShopProductModel> products = [];
+
+  void _generateDays(DateTime openedAt, DateTime closedAt) {
+    setState(() {
+      days.clear();
+      days = createDays(openedAt, closedAt);
+      products = []..length = days.length;
+    });
+  }
 
   @override
   void initState() {
@@ -421,6 +433,15 @@ class _EditCourseCustomDialogState extends State<EditCourseCustomDialog> {
               maxLines: 1,
               labelText: 'コース(セット)名',
               iconData: Icons.title,
+            ),
+            SizedBox(height: 8.0),
+            FillBoxIconButton(
+              iconData: Icons.calendar_today,
+              labelText:
+                  '${DateFormat('yyyy/MM/dd').format(openedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(closedAt)}',
+              labelColor: Colors.white,
+              backgroundColor: Colors.lightBlueAccent,
+              onTap: () {},
             ),
             SizedBox(height: 8.0),
             ListView.builder(
