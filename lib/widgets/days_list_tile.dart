@@ -4,10 +4,12 @@ import 'package:intl/intl.dart';
 class DaysListTile extends StatelessWidget {
   final DateTime deliveryAt;
   final Widget child;
+  final Function onTap;
 
   DaysListTile({
     this.deliveryAt,
     this.child,
+    this.onTap,
   });
 
   @override
@@ -27,9 +29,14 @@ class DaysListTile extends StatelessWidget {
               color: Colors.black12.withOpacity(0.3),
             ),
             child: Center(
-                child: Text('${DateFormat('MM/dd').format(deliveryAt)}')),
+              child: Text('${DateFormat('MM/dd').format(deliveryAt)}'),
+            ),
           ),
           title: child,
+          trailing: GestureDetector(
+            onTap: onTap,
+            child: Icon(Icons.clear),
+          ),
           contentPadding: EdgeInsets.all(8.0),
         ),
       ),

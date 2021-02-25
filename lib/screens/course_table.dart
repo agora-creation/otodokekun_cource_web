@@ -248,7 +248,7 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
   DateTime firstDate = DateTime.now().subtract(Duration(days: 365));
   DateTime lastDate = DateTime.now().add(Duration(days: 365));
   List<DaysModel> days = [];
-  List<ShopProductModel> selecteds = [];
+  List<ShopProductModel> products = [];
 
   @override
   Widget build(BuildContext context) {
@@ -289,7 +289,7 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
                     initialLastDate = picked.last;
                     days.clear();
                     days = createDays(openedAt, closedAt);
-                    selecteds = []..length = days.length;
+                    products = []..length = days.length;
                   });
                 }
               },
@@ -305,7 +305,7 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
                   child: DropdownButton<ShopProductModel>(
                     isExpanded: true,
                     icon: Icon(Icons.arrow_drop_down),
-                    value: selecteds[index],
+                    value: products[index],
                     onChanged: (product) {
                       setState(() {
                         days[index].id = product.id;
@@ -314,7 +314,7 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
                         days[index].unit = product.unit;
                         days[index].price = product.price;
                         days[index].exist = true;
-                        selecteds[index] = product;
+                        products[index] = product;
                       });
                     },
                     items: widget.products.map((product) {
@@ -324,6 +324,11 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
                       );
                     }).toList(),
                   ),
+                  onTap: () {
+                    setState(() {
+                      products[index] = null;
+                    });
+                  },
                 );
               },
             ),
