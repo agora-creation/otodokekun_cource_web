@@ -41,7 +41,6 @@ class CustomAdminScaffold extends StatelessWidget {
               shopProvider.address.text = shopProvider.shop?.address;
               shopProvider.tel.text = shopProvider.shop?.tel;
               shopProvider.email.text = shopProvider.shop?.email;
-              shopProvider.staff.text = shopProvider.shop?.staff;
               shopProvider.remarks.text = shopProvider.shop?.remarks;
               shopProvider.cancelLimit = shopProvider.shop?.cancelLimit;
               showDialog(
@@ -167,15 +166,6 @@ class _EditShopCustomDialogState extends State<EditShopCustomDialog> {
               maxLines: 1,
               labelText: 'メールアドレス',
               iconData: Icons.email,
-            ),
-            SizedBox(height: 8.0),
-            CustomTextField(
-              controller: widget.shopProvider.staff,
-              obscureText: false,
-              textInputType: TextInputType.name,
-              maxLines: 1,
-              labelText: '担当者名',
-              iconData: Icons.person,
             ),
             SizedBox(height: 8.0),
             CustomTextField(

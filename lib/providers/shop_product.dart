@@ -12,6 +12,7 @@ class ShopProductProvider with ChangeNotifier {
   TextEditingController unit = TextEditingController();
   TextEditingController price = TextEditingController();
   TextEditingController description = TextEditingController();
+  bool published;
 
   Future<bool> createProduct({String shopId, File imageFile}) async {
     if (name.text == null) return false;
@@ -73,7 +74,7 @@ class ShopProductProvider with ChangeNotifier {
           'unit': unit.text.trim(),
           'price': int.parse(price.text.trim()),
           'description': description.text,
-          'published': true,
+          'published': published,
         });
       } else {
         _shopProductService.updateProduct({
@@ -83,7 +84,7 @@ class ShopProductProvider with ChangeNotifier {
           'unit': unit.text.trim(),
           'price': int.parse(price.text.trim()),
           'description': description.text,
-          'published': true,
+          'published': published,
         });
       }
       return true;
@@ -94,15 +95,14 @@ class ShopProductProvider with ChangeNotifier {
   }
 
   Future<bool> deleteProduct({String id, String shopId, String image}) async {
-    print(image);
-    if (image != '') {
-      String imagePath = '$shopId/$id';
-      firebase.StorageReference ref = firebase
-          .storage()
-          .refFromURL('gs://otodokekun-cource.appspot.com/')
-          .child(imagePath);
-      await ref.delete();
-    }
+    // if (image != '') {
+    //   String imagePath = '$shopId/$id';
+    //   firebase.StorageReference ref = firebase
+    //       .storage()
+    //       .refFromURL('gs://otodokekun-cource.appspot.com/')
+    //       .child(imagePath);
+    //   await ref.delete();
+    // }
     try {
       _shopProductService.deleteProduct({
         'id': id,

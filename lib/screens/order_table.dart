@@ -144,7 +144,7 @@ class _OrderTableState extends State<OrderTable> {
   DateTime selectMonth = DateTime.now();
   DateTime firstDate = DateTime(DateTime.now().year - 1);
   DateTime lastDate = DateTime(DateTime.now().year + 1);
-  String selectShipping = '配達待ち';
+  bool selectShipping = false;
 
   void _getStaff() async {
     await widget.shopStaffProvider
@@ -203,7 +203,7 @@ class _OrderTableState extends State<OrderTable> {
                   '配達状況',
                   style: TextStyle(color: Colors.grey, fontSize: 12.0),
                 ),
-                DropdownButton<String>(
+                DropdownButton<bool>(
                   value: selectShipping,
                   onChanged: (value) {
                     setState(() {
@@ -211,12 +211,12 @@ class _OrderTableState extends State<OrderTable> {
                     });
                   },
                   items: [
-                    DropdownMenuItem<String>(
-                      value: '配達待ち',
+                    DropdownMenuItem<bool>(
+                      value: false,
                       child: Text('配達待ち'),
                     ),
                     DropdownMenuItem(
-                      value: '配達済み',
+                      value: true,
                       child: Text('配達済み'),
                     ),
                   ],
@@ -317,24 +317,21 @@ class EditOrderCustomDialog extends StatefulWidget {
 }
 
 class _EditOrderCustomDialogState extends State<EditOrderCustomDialog> {
+  List<CartModel> cart = [];
   List<String> staffs = [];
-
-  void _createStaff() {
-    for (ShopStaffModel staff in widget.staffs) {
-      staffs.add(staff.name);
-    }
-  }
 
   @override
   void initState() {
     super.initState();
-    _createStaff();
+    cart = widget.data['cart'];
+    for (ShopStaffModel staff in widget.staffs) {
+      staffs.add(staff.name);
+    }
     staffs.insert(0, '');
   }
 
   @override
   Widget build(BuildContext context) {
-    List<CartModel> cart = widget.data['cart'];
     return CustomDialog(
       title: '注文詳細',
       content: Container(

@@ -24,12 +24,12 @@ class CartListTile extends StatelessWidget {
           border: Border.all(color: Colors.black54),
         ),
         child: ListTile(
-          leading: image != null
+          leading: image != ''
               ? Image.network(
                   image,
                   fit: BoxFit.cover,
                 )
-              : Container(),
+              : null,
           title: Text(name),
           subtitle: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -135,6 +135,7 @@ class _ProductTableState extends State<ProductTable> {
         widget.shopProductProvider.unit.text = data['unit'];
         widget.shopProductProvider.price.text = data['price'].toString();
         widget.shopProductProvider.description.text = data['description'];
+        widget.shopProductProvider.published = data['published'];
         showDialog(
           context: context,
           builder: (_) {
@@ -434,8 +435,12 @@ class _EditProductCustomDialogState extends State<EditProductCustomDialog> {
             SizedBox(height: 8.0),
             DropdownButton<bool>(
               isExpanded: true,
-              value: true,
-              onChanged: (value) {},
+              value: widget.shopProductProvider.published,
+              onChanged: (value) {
+                setState(() {
+                  widget.shopProductProvider.published = value;
+                });
+              },
               items: [
                 DropdownMenuItem<bool>(
                   value: false,

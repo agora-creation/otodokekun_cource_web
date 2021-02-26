@@ -6,7 +6,6 @@ class DaysModel {
   String image;
   String unit;
   int price;
-  bool exist;
   DateTime deliveryAt;
 
   DaysModel.fromMap(Map data) {
@@ -15,7 +14,6 @@ class DaysModel {
     image = data['image'];
     unit = data['unit'];
     price = data['price'];
-    exist = data['exist'];
     deliveryAt = data['deliveryAt'].toDate();
   }
 
@@ -25,7 +23,6 @@ class DaysModel {
         'image': image,
         'unit': unit,
         'price': price,
-        'exist': exist,
         'deliveryAt': deliveryAt,
       };
 }
@@ -39,7 +36,6 @@ List<DaysModel> createDays(DateTime openedAt, DateTime closedAt) {
       'image': '',
       'unit': '',
       'price': 0,
-      'exist': false,
       'deliveryAt': Timestamp.fromDate(openedAt.add(Duration(days: i))),
     };
     days.add(DaysModel.fromMap(day));

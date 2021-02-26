@@ -25,7 +25,6 @@ class ShopProvider with ChangeNotifier {
   TextEditingController zip = TextEditingController();
   TextEditingController address = TextEditingController();
   TextEditingController tel = TextEditingController();
-  TextEditingController staff = TextEditingController();
   TextEditingController remarks = TextEditingController();
   List<int> cancelLimitList = [3, 4, 5, 6, 7];
   int cancelLimit;
@@ -76,8 +75,8 @@ class ShopProvider with ChangeNotifier {
           'tel': '',
           'email': email.text.trim(),
           'password': password.text.trim(),
-          'staff': '',
           'remarks': '',
+          'invoiceLimit': 1,
           'cancelLimit': 3,
           'createdAt': DateTime.now(),
         });
@@ -104,7 +103,6 @@ class ShopProvider with ChangeNotifier {
           'address': address.text.trim(),
           'tel': tel.text.trim(),
           'email': email.text.trim(),
-          'staff': staff.text.trim(),
           'remarks': remarks.text,
           'cancelLimit': cancelLimit,
         });
@@ -132,7 +130,6 @@ class ShopProvider with ChangeNotifier {
     zip.text = '';
     address.text = '';
     tel.text = '';
-    staff.text = '';
     remarks.text = '';
   }
 

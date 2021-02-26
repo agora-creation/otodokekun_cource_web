@@ -153,6 +153,7 @@ class _CourseTableState extends State<CourseTable> {
       onTabRow: (data) {
         widget.shopCourseProvider.clearController();
         widget.shopCourseProvider.name.text = data['name'];
+        widget.shopCourseProvider.published = data['published'];
         showDialog(
           context: context,
           builder: (_) {
@@ -317,7 +318,6 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
                         days[index].image = product.image;
                         days[index].unit = product.unit;
                         days[index].price = product.price;
-                        days[index].exist = true;
                         products[index] = product;
                       });
                     },
@@ -335,7 +335,6 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
                       days[index].image = '';
                       days[index].unit = '';
                       days[index].price = 0;
-                      days[index].exist = false;
                       products[index] = null;
                     });
                   },
@@ -478,7 +477,6 @@ class _EditCourseCustomDialogState extends State<EditCourseCustomDialog> {
                         days[index].image = product.image;
                         days[index].unit = product.unit;
                         days[index].price = product.price;
-                        days[index].exist = true;
                         products[index] = product;
                       });
                     },
@@ -496,7 +494,6 @@ class _EditCourseCustomDialogState extends State<EditCourseCustomDialog> {
                       days[index].image = '';
                       days[index].unit = '';
                       days[index].price = 0;
-                      days[index].exist = false;
                       products[index] = null;
                     });
                   },
@@ -506,8 +503,12 @@ class _EditCourseCustomDialogState extends State<EditCourseCustomDialog> {
             SizedBox(height: 8.0),
             DropdownButton<bool>(
               isExpanded: true,
-              value: true,
-              onChanged: (value) {},
+              value: widget.shopCourseProvider.published,
+              onChanged: (value) {
+                setState(() {
+                  widget.shopCourseProvider.published = value;
+                });
+              },
               items: [
                 DropdownMenuItem<bool>(
                   value: false,

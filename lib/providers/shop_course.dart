@@ -6,6 +6,7 @@ class ShopCourseProvider with ChangeNotifier {
   ShopCourseService _shopCourseService = ShopCourseService();
 
   TextEditingController name = TextEditingController();
+  bool published;
 
   Future<bool> createCourse(
       {String shopId,
@@ -49,6 +50,7 @@ class ShopCourseProvider with ChangeNotifier {
         'shopId': shopId,
         'name': name.text.trim(),
         'days': convertedDays,
+        'published': published,
       });
       return true;
     } catch (e) {

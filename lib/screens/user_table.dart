@@ -86,6 +86,12 @@ class _UserTableState extends State<UserTable> {
       sortable: true,
     ),
     DatatableHeader(
+      text: '担当者',
+      value: 'staff',
+      show: false,
+      sortable: false,
+    ),
+    DatatableHeader(
       text: 'トークン',
       value: 'token',
       show: false,
