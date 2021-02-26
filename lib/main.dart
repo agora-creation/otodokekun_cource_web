@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
-import 'package:otodokekun_cource_web/providers/shop_course.dart';
 import 'package:otodokekun_cource_web/providers/shop_notice.dart';
 import 'package:otodokekun_cource_web/providers/shop_order.dart';
+import 'package:otodokekun_cource_web/providers/shop_plan.dart';
 import 'package:otodokekun_cource_web/providers/shop_product.dart';
 import 'package:otodokekun_cource_web/providers/shop_staff.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/providers/user_notice.dart';
-import 'package:otodokekun_cource_web/screens/course.dart';
 import 'package:otodokekun_cource_web/screens/login.dart';
 import 'package:otodokekun_cource_web/screens/notice.dart';
 import 'package:otodokekun_cource_web/screens/order.dart';
+import 'package:otodokekun_cource_web/screens/plan.dart';
 import 'package:otodokekun_cource_web/screens/product.dart';
 import 'package:otodokekun_cource_web/screens/registration.dart';
 import 'package:otodokekun_cource_web/screens/splash.dart';
@@ -39,9 +39,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: ShopProvider.initialize()),
-        ChangeNotifierProvider.value(value: ShopCourseProvider()),
         ChangeNotifierProvider.value(value: ShopNoticeProvider()),
         ChangeNotifierProvider.value(value: ShopOrderProvider()),
+        ChangeNotifierProvider.value(value: ShopPlanProvider()),
         ChangeNotifierProvider.value(value: ShopProductProvider()),
         ChangeNotifierProvider.value(value: ShopStaffProvider()),
         ChangeNotifierProvider.value(value: UserProvider()),
@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
         theme: theme(),
         home: SplashController(),
         routes: {
-          CourseScreen.id: (context) => CourseScreen(),
+          PlanScreen.id: (context) => PlanScreen(),
           LoginScreen.id: (context) => LoginScreen(),
           NoticeScreen.id: (context) => NoticeScreen(),
           OrderScreen.id: (context) => OrderScreen(),

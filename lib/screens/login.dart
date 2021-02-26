@@ -17,6 +17,7 @@ class LoginScreen extends StatelessWidget {
     final shopProvider = Provider.of<ShopProvider>(context);
     shopProvider.email.text = 'info@agora-c.com';
     shopProvider.password.text = 'agora1234';
+
     return Scaffold(
       backgroundColor: kMainColor,
       body: SingleChildScrollView(

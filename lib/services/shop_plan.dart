@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ShopCourseService {
+class ShopPlanService {
   String _collection = 'shop';
-  String _subCollection = 'course';
+  String _subCollection = 'plan';
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
-  String getNewCourseId({String shopId}) {
+  String getNewPlanId({String shopId}) {
     String id = _firebaseFirestore
         .collection(_collection)
         .doc(shopId)
@@ -15,7 +15,7 @@ class ShopCourseService {
     return id;
   }
 
-  void createCourse(Map<String, dynamic> values) {
+  void createPlan(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])
@@ -24,7 +24,7 @@ class ShopCourseService {
         .set(values);
   }
 
-  void updateCourse(Map<String, dynamic> values) {
+  void updatePlan(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])
@@ -33,7 +33,7 @@ class ShopCourseService {
         .update(values);
   }
 
-  void deleteCourse(Map<String, dynamic> values) {
+  void deletePlan(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])

@@ -146,7 +146,7 @@ class _OrderTableState extends State<OrderTable> {
   DateTime lastDate = DateTime(DateTime.now().year + 1);
   bool selectShipping = false;
 
-  void _getStaff() async {
+  void _init() async {
     await widget.shopStaffProvider
         .getStaffs(shopId: widget.shop?.id)
         .then((value) {
@@ -157,7 +157,7 @@ class _OrderTableState extends State<OrderTable> {
   @override
   void initState() {
     super.initState();
-    _getStaff();
+    _init();
   }
 
   @override
@@ -236,7 +236,7 @@ class _OrderTableState extends State<OrderTable> {
         showDialog(
           context: context,
           builder: (_) {
-            return EditOrderCustomDialog(
+            return EditOrderDialog(
               shopOrderProvider: widget.shopOrderProvider,
               data: data,
               staffs: _staffs,
@@ -301,22 +301,22 @@ class _OrderTableState extends State<OrderTable> {
   }
 }
 
-class EditOrderCustomDialog extends StatefulWidget {
+class EditOrderDialog extends StatefulWidget {
   final ShopOrderProvider shopOrderProvider;
   final dynamic data;
   final List<ShopStaffModel> staffs;
 
-  EditOrderCustomDialog({
+  EditOrderDialog({
     @required this.shopOrderProvider,
     @required this.data,
     @required this.staffs,
   });
 
   @override
-  _EditOrderCustomDialogState createState() => _EditOrderCustomDialogState();
+  _EditOrderDialogState createState() => _EditOrderDialogState();
 }
 
-class _EditOrderCustomDialogState extends State<EditOrderCustomDialog> {
+class _EditOrderDialogState extends State<EditOrderDialog> {
   List<CartModel> cart = [];
   List<String> staffs = [];
 

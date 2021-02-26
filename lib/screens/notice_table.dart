@@ -77,7 +77,7 @@ class _NoticeTableState extends State<NoticeTable> {
   bool _sortAscending = true;
   List<UserModel> _users = [];
 
-  void _getUser() async {
+  void _init() async {
     await widget.userProvider.getUsers(shopId: widget.shop?.id).then((value) {
       _users = value;
     });
@@ -86,7 +86,7 @@ class _NoticeTableState extends State<NoticeTable> {
   @override
   void initState() {
     super.initState();
-    _getUser();
+    _init();
   }
 
   @override
@@ -103,7 +103,7 @@ class _NoticeTableState extends State<NoticeTable> {
             showDialog(
               context: context,
               builder: (_) {
-                return AddNoticeCustomDialog(
+                return AddNoticeDialog(
                   shop: widget.shop,
                   shopNoticeProvider: widget.shopNoticeProvider,
                 );
@@ -123,7 +123,7 @@ class _NoticeTableState extends State<NoticeTable> {
         showDialog(
           context: context,
           builder: (_) {
-            return EditNoticeCustomDialog(
+            return EditNoticeDialog(
               shopNoticeProvider: widget.shopNoticeProvider,
               userNoticeProvider: widget.userNoticeProvider,
               data: data,
@@ -189,20 +189,20 @@ class _NoticeTableState extends State<NoticeTable> {
   }
 }
 
-class AddNoticeCustomDialog extends StatefulWidget {
+class AddNoticeDialog extends StatefulWidget {
   final ShopModel shop;
   final ShopNoticeProvider shopNoticeProvider;
 
-  AddNoticeCustomDialog({
+  AddNoticeDialog({
     @required this.shop,
     @required this.shopNoticeProvider,
   });
 
   @override
-  _AddNoticeCustomDialogState createState() => _AddNoticeCustomDialogState();
+  _AddNoticeDialogState createState() => _AddNoticeDialogState();
 }
 
-class _AddNoticeCustomDialogState extends State<AddNoticeCustomDialog> {
+class _AddNoticeDialogState extends State<AddNoticeDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
@@ -254,13 +254,13 @@ class _AddNoticeCustomDialogState extends State<AddNoticeCustomDialog> {
   }
 }
 
-class EditNoticeCustomDialog extends StatefulWidget {
+class EditNoticeDialog extends StatefulWidget {
   final ShopNoticeProvider shopNoticeProvider;
   final UserNoticeProvider userNoticeProvider;
   final dynamic data;
   final List<UserModel> users;
 
-  EditNoticeCustomDialog({
+  EditNoticeDialog({
     @required this.shopNoticeProvider,
     @required this.userNoticeProvider,
     @required this.data,
@@ -268,10 +268,10 @@ class EditNoticeCustomDialog extends StatefulWidget {
   });
 
   @override
-  _EditNoticeCustomDialogState createState() => _EditNoticeCustomDialogState();
+  _EditNoticeDialogState createState() => _EditNoticeDialogState();
 }
 
-class _EditNoticeCustomDialogState extends State<EditNoticeCustomDialog> {
+class _EditNoticeDialogState extends State<EditNoticeDialog> {
   final ScrollController _scrollController = ScrollController();
   List<UserModel> selecteds = [];
 

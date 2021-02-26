@@ -1,23 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:otodokekun_cource_web/models/shop_product.dart';
+import 'package:otodokekun_cource_web/models/shop_plan.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
-import 'package:otodokekun_cource_web/providers/shop_product.dart';
-import 'package:otodokekun_cource_web/screens/product_table.dart';
+import 'package:otodokekun_cource_web/providers/shop_plan.dart';
+import 'package:otodokekun_cource_web/screens/plan_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
 import 'package:provider/provider.dart';
 
-class ProductScreen extends StatelessWidget {
-  static const String id = 'product';
+class PlanScreen extends StatelessWidget {
+  static const String id = 'plan';
 
   @override
   Widget build(BuildContext context) {
     final shopProvider = Provider.of<ShopProvider>(context);
-    final shopProductProvider = Provider.of<ShopProductProvider>(context);
-    final Stream<QuerySnapshot> streamProduct = FirebaseFirestore.instance
+    final shopPlanProvider = Provider.of<ShopPlanProvider>(context);
+    final Stream<QuerySnapshot> streamPlan = FirebaseFirestore.instance
         .collection('shop')
         .doc(shopProvider.shop?.id)
-        .collection('product')
+        .collection('plan')
         .orderBy('createdAt', descending: true)
         .snapshots();
     List<Map<String, dynamic>> _source = [];
@@ -26,19 +26,18 @@ class ProductScreen extends StatelessWidget {
       shopProvider: shopProvider,
       selectedRoute: id,
       body: StreamBuilder<QuerySnapshot>(
-        stream: streamProduct,
+        stream: streamPlan,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             _source.clear();
-            for (DocumentSnapshot product in snapshot.data.docs) {
-              ShopProductModel shopProductModel =
-                  ShopProductModel.fromSnapshot(product);
-              _source.add(shopProductModel.toMap());
+            for (DocumentSnapshot plan in snapshot.data.docs) {
+              ShopPlanModel shopPlanModel = ShopPlanModel.fromSnapshot(plan);
+              _source.add(shopPlanModel.toMap());
             }
           }
-          return ProductTable(
+          return PlanTable(
             shop: shopProvider.shop,
-            shopProductProvider: shopProductProvider,
+            shopPlanProvider: shopPlanProvider,
             source: _source,
           );
         },

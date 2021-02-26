@@ -116,7 +116,7 @@ class _ProductTableState extends State<ProductTable> {
             showDialog(
               context: context,
               builder: (_) {
-                return AddProductCustomDialog(
+                return AddProductDialog(
                   shop: widget.shop,
                   shopProductProvider: widget.shopProductProvider,
                 );
@@ -139,7 +139,7 @@ class _ProductTableState extends State<ProductTable> {
         showDialog(
           context: context,
           builder: (_) {
-            return EditProductCustomDialog(
+            return EditProductDialog(
               shopProductProvider: widget.shopProductProvider,
               data: data,
             );
@@ -203,21 +203,20 @@ class _ProductTableState extends State<ProductTable> {
   }
 }
 
-class AddProductCustomDialog extends StatefulWidget {
+class AddProductDialog extends StatefulWidget {
   final ShopModel shop;
   final ShopProductProvider shopProductProvider;
 
-  AddProductCustomDialog({
+  AddProductDialog({
     @required this.shop,
     @required this.shopProductProvider,
   });
 
   @override
-  _AddProductCustomDialogState createState() => _AddProductCustomDialogState();
+  _AddProductDialogState createState() => _AddProductDialogState();
 }
 
-class _AddProductCustomDialogState extends State<AddProductCustomDialog> {
-  File imageFile;
+class _AddProductDialogState extends State<AddProductDialog> {
   Uint8List imageData;
 
   @override
@@ -250,9 +249,9 @@ class _AddProductCustomDialogState extends State<AddProductCustomDialog> {
                   ..accept = 'image/*';
                 _input.click();
                 _input.onChange.listen((e) {
-                  imageFile = _input.files.first;
+                  widget.shopProductProvider.imageFile = _input.files.first;
                   final reader = FileReader();
-                  reader.readAsDataUrl(imageFile);
+                  reader.readAsDataUrl(widget.shopProductProvider.imageFile);
                   reader.onLoadEnd.listen((e) {
                     final encoded = reader.result as String;
                     final stripped = encoded.replaceFirst(
@@ -312,7 +311,7 @@ class _AddProductCustomDialogState extends State<AddProductCustomDialog> {
           backgroundColor: Colors.blueAccent,
           onTap: () async {
             if (!await widget.shopProductProvider
-                .createProduct(shopId: widget.shop?.id, imageFile: imageFile)) {
+                .createProduct(shopId: widget.shop?.id)) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(
@@ -327,22 +326,20 @@ class _AddProductCustomDialogState extends State<AddProductCustomDialog> {
   }
 }
 
-class EditProductCustomDialog extends StatefulWidget {
+class EditProductDialog extends StatefulWidget {
   final ShopProductProvider shopProductProvider;
   final dynamic data;
 
-  EditProductCustomDialog({
+  EditProductDialog({
     @required this.shopProductProvider,
     @required this.data,
   });
 
   @override
-  _EditProductCustomDialogState createState() =>
-      _EditProductCustomDialogState();
+  _EditProductDialogState createState() => _EditProductDialogState();
 }
 
-class _EditProductCustomDialogState extends State<EditProductCustomDialog> {
-  File imageFile;
+class _EditProductDialogState extends State<EditProductDialog> {
   Uint8List imageData;
 
   @override
@@ -375,9 +372,9 @@ class _EditProductCustomDialogState extends State<EditProductCustomDialog> {
                   ..accept = 'image/*';
                 _input.click();
                 _input.onChange.listen((e) {
-                  imageFile = _input.files.first;
+                  widget.shopProductProvider.imageFile = _input.files.first;
                   final reader = FileReader();
-                  reader.readAsDataUrl(imageFile);
+                  reader.readAsDataUrl(widget.shopProductProvider.imageFile);
                   reader.onLoadEnd.listen((e) {
                     final encoded = reader.result as String;
                     final stripped = encoded.replaceFirst(
@@ -462,9 +459,7 @@ class _EditProductCustomDialogState extends State<EditProductCustomDialog> {
           backgroundColor: Colors.redAccent,
           onTap: () async {
             if (!await widget.shopProductProvider.deleteProduct(
-                id: widget.data['id'],
-                shopId: widget.data['shopId'],
-                image: widget.data['image'])) {
+                id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(
@@ -480,9 +475,7 @@ class _EditProductCustomDialogState extends State<EditProductCustomDialog> {
           backgroundColor: Colors.blueAccent,
           onTap: () async {
             if (!await widget.shopProductProvider.updateProduct(
-                id: widget.data['id'],
-                shopId: widget.data['shopId'],
-                imageFile: imageFile)) {
+                id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(

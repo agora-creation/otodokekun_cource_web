@@ -1,10 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/models/days.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/shop_product.dart';
-import 'package:otodokekun_cource_web/providers/shop_course.dart';
+import 'package:otodokekun_cource_web/providers/shop_plan.dart';
 import 'package:otodokekun_cource_web/providers/shop_product.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
@@ -15,24 +17,22 @@ import 'package:otodokekun_cource_web/widgets/fill_box_icon_button.dart';
 import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 
-class CourseTable extends StatefulWidget {
+class PlanTable extends StatefulWidget {
   final ShopModel shop;
-  final ShopCourseProvider shopCourseProvider;
-  final ShopProductProvider shopProductProvider;
+  final ShopPlanProvider shopPlanProvider;
   final List<Map<String, dynamic>> source;
 
-  CourseTable({
+  PlanTable({
     @required this.shop,
-    @required this.shopCourseProvider,
-    @required this.shopProductProvider,
+    @required this.shopPlanProvider,
     @required this.source,
   });
 
   @override
-  _CourseTableState createState() => _CourseTableState();
+  _PlanTableState createState() => _PlanTableState();
 }
 
-class _CourseTableState extends State<CourseTable> {
+class _PlanTableState extends State<PlanTable> {
   List<DatatableHeader> _headers = [
     DatatableHeader(
       text: 'ID',
@@ -47,38 +47,44 @@ class _CourseTableState extends State<CourseTable> {
       sortable: false,
     ),
     DatatableHeader(
-      text: 'コース(セット)名',
+      text: '商品名',
       value: 'name',
       show: true,
       sortable: true,
     ),
     DatatableHeader(
-      text: '開始日',
-      value: 'openedAt',
+      text: '商品画像',
+      value: 'image',
       show: false,
       sortable: false,
     ),
     DatatableHeader(
-      text: '終了日',
-      value: 'closedAt',
+      text: '単位',
+      value: 'unit',
       show: false,
       sortable: false,
     ),
     DatatableHeader(
-      text: 'コース期間',
-      value: 'openedClosed',
+      text: '価格',
+      value: 'price',
       show: true,
       sortable: true,
     ),
     DatatableHeader(
-      text: 'DAYS',
-      value: 'days',
+      text: '説明',
+      value: 'description',
+      show: true,
+      sortable: true,
+    ),
+    DatatableHeader(
+      text: 'お届け予定日',
+      value: 'deliveryAt',
       show: false,
       sortable: false,
     ),
     DatatableHeader(
-      text: '商品(一部)',
-      value: 'daysText',
+      text: 'お届け予定日',
+      value: 'deliveryAtText',
       show: true,
       sortable: true,
     ),
@@ -100,43 +106,34 @@ class _CourseTableState extends State<CourseTable> {
       show: false,
       sortable: false,
     ),
+    DatatableHeader(
+      text: '登録日時',
+      value: 'createdAtText',
+      show: true,
+      sortable: true,
+    ),
   ];
   int _currentPerPage = 10;
   int _currentPage = 1;
   List<Map<String, dynamic>> _selecteds = [];
   String _sortColumn;
   bool _sortAscending = true;
-  List<ShopProductModel> _products = [];
-
-  void _getProduct() async {
-    await widget.shopProductProvider
-        .getProducts(shopId: widget.shop?.id)
-        .then((value) {
-      _products = value;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getProduct();
-  }
 
   @override
   Widget build(BuildContext context) {
     return CustomTable(
-      title: 'コース(セット)商品一覧',
+      title: '日付指定商品一覧',
       actions: [
         FillBoxButton(
           labelText: '新規登録',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
           onTap: () {
-            widget.shopCourseProvider.clearController();
+            widget.shopPlanProvider.clearController();
             showDialog(
               context: context,
               builder: (_) {
-                return AddCourseCustomDialog(
+                return AddCourseDialog(
                   shop: widget.shop,
                   shopCourseProvider: widget.shopCourseProvider,
                   products: _products,
@@ -151,9 +148,12 @@ class _CourseTableState extends State<CourseTable> {
       selecteds: _selecteds,
       showSelect: false,
       onTabRow: (data) {
-        widget.shopCourseProvider.clearController();
-        widget.shopCourseProvider.name.text = data['name'];
-        widget.shopCourseProvider.published = data['published'];
+        widget.shopPlanProvider.clearController();
+        widget.shopPlanProvider.name.text = data['name'];
+        widget.shopPlanProvider.unit.text = data['unit'];
+        widget.shopPlanProvider.price.text = data['price'].toString();
+        widget.shopPlanProvider.description.text = data['description'];
+        widget.shopPlanProvider.published = data['published'];
         showDialog(
           context: context,
           builder: (_) {
@@ -222,42 +222,21 @@ class _CourseTableState extends State<CourseTable> {
   }
 }
 
-class AddCourseCustomDialog extends StatefulWidget {
+class AddCourseDialog extends StatefulWidget {
   final ShopModel shop;
-  final ShopCourseProvider shopCourseProvider;
-  final List<ShopProductModel> products;
+  final ShopPlanProvider shopPlanProvider;
 
-  AddCourseCustomDialog({
+  AddCourseDialog({
     @required this.shop,
-    @required this.shopCourseProvider,
-    @required this.products,
+    @required this.shopPlanProvider,
   });
 
   @override
-  _AddCourseCustomDialogState createState() => _AddCourseCustomDialogState();
+  _AddCourseDialogState createState() => _AddCourseDialogState();
 }
 
-class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
-  DateTime openedAt = DateTime.now();
-  DateTime closedAt = DateTime.now().add(Duration(days: 5));
-  DateTime firstDate = DateTime.now().subtract(Duration(days: 365));
-  DateTime lastDate = DateTime.now().add(Duration(days: 365));
-  List<DaysModel> days = [];
-  List<ShopProductModel> products = [];
-
-  void _generateDays(DateTime openedAt, DateTime closedAt) {
-    setState(() {
-      days.clear();
-      days = createDays(openedAt, closedAt);
-      products = []..length = days.length;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _generateDays(openedAt, closedAt);
-  }
+class _AddCourseDialogState extends State<AddCourseDialog> {
+  Uint8List imageData;
 
   @override
   Widget build(BuildContext context) {
@@ -268,6 +247,14 @@ class _AddCourseCustomDialogState extends State<AddCourseCustomDialog> {
         child: ListView(
           shrinkWrap: true,
           children: [
+            CustomTextField(
+              controller: widget.shopPlanProvider.name,
+              obscureText: false,
+              textInputType: TextInputType.name,
+              maxLines: 1,
+              labelText: '日付指定商品名',
+              iconData: Icons.title,
+            ),
             CustomTextField(
               controller: widget.shopCourseProvider.name,
               obscureText: false,

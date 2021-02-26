@@ -2,23 +2,25 @@ import 'dart:html';
 
 import 'package:firebase/firebase.dart' as firebase;
 import 'package:flutter/material.dart';
-import 'package:otodokekun_cource_web/services/shop_product.dart';
+import 'package:otodokekun_cource_web/services/shop_plan.dart';
 
-class ShopProductProvider with ChangeNotifier {
-  ShopProductService _shopProductService = ShopProductService();
+class ShopPlanProvider with ChangeNotifier {
+  ShopPlanService _shopPlanService = ShopPlanService();
 
   TextEditingController name = TextEditingController();
   TextEditingController unit = TextEditingController();
   TextEditingController price = TextEditingController();
   TextEditingController description = TextEditingController();
   File imageFile;
+  DateTime deliveryAt;
   bool published;
 
-  Future<bool> createProduct({String shopId}) async {
+  Future<bool> createPlan({String shopId}) async {
     if (name.text == null) return false;
     if (price.text == null) return false;
-    String productId = _shopProductService.getNewProductId(shopId: shopId);
-    String imagePath = '$shopId/$productId';
+    if (deliveryAt == null) return false;
+    String planId = _shopPlanService.getNewPlanId(shopId: shopId);
+    String imagePath = '$shopId/$planId';
     String imageUrl = '';
     try {
       if (imageFile != null) {
@@ -31,14 +33,15 @@ class ShopProductProvider with ChangeNotifier {
           imageUrl = uri.toString();
         });
       }
-      _shopProductService.createProduct({
-        'id': productId,
+      _shopPlanService.createPlan({
+        'id': planId,
         'shopId': shopId,
         'name': name.text.trim(),
         'image': imageUrl,
         'unit': unit.text.trim(),
         'price': int.parse(price.text.trim()),
         'description': description.text,
+        'deliveryAt': deliveryAt,
         'published': true,
         'createdAt': DateTime.now(),
       });
@@ -49,9 +52,10 @@ class ShopProductProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateProduct({String id, String shopId}) async {
+  Future<bool> updatePlan({String id, String shopId}) async {
     if (name.text == null) return false;
     if (price.text == null) return false;
+    if (deliveryAt == null) return false;
     String imagePath = '$shopId/$id';
     String imageUrl = '';
     try {
@@ -64,7 +68,7 @@ class ShopProductProvider with ChangeNotifier {
           var uri = await ref.getDownloadURL();
           imageUrl = uri.toString();
         });
-        _shopProductService.updateProduct({
+        _shopPlanService.updatePlan({
           'id': id,
           'shopId': shopId,
           'name': name.text.trim(),
@@ -72,16 +76,18 @@ class ShopProductProvider with ChangeNotifier {
           'unit': unit.text.trim(),
           'price': int.parse(price.text.trim()),
           'description': description.text,
+          'deliveryAt': deliveryAt,
           'published': published,
         });
       } else {
-        _shopProductService.updateProduct({
+        _shopPlanService.updatePlan({
           'id': id,
           'shopId': shopId,
           'name': name.text.trim(),
           'unit': unit.text.trim(),
           'price': int.parse(price.text.trim()),
           'description': description.text,
+          'deliveryAt': deliveryAt,
           'published': published,
         });
       }
@@ -92,7 +98,7 @@ class ShopProductProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> deleteProduct({String id, String shopId}) async {
+  Future<bool> deletePlan({String id, String shopId}) async {
     // if (image != '') {
     //   String imagePath = '$shopId/$id';
     //   firebase.StorageReference ref = firebase
@@ -102,7 +108,7 @@ class ShopProductProvider with ChangeNotifier {
     //   await ref.delete();
     // }
     try {
-      _shopProductService.deleteProduct({
+      _shopPlanService.deletePlan({
         'id': id,
         'shopId': shopId,
       });
