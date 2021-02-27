@@ -66,7 +66,7 @@ class ShopProvider with ChangeNotifier {
         password: password.text.trim(),
       )
           .then((value) {
-        _shopServices.createShop({
+        _shopServices.create({
           'id': value.user.uid,
           'code': '',
           'name': name.text.trim(),
@@ -90,12 +90,12 @@ class ShopProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateShop() async {
+  Future<bool> update() async {
     if (name.text == null) return false;
     if (email.text == null) return false;
     try {
       await _auth.currentUser.updateEmail(email.text.trim()).then((value) {
-        _shopServices.updateShop({
+        _shopServices.update({
           'id': _auth.currentUser.uid,
           'code': code.text.trim(),
           'name': name.text.trim(),
@@ -134,7 +134,7 @@ class ShopProvider with ChangeNotifier {
   }
 
   Future reloadShopModel() async {
-    _shop = await _shopServices.getShop(shopId: _fUser.uid);
+    _shop = await _shopServices.select(shopId: _fUser.uid);
     notifyListeners();
   }
 
@@ -144,7 +144,7 @@ class ShopProvider with ChangeNotifier {
     } else {
       _fUser = firebaseUser;
       _status = Status.Authenticated;
-      _shop = await _shopServices.getShop(shopId: _fUser.uid);
+      _shop = await _shopServices.select(shopId: _fUser.uid);
     }
     notifyListeners();
   }

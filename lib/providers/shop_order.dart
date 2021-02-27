@@ -7,9 +7,9 @@ class ShopOrderProvider with ChangeNotifier {
   String staff;
   bool shipping;
 
-  Future<bool> updateOrder({String id, String shopId}) async {
+  Future<bool> update({String id, String shopId}) async {
     try {
-      _shopOrderService.updateOrder({
+      _shopOrderService.update({
         'id': id,
         'shopId': shopId,
         'staff': staff,

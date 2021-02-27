@@ -60,10 +60,10 @@ class MyApp extends StatelessWidget {
         theme: theme(),
         home: SplashController(),
         routes: {
-          PlanScreen.id: (context) => PlanScreen(),
           LoginScreen.id: (context) => LoginScreen(),
           NoticeScreen.id: (context) => NoticeScreen(),
           OrderScreen.id: (context) => OrderScreen(),
+          PlanScreen.id: (context) => PlanScreen(),
           ProductScreen.id: (context) => ProductScreen(),
           RegistrationScreen.id: (context) => RegistrationScreen(),
           StaffScreen.id: (context) => StaffScreen(),

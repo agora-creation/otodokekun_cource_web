@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
+import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/cart.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/shop_staff.dart';
@@ -33,64 +34,16 @@ class OrderTable extends StatefulWidget {
 class _OrderTableState extends State<OrderTable> {
   List<DatatableHeader> _headers = [
     DatatableHeader(
-      text: 'ID',
-      value: 'id',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
-      text: '店舗ID',
-      value: 'shopId',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
-      text: '顧客ID',
-      value: 'userId',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
       text: '顧客名',
       value: 'name',
       show: true,
       sortable: true,
     ),
     DatatableHeader(
-      text: '郵便番号',
-      value: 'zip',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
-      text: '住所',
-      value: 'address',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
-      text: '電話番号',
-      value: 'tel',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
-      text: 'カート',
-      value: 'cart',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
       text: '注文商品',
       value: 'cartText',
       show: true,
       sortable: true,
-    ),
-    DatatableHeader(
-      text: 'お届け予定日',
-      value: 'deliveryAt',
-      show: false,
-      sortable: false,
     ),
     DatatableHeader(
       text: 'お届け予定日',
@@ -118,21 +71,9 @@ class _OrderTableState extends State<OrderTable> {
     ),
     DatatableHeader(
       text: '配達状況',
-      value: 'shipping',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
-      text: '配達状況',
       value: 'shippingText',
       show: true,
       sortable: true,
-    ),
-    DatatableHeader(
-      text: '登録日時',
-      value: 'createdAt',
-      show: false,
-      sortable: false,
     ),
   ];
   int _currentPerPage = 10;
@@ -141,6 +82,7 @@ class _OrderTableState extends State<OrderTable> {
   String _sortColumn;
   bool _sortAscending = true;
   List<ShopStaffModel> _staffs = [];
+
   DateTime selectMonth = DateTime.now();
   DateTime firstDate = DateTime(DateTime.now().year - 1);
   DateTime lastDate = DateTime(DateTime.now().year + 1);
@@ -148,7 +90,7 @@ class _OrderTableState extends State<OrderTable> {
 
   void _init() async {
     await widget.shopStaffProvider
-        .getStaffs(shopId: widget.shop?.id)
+        .selectList(shopId: widget.shop?.id)
         .then((value) {
       _staffs = value;
     });
@@ -339,8 +281,7 @@ class _EditOrderDialogState extends State<EditOrderDialog> {
         child: ListView(
           shrinkWrap: true,
           children: [
-            Text('注文商品'),
-            SizedBox(height: 4.0),
+            Text('注文商品', style: kLabelTextStyle),
             ListView.builder(
               shrinkWrap: true,
               physics: ScrollPhysics(),
@@ -356,178 +297,66 @@ class _EditOrderDialogState extends State<EditOrderDialog> {
                 );
               },
             ),
-            Table(
-              border: TableBorder.all(width: 1.0, color: Colors.black54),
+            Text('注文日時', style: kLabelTextStyle),
+            Text('${widget.data['createdAtText']}'),
+            SizedBox(height: 8.0),
+            Text('お届け予定日', style: kLabelTextStyle),
+            Text('${widget.data['deliveryAtText']}'),
+            SizedBox(height: 8.0),
+            Text('顧客名', style: kLabelTextStyle),
+            Text('${widget.data['name']}'),
+            SizedBox(height: 8.0),
+            Text('お届け住所', style: kLabelTextStyle),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('注文日時'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          '${DateFormat('yyyy/MM/dd HH:mm').format(widget.data['createdAt'])}',
-                        ),
-                      ),
-                    ),
-                  ],
+                Text('〒${widget.data['zip']}'),
+                Text('${widget.data['address']}'),
+                Text('${widget.data['tel']}'),
+              ],
+            ),
+            SizedBox(height: 8.0),
+            Text('備考', style: kLabelTextStyle),
+            Text('${widget.data['remarks']}'),
+            SizedBox(height: 8.0),
+            Text('合計金額', style: kLabelTextStyle),
+            Text('¥ ${widget.data['totalPrice']}'),
+            SizedBox(height: 8.0),
+            Text('担当者', style: kLabelTextStyle),
+            DropdownButton<String>(
+              isExpanded: true,
+              icon: Icon(Icons.arrow_drop_down),
+              value: widget.shopOrderProvider.staff,
+              onChanged: (value) {
+                setState(() {
+                  widget.shopOrderProvider.staff = value;
+                });
+              },
+              items: staffs.map((value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text('$value'),
+                );
+              }).toList(),
+            ),
+            SizedBox(height: 8.0),
+            Text('配達状況', style: kLabelTextStyle),
+            DropdownButton(
+              isExpanded: true,
+              value: widget.shopOrderProvider.shipping,
+              onChanged: (value) {
+                setState(() {
+                  widget.shopOrderProvider.shipping = value;
+                });
+              },
+              items: [
+                DropdownMenuItem(
+                  value: false,
+                  child: Text('配達待ち'),
                 ),
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('顧客名'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('${widget.data['name']}'),
-                      ),
-                    ),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('住所'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('〒${widget.data['zip']}'),
-                            Text('${widget.data['address']}'),
-                            Text('${widget.data['tel']}'),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('お届け予定日'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('${widget.data['deliveryAtText']}'),
-                      ),
-                    ),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('備考'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('${widget.data['remarks']}'),
-                      ),
-                    ),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('合計金額'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('${widget.data['totalPrice']}'),
-                      ),
-                    ),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('担当者'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: DropdownButton<String>(
-                          isExpanded: true,
-                          icon: Icon(Icons.arrow_drop_down),
-                          value: widget.shopOrderProvider.staff,
-                          onChanged: (value) {
-                            setState(() {
-                              widget.shopOrderProvider.staff = value;
-                            });
-                          },
-                          items: staffs.map((value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text('$value'),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('配達状況'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: DropdownButton(
-                          isExpanded: true,
-                          value: widget.shopOrderProvider.shipping,
-                          onChanged: (value) {
-                            setState(() {
-                              widget.shopOrderProvider.shipping = value;
-                            });
-                          },
-                          items: [
-                            DropdownMenuItem(
-                              value: false,
-                              child: Text('配達待ち'),
-                            ),
-                            DropdownMenuItem(
-                              value: true,
-                              child: Text('配達済み'),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                DropdownMenuItem(
+                  value: true,
+                  child: Text('配達済み'),
                 ),
               ],
             ),
@@ -540,8 +369,8 @@ class _EditOrderDialogState extends State<EditOrderDialog> {
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
           onTap: () async {
-            if (!await widget.shopOrderProvider.updateOrder(
-                id: widget.data['id'], shopId: widget.data['shopId'])) {
+            if (!await widget.shopOrderProvider
+                .update(id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(

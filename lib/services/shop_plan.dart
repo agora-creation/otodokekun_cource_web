@@ -5,7 +5,7 @@ class ShopPlanService {
   String _subCollection = 'plan';
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
-  String getNewPlanId({String shopId}) {
+  String newId({String shopId}) {
     String id = _firebaseFirestore
         .collection(_collection)
         .doc(shopId)
@@ -15,7 +15,7 @@ class ShopPlanService {
     return id;
   }
 
-  void createPlan(Map<String, dynamic> values) {
+  void create(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])
@@ -24,7 +24,7 @@ class ShopPlanService {
         .set(values);
   }
 
-  void updatePlan(Map<String, dynamic> values) {
+  void update(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])
@@ -33,7 +33,7 @@ class ShopPlanService {
         .update(values);
   }
 
-  void deletePlan(Map<String, dynamic> values) {
+  void delete(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])

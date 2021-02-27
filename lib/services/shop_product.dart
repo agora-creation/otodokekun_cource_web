@@ -5,7 +5,7 @@ class ShopProductService {
   String _subCollection = 'product';
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
-  String getNewProductId({String shopId}) {
+  String newId({String shopId}) {
     String id = _firebaseFirestore
         .collection(_collection)
         .doc(shopId)
@@ -15,7 +15,7 @@ class ShopProductService {
     return id;
   }
 
-  void createProduct(Map<String, dynamic> values) {
+  void create(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])
@@ -24,7 +24,7 @@ class ShopProductService {
         .set(values);
   }
 
-  void updateProduct(Map<String, dynamic> values) {
+  void update(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])
@@ -33,7 +33,7 @@ class ShopProductService {
         .update(values);
   }
 
-  void deleteProduct(Map<String, dynamic> values) {
+  void delete(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])

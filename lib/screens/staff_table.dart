@@ -26,28 +26,10 @@ class StaffTable extends StatefulWidget {
 class _StaffTableState extends State<StaffTable> {
   List<DatatableHeader> _headers = [
     DatatableHeader(
-      text: 'ID',
-      value: 'id',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
-      text: '店舗ID',
-      value: 'shopId',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
       text: '担当者名',
       value: 'name',
       show: true,
       sortable: true,
-    ),
-    DatatableHeader(
-      text: '登録日時',
-      value: 'createdAt',
-      show: false,
-      sortable: false,
     ),
     DatatableHeader(
       text: '登録日時',
@@ -76,7 +58,7 @@ class _StaffTableState extends State<StaffTable> {
             showDialog(
               context: context,
               builder: (_) {
-                return AddStaffCustomDialog(
+                return AddStaffDialog(
                   shop: widget.shop,
                   shopStaffProvider: widget.shopStaffProvider,
                 );
@@ -95,7 +77,7 @@ class _StaffTableState extends State<StaffTable> {
         showDialog(
           context: context,
           builder: (_) {
-            return EditStaffCustomDialog(
+            return EditStaffDialog(
               shopStaffProvider: widget.shopStaffProvider,
               data: data,
             );
@@ -159,20 +141,20 @@ class _StaffTableState extends State<StaffTable> {
   }
 }
 
-class AddStaffCustomDialog extends StatefulWidget {
+class AddStaffDialog extends StatefulWidget {
   final ShopModel shop;
   final ShopStaffProvider shopStaffProvider;
 
-  AddStaffCustomDialog({
+  AddStaffDialog({
     @required this.shop,
     @required this.shopStaffProvider,
   });
 
   @override
-  _AddStaffCustomDialogState createState() => _AddStaffCustomDialogState();
+  _AddStaffDialogState createState() => _AddStaffDialogState();
 }
 
-class _AddStaffCustomDialogState extends State<AddStaffCustomDialog> {
+class _AddStaffDialogState extends State<AddStaffDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
@@ -200,7 +182,7 @@ class _AddStaffCustomDialogState extends State<AddStaffCustomDialog> {
           backgroundColor: Colors.blueAccent,
           onTap: () async {
             if (!await widget.shopStaffProvider
-                .createStaff(shopId: widget.shop?.id)) {
+                .create(shopId: widget.shop?.id)) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(
@@ -215,20 +197,20 @@ class _AddStaffCustomDialogState extends State<AddStaffCustomDialog> {
   }
 }
 
-class EditStaffCustomDialog extends StatefulWidget {
+class EditStaffDialog extends StatefulWidget {
   final ShopStaffProvider shopStaffProvider;
   final dynamic data;
 
-  EditStaffCustomDialog({
+  EditStaffDialog({
     @required this.shopStaffProvider,
     @required this.data,
   });
 
   @override
-  _EditStaffCustomDialogState createState() => _EditStaffCustomDialogState();
+  _EditStaffDialogState createState() => _EditStaffDialogState();
 }
 
-class _EditStaffCustomDialogState extends State<EditStaffCustomDialog> {
+class _EditStaffDialogState extends State<EditStaffDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
@@ -255,8 +237,8 @@ class _EditStaffCustomDialogState extends State<EditStaffCustomDialog> {
           labelColor: Colors.white,
           backgroundColor: Colors.redAccent,
           onTap: () async {
-            if (!await widget.shopStaffProvider.deleteStaff(
-                id: widget.data['id'], shopId: widget.data['shopId'])) {
+            if (!await widget.shopStaffProvider
+                .delete(id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(
@@ -271,8 +253,8 @@ class _EditStaffCustomDialogState extends State<EditStaffCustomDialog> {
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
           onTap: () async {
-            if (!await widget.shopStaffProvider.updateStaff(
-                id: widget.data['id'], shopId: widget.data['shopId'])) {
+            if (!await widget.shopStaffProvider
+                .update(id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(

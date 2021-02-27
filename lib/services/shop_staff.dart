@@ -6,7 +6,7 @@ class ShopStaffService {
   String _subCollection = 'staff';
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
-  String getNewStaffId({String shopId}) {
+  String newId({String shopId}) {
     String id = _firebaseFirestore
         .collection(_collection)
         .doc(shopId)
@@ -16,7 +16,7 @@ class ShopStaffService {
     return id;
   }
 
-  void createStaff(Map<String, dynamic> values) {
+  void create(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])
@@ -25,7 +25,7 @@ class ShopStaffService {
         .set(values);
   }
 
-  void updateStaff(Map<String, dynamic> values) {
+  void update(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])
@@ -34,7 +34,7 @@ class ShopStaffService {
         .update(values);
   }
 
-  void deleteStaff(Map<String, dynamic> values) {
+  void delete(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])
@@ -43,7 +43,7 @@ class ShopStaffService {
         .delete();
   }
 
-  Future<List<ShopStaffModel>> getStaffs({String shopId}) async {
+  Future<List<ShopStaffModel>> selectList({String shopId}) async {
     List<ShopStaffModel> _staffs = [];
     QuerySnapshot snapshot = await _firebaseFirestore
         .collection(_collection)

@@ -14,11 +14,11 @@ class ShopProductProvider with ChangeNotifier {
   File imageFile;
   bool published;
 
-  Future<bool> createProduct({String shopId}) async {
+  Future<bool> create({String shopId}) async {
     if (name.text == null) return false;
     if (price.text == null) return false;
-    String productId = _shopProductService.getNewProductId(shopId: shopId);
-    String imagePath = '$shopId/$productId';
+    String id = _shopProductService.newId(shopId: shopId);
+    String imagePath = '$shopId/$id';
     String imageUrl = '';
     try {
       if (imageFile != null) {
@@ -31,8 +31,8 @@ class ShopProductProvider with ChangeNotifier {
           imageUrl = uri.toString();
         });
       }
-      _shopProductService.createProduct({
-        'id': productId,
+      _shopProductService.create({
+        'id': id,
         'shopId': shopId,
         'name': name.text.trim(),
         'image': imageUrl,
@@ -49,7 +49,7 @@ class ShopProductProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateProduct({String id, String shopId}) async {
+  Future<bool> update({String id, String shopId}) async {
     if (name.text == null) return false;
     if (price.text == null) return false;
     String imagePath = '$shopId/$id';
@@ -64,7 +64,7 @@ class ShopProductProvider with ChangeNotifier {
           var uri = await ref.getDownloadURL();
           imageUrl = uri.toString();
         });
-        _shopProductService.updateProduct({
+        _shopProductService.update({
           'id': id,
           'shopId': shopId,
           'name': name.text.trim(),
@@ -75,7 +75,7 @@ class ShopProductProvider with ChangeNotifier {
           'published': published,
         });
       } else {
-        _shopProductService.updateProduct({
+        _shopProductService.update({
           'id': id,
           'shopId': shopId,
           'name': name.text.trim(),
@@ -92,7 +92,7 @@ class ShopProductProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> deleteProduct({String id, String shopId}) async {
+  Future<bool> delete({String id, String shopId}) async {
     // if (image != '') {
     //   String imagePath = '$shopId/$id';
     //   firebase.StorageReference ref = firebase
@@ -102,7 +102,7 @@ class ShopProductProvider with ChangeNotifier {
     //   await ref.delete();
     // }
     try {
-      _shopProductService.deleteProduct({
+      _shopProductService.delete({
         'id': id,
         'shopId': shopId,
       });

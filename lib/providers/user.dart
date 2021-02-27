@@ -6,12 +6,14 @@ class UserProvider with ChangeNotifier {
   UserService _userServices = UserService();
 
   bool blacklist;
+  String staff;
 
-  Future<bool> updateUser({String id}) async {
+  Future<bool> update({String id}) async {
     try {
-      _userServices.updateUser({
+      _userServices.update({
         'id': id,
         'blacklist': blacklist,
+        'staff': staff,
       });
       return true;
     } catch (e) {
@@ -20,9 +22,9 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<List<UserModel>> getUsers({String shopId}) async {
+  Future<List<UserModel>> selectList({String shopId}) async {
     List<UserModel> _users = [];
-    await _userServices.getUsers(shopId: shopId).then((value) {
+    await _userServices.selectList(shopId: shopId).then((value) {
       _users = value;
     });
     return _users;

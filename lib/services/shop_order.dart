@@ -5,7 +5,7 @@ class ShopOrderService {
   String _subCollection = 'order';
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
-  void updateOrder(Map<String, dynamic> values) {
+  void update(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/providers/shop_notice.dart';
@@ -34,18 +35,6 @@ class NoticeTable extends StatefulWidget {
 class _NoticeTableState extends State<NoticeTable> {
   List<DatatableHeader> _headers = [
     DatatableHeader(
-      text: 'ID',
-      value: 'id',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
-      text: '店舗ID',
-      value: 'shopId',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
       text: 'タイトル',
       value: 'title',
       show: true,
@@ -56,12 +45,6 @@ class _NoticeTableState extends State<NoticeTable> {
       value: 'message',
       show: true,
       sortable: true,
-    ),
-    DatatableHeader(
-      text: '登録日時',
-      value: 'createdAt',
-      show: false,
-      sortable: false,
     ),
     DatatableHeader(
       text: '登録日時',
@@ -78,7 +61,7 @@ class _NoticeTableState extends State<NoticeTable> {
   List<UserModel> _users = [];
 
   void _init() async {
-    await widget.userProvider.getUsers(shopId: widget.shop?.id).then((value) {
+    await widget.userProvider.selectList(shopId: widget.shop?.id).then((value) {
       _users = value;
     });
   }
@@ -239,7 +222,7 @@ class _AddNoticeDialogState extends State<AddNoticeDialog> {
           backgroundColor: Colors.blueAccent,
           onTap: () async {
             if (!await widget.shopNoticeProvider
-                .createNotice(shopId: widget.shop?.id)) {
+                .create(shopId: widget.shop?.id)) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(
@@ -273,7 +256,7 @@ class EditNoticeDialog extends StatefulWidget {
 
 class _EditNoticeDialogState extends State<EditNoticeDialog> {
   final ScrollController _scrollController = ScrollController();
-  List<UserModel> selecteds = [];
+  List<UserModel> users = [];
 
   @override
   Widget build(BuildContext context) {
@@ -302,7 +285,7 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
               iconData: Icons.message,
             ),
             SizedBox(height: 16.0),
-            Text('送信先選択'),
+            Text('送信先選択', style: kLabelTextStyle),
             SizedBox(height: 8.0),
             Container(
               decoration: BoxDecoration(
@@ -320,18 +303,18 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
                   itemCount: widget.users.length,
                   itemBuilder: (context, index) {
                     UserModel _user = widget.users[index];
-                    var contain = selecteds.where((e) => e.id == _user.id);
+                    var contain = users.where((e) => e.id == _user.id);
                     return CheckboxListTile(
                       title: Text('${_user.name}'),
                       value: contain.isNotEmpty,
                       activeColor: Colors.blueAccent,
                       onChanged: (value) {
-                        var contain = selecteds.where((e) => e.id == _user.id);
+                        var contain = users.where((e) => e.id == _user.id);
                         setState(() {
                           if (contain.isEmpty) {
-                            selecteds.add(_user);
+                            users.add(_user);
                           } else {
-                            selecteds.removeWhere((e) => e.id == _user.id);
+                            users.removeWhere((e) => e.id == _user.id);
                           }
                         });
                       },
@@ -344,14 +327,14 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
         ),
       ),
       actions: [
-        selecteds.length > 0
+        users.length > 0
             ? BorderRoundButton(
                 labelText: '送信する',
                 labelColor: Colors.blueAccent,
                 borderColor: Colors.blueAccent,
                 onTap: () async {
-                  if (!await widget.userNoticeProvider.createNotice(
-                      selecteds: selecteds,
+                  if (!await widget.userNoticeProvider.create(
+                      users: users,
                       title: widget.shopNoticeProvider.title.text.trim(),
                       message: widget.shopNoticeProvider.message.text)) {
                     return;
@@ -368,8 +351,8 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
           labelColor: Colors.white,
           backgroundColor: Colors.redAccent,
           onTap: () async {
-            if (!await widget.shopNoticeProvider.deleteNotice(
-                id: widget.data['id'], shopId: widget.data['shopId'])) {
+            if (!await widget.shopNoticeProvider
+                .delete(id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(
@@ -384,8 +367,8 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
           onTap: () async {
-            if (!await widget.shopNoticeProvider.updateNotice(
-                id: widget.data['id'], shopId: widget.data['shopId'])) {
+            if (!await widget.shopNoticeProvider
+                .update(id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(

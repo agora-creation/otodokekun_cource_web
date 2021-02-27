@@ -3,6 +3,7 @@ import 'dart:html';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_product.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
@@ -30,34 +31,10 @@ class ProductTable extends StatefulWidget {
 class _ProductTableState extends State<ProductTable> {
   List<DatatableHeader> _headers = [
     DatatableHeader(
-      text: 'ID',
-      value: 'id',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
-      text: '店舗ID',
-      value: 'shopId',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
       text: '商品名',
       value: 'name',
       show: true,
       sortable: true,
-    ),
-    DatatableHeader(
-      text: '商品画像',
-      value: 'image',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
-      text: '単位',
-      value: 'unit',
-      show: false,
-      sortable: false,
     ),
     DatatableHeader(
       text: '価格',
@@ -73,25 +50,7 @@ class _ProductTableState extends State<ProductTable> {
     ),
     DatatableHeader(
       text: '公開設定',
-      value: 'published',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
-      text: '公開設定',
       value: 'publishedText',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
-      text: '登録日時',
-      value: 'createdAt',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
-      text: '登録日時',
-      value: 'createdAtText',
       show: true,
       sortable: true,
     ),
@@ -237,12 +196,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
               iconData: Icons.title,
             ),
             SizedBox(height: 8.0),
-            Row(
-              children: [
-                Icon(Icons.image),
-                Text('商品画像'),
-              ],
-            ),
+            Text('商品画像', style: kLabelTextStyle),
             GestureDetector(
               onTap: () {
                 InputElement _input = FileUploadInputElement()
@@ -311,7 +265,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
           backgroundColor: Colors.blueAccent,
           onTap: () async {
             if (!await widget.shopProductProvider
-                .createProduct(shopId: widget.shop?.id)) {
+                .create(shopId: widget.shop?.id)) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(
@@ -360,12 +314,7 @@ class _EditProductDialogState extends State<EditProductDialog> {
               iconData: Icons.title,
             ),
             SizedBox(height: 8.0),
-            Row(
-              children: [
-                Icon(Icons.image),
-                Text('商品画像'),
-              ],
-            ),
+            Text('商品画像', style: kLabelTextStyle),
             GestureDetector(
               onTap: () {
                 InputElement _input = FileUploadInputElement()
@@ -430,6 +379,7 @@ class _EditProductDialogState extends State<EditProductDialog> {
               iconData: Icons.description,
             ),
             SizedBox(height: 8.0),
+            Text('公開設定', style: kLabelTextStyle),
             DropdownButton<bool>(
               isExpanded: true,
               value: widget.shopProductProvider.published,
@@ -458,8 +408,8 @@ class _EditProductDialogState extends State<EditProductDialog> {
           labelColor: Colors.white,
           backgroundColor: Colors.redAccent,
           onTap: () async {
-            if (!await widget.shopProductProvider.deleteProduct(
-                id: widget.data['id'], shopId: widget.data['shopId'])) {
+            if (!await widget.shopProductProvider
+                .delete(id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(
@@ -474,8 +424,8 @@ class _EditProductDialogState extends State<EditProductDialog> {
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
           onTap: () async {
-            if (!await widget.shopProductProvider.updateProduct(
-                id: widget.data['id'], shopId: widget.data['shopId'])) {
+            if (!await widget.shopProductProvider
+                .update(id: widget.data['id'], shopId: widget.data['shopId'])) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(

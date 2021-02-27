@@ -15,12 +15,12 @@ class ShopPlanProvider with ChangeNotifier {
   DateTime deliveryAt;
   bool published;
 
-  Future<bool> createPlan({String shopId}) async {
+  Future<bool> create({String shopId}) async {
     if (name.text == null) return false;
     if (price.text == null) return false;
     if (deliveryAt == null) return false;
-    String planId = _shopPlanService.getNewPlanId(shopId: shopId);
-    String imagePath = '$shopId/$planId';
+    String id = _shopPlanService.newId(shopId: shopId);
+    String imagePath = '$shopId/$id';
     String imageUrl = '';
     try {
       if (imageFile != null) {
@@ -33,8 +33,8 @@ class ShopPlanProvider with ChangeNotifier {
           imageUrl = uri.toString();
         });
       }
-      _shopPlanService.createPlan({
-        'id': planId,
+      _shopPlanService.create({
+        'id': id,
         'shopId': shopId,
         'name': name.text.trim(),
         'image': imageUrl,
@@ -52,7 +52,7 @@ class ShopPlanProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updatePlan({String id, String shopId}) async {
+  Future<bool> update({String id, String shopId}) async {
     if (name.text == null) return false;
     if (price.text == null) return false;
     if (deliveryAt == null) return false;
@@ -68,7 +68,7 @@ class ShopPlanProvider with ChangeNotifier {
           var uri = await ref.getDownloadURL();
           imageUrl = uri.toString();
         });
-        _shopPlanService.updatePlan({
+        _shopPlanService.update({
           'id': id,
           'shopId': shopId,
           'name': name.text.trim(),
@@ -80,7 +80,7 @@ class ShopPlanProvider with ChangeNotifier {
           'published': published,
         });
       } else {
-        _shopPlanService.updatePlan({
+        _shopPlanService.update({
           'id': id,
           'shopId': shopId,
           'name': name.text.trim(),
@@ -98,7 +98,7 @@ class ShopPlanProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> deletePlan({String id, String shopId}) async {
+  Future<bool> delete({String id, String shopId}) async {
     // if (image != '') {
     //   String imagePath = '$shopId/$id';
     //   firebase.StorageReference ref = firebase
@@ -108,7 +108,7 @@ class ShopPlanProvider with ChangeNotifier {
     //   await ref.delete();
     // }
     try {
-      _shopPlanService.deletePlan({
+      _shopPlanService.delete({
         'id': id,
         'shopId': shopId,
       });

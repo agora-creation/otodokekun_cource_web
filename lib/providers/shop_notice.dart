@@ -7,13 +7,13 @@ class ShopNoticeProvider with ChangeNotifier {
   TextEditingController title = TextEditingController();
   TextEditingController message = TextEditingController();
 
-  Future<bool> createNotice({String shopId}) async {
+  Future<bool> create({String shopId}) async {
     if (title.text == null) return false;
     if (message.text == null) return false;
-    String noticeId = _shopNoticeService.getNewNoticeId(shopId: shopId);
+    String id = _shopNoticeService.newId(shopId: shopId);
     try {
-      _shopNoticeService.createNotice({
-        'id': noticeId,
+      _shopNoticeService.create({
+        'id': id,
         'shopId': shopId,
         'title': title.text.trim(),
         'message': message.text,
@@ -26,11 +26,11 @@ class ShopNoticeProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateNotice({String id, String shopId}) async {
+  Future<bool> update({String id, String shopId}) async {
     if (title.text == null) return false;
     if (message.text == null) return false;
     try {
-      _shopNoticeService.updateNotice({
+      _shopNoticeService.update({
         'id': id,
         'shopId': shopId,
         'title': title.text.trim(),
@@ -43,9 +43,9 @@ class ShopNoticeProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> deleteNotice({String id, String shopId}) async {
+  Future<bool> delete({String id, String shopId}) async {
     try {
-      _shopNoticeService.deleteNotice({
+      _shopNoticeService.delete({
         'id': id,
         'shopId': shopId,
       });

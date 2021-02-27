@@ -15,8 +15,6 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shopProvider = Provider.of<ShopProvider>(context);
-    shopProvider.email.text = 'info@agora-c.com';
-    shopProvider.password.text = 'agora1234';
 
     return Scaffold(
       backgroundColor: kMainColor,
@@ -25,9 +23,7 @@ class LoginScreen extends StatelessWidget {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: shopProvider.status == Status.Authenticating
-              ? Center(
-                  child: LoadingWidget(),
-                )
+              ? Center(child: LoadingWidget())
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [

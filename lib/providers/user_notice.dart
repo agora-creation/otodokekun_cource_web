@@ -5,13 +5,13 @@ import 'package:otodokekun_cource_web/services/user_notice.dart';
 class UserNoticeProvider with ChangeNotifier {
   UserNoticeService _userNoticeService = UserNoticeService();
 
-  Future<bool> createNotice(
-      {List<UserModel> selecteds, String title, String message}) async {
+  Future<bool> create(
+      {List<UserModel> users, String title, String message}) async {
     try {
-      for (UserModel user in selecteds) {
-        String noticeId = _userNoticeService.getNewNoticeId(userId: user.id);
-        _userNoticeService.createNotice({
-          'id': noticeId,
+      for (UserModel user in users) {
+        String id = _userNoticeService.newId(userId: user.id);
+        _userNoticeService.create({
+          'id': id,
           'userId': user.id,
           'title': title,
           'message': message,

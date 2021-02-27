@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
@@ -26,34 +26,10 @@ class UserTable extends StatefulWidget {
 class _UserTableState extends State<UserTable> {
   List<DatatableHeader> _headers = [
     DatatableHeader(
-      text: 'ID',
-      value: 'id',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
-      text: '店舗ID',
-      value: 'shopId',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
       text: '名前',
       value: 'name',
       show: true,
       sortable: true,
-    ),
-    DatatableHeader(
-      text: '郵便番号',
-      value: 'zip',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
-      text: '住所',
-      value: 'address',
-      show: false,
-      sortable: false,
     ),
     DatatableHeader(
       text: '電話番号',
@@ -75,33 +51,9 @@ class _UserTableState extends State<UserTable> {
     ),
     DatatableHeader(
       text: 'ブラックリスト',
-      value: 'blacklist',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
-      text: 'ブラックリスト',
       value: 'blacklistText',
       show: true,
       sortable: true,
-    ),
-    DatatableHeader(
-      text: '担当者',
-      value: 'staff',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
-      text: 'トークン',
-      value: 'token',
-      show: false,
-      sortable: false,
-    ),
-    DatatableHeader(
-      text: '登録日時',
-      value: 'createdAt',
-      show: false,
-      sortable: false,
     ),
   ];
   int _currentPerPage = 10;
@@ -124,7 +76,7 @@ class _UserTableState extends State<UserTable> {
         showDialog(
           context: context,
           builder: (_) {
-            return EditUserCustomDialog(
+            return EditUserDialog(
               userProvider: widget.userProvider,
               data: data,
             );
@@ -188,20 +140,20 @@ class _UserTableState extends State<UserTable> {
   }
 }
 
-class EditUserCustomDialog extends StatefulWidget {
+class EditUserDialog extends StatefulWidget {
   final UserProvider userProvider;
   final dynamic data;
 
-  EditUserCustomDialog({
+  EditUserDialog({
     @required this.userProvider,
     @required this.data,
   });
 
   @override
-  _EditUserCustomDialogState createState() => _EditUserCustomDialogState();
+  _EditUserDialogState createState() => _EditUserDialogState();
 }
 
-class _EditUserCustomDialogState extends State<EditUserCustomDialog> {
+class _EditUserDialogState extends State<EditUserDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
@@ -211,99 +163,39 @@ class _EditUserCustomDialogState extends State<EditUserCustomDialog> {
         child: ListView(
           shrinkWrap: true,
           children: [
-            Table(
-              border: TableBorder.all(width: 1.0, color: Colors.black54),
+            Text('名前', style: kLabelTextStyle),
+            Text('${widget.data['name']}'),
+            SizedBox(height: 8.0),
+            Text('登録住所', style: kLabelTextStyle),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('住所'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('〒${widget.data['zip']}'),
-                            Text('${widget.data['address']}'),
-                            Text('${widget.data['tel']}'),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                Text('〒${widget.data['zip']}'),
+                Text('${widget.data['address']}'),
+                Text('${widget.data['tel']}'),
+              ],
+            ),
+            SizedBox(height: 8.0),
+            Text('メールアドレス', style: kLabelTextStyle),
+            Text('${widget.data['email']}'),
+            SizedBox(height: 8.0),
+            Text('ブラックリスト', style: kLabelTextStyle),
+            DropdownButton<bool>(
+              isExpanded: true,
+              value: widget.userProvider.blacklist,
+              onChanged: (value) {
+                setState(() {
+                  widget.userProvider.blacklist = value;
+                });
+              },
+              items: [
+                DropdownMenuItem<bool>(
+                  value: false,
+                  child: Text('設定なし'),
                 ),
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('メールアドレス'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('${widget.data['email']}'),
-                      ),
-                    ),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('登録日時'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          '${DateFormat('yyyy/MM/dd HH:mm').format(widget.data['createdAt'])}',
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('ブラックリスト'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: DropdownButton(
-                          isExpanded: true,
-                          value: widget.userProvider.blacklist,
-                          onChanged: (value) {
-                            setState(() {
-                              widget.userProvider.blacklist = value;
-                            });
-                          },
-                          items: [
-                            DropdownMenuItem(
-                              value: false,
-                              child: Text('設定なし'),
-                            ),
-                            DropdownMenuItem(
-                              value: true,
-                              child: Text('設定済み'),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                DropdownMenuItem<bool>(
+                  value: true,
+                  child: Text('設定済み'),
                 ),
               ],
             ),
@@ -316,7 +208,7 @@ class _EditUserCustomDialogState extends State<EditUserCustomDialog> {
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
           onTap: () async {
-            if (!await widget.userProvider.updateUser(id: widget.data['id'])) {
+            if (!await widget.userProvider.update(id: widget.data['id'])) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(

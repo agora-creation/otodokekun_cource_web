@@ -75,5 +75,6 @@ class ShopOrderModel {
         'shipping': shipping,
         'shippingText': shipping ? '配達済み' : '配達待ち',
         'createdAt': createdAt,
+        'createdAtText': DateFormat('yyyy/MM/dd HH:mm').format(createdAt),
       };
 }

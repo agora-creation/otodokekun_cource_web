@@ -4,9 +4,8 @@ import 'package:otodokekun_cource_web/models/shop_staff.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_staff.dart';
 import 'package:otodokekun_cource_web/screens/staff_table.dart';
+import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
 import 'package:provider/provider.dart';
-
-import '../widgets/custom_admin_scaffold.dart';
 
 class StaffScreen extends StatelessWidget {
   static const String id = 'staff';
@@ -22,6 +21,7 @@ class StaffScreen extends StatelessWidget {
         .orderBy('createdAt', descending: true)
         .snapshots();
     List<Map<String, dynamic>> _source = [];
+
     return CustomAdminScaffold(
       shopProvider: shopProvider,
       selectedRoute: id,

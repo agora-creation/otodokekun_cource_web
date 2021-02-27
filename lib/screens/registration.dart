@@ -14,6 +14,7 @@ class RegistrationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shopProvider = Provider.of<ShopProvider>(context);
+
     return Scaffold(
       backgroundColor: kMainColor,
       body: SingleChildScrollView(
@@ -21,9 +22,7 @@ class RegistrationScreen extends StatelessWidget {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: shopProvider.status == Status.Authenticating
-              ? Center(
-                  child: LoadingWidget(),
-                )
+              ? Center(child: LoadingWidget())
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [

@@ -46,7 +46,7 @@ class CustomAdminScaffold extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (_) {
-                  return EditShopCustomDialog(shopProvider: shopProvider);
+                  return EditShopDialog(shopProvider: shopProvider);
                 },
               );
             },
@@ -95,16 +95,16 @@ class CustomAdminScaffold extends StatelessWidget {
   }
 }
 
-class EditShopCustomDialog extends StatefulWidget {
+class EditShopDialog extends StatefulWidget {
   final ShopProvider shopProvider;
 
-  EditShopCustomDialog({@required this.shopProvider});
+  EditShopDialog({@required this.shopProvider});
 
   @override
-  _EditShopCustomDialogState createState() => _EditShopCustomDialogState();
+  _EditShopDialogState createState() => _EditShopDialogState();
 }
 
-class _EditShopCustomDialogState extends State<EditShopCustomDialog> {
+class _EditShopDialogState extends State<EditShopDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
@@ -177,6 +177,7 @@ class _EditShopCustomDialogState extends State<EditShopCustomDialog> {
               iconData: Icons.message,
             ),
             SizedBox(height: 8.0),
+            Text('キャンセル期限日', style: kLabelTextStyle),
             DropdownButton<int>(
               isExpanded: true,
               value: widget.shopProvider.cancelLimit,
@@ -186,21 +187,22 @@ class _EditShopCustomDialogState extends State<EditShopCustomDialog> {
                 });
               },
               items: widget.shopProvider.cancelLimitList.map((value) {
-                return DropdownMenuItem(
+                return DropdownMenuItem<int>(
                   value: value,
-                  child: Text('注文のキャンセルは$value日前まで可能'),
+                  child: Text('$value日前'),
                 );
               }).toList(),
             ),
             SizedBox(height: 8.0),
+            Text('締日', style: kLabelTextStyle),
             DropdownButton<String>(
               isExpanded: true,
-              value: '締日は末日です',
+              value: '末日',
               onChanged: (value) {},
               items: [
                 DropdownMenuItem<String>(
-                  value: '締日は末日です',
-                  child: Text('締日は末日です'),
+                  value: '末日',
+                  child: Text('末日'),
                 ),
               ],
             ),
@@ -229,7 +231,7 @@ class _EditShopCustomDialogState extends State<EditShopCustomDialog> {
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
           onTap: () async {
-            if (!await widget.shopProvider.updateShop()) {
+            if (!await widget.shopProvider.update()) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(

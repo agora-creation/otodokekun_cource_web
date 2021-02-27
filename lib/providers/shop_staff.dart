@@ -7,12 +7,12 @@ class ShopStaffProvider with ChangeNotifier {
 
   TextEditingController name = TextEditingController();
 
-  Future<bool> createStaff({String shopId}) async {
+  Future<bool> create({String shopId}) async {
     if (name.text == null) return false;
-    String staffId = _shopStaffService.getNewStaffId(shopId: shopId);
+    String id = _shopStaffService.newId(shopId: shopId);
     try {
-      _shopStaffService.createStaff({
-        'id': staffId,
+      _shopStaffService.create({
+        'id': id,
         'shopId': shopId,
         'name': name.text.trim(),
         'createdAt': DateTime.now(),
@@ -24,10 +24,10 @@ class ShopStaffProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateStaff({String id, String shopId}) async {
+  Future<bool> update({String id, String shopId}) async {
     if (name.text == null) return false;
     try {
-      _shopStaffService.updateStaff({
+      _shopStaffService.update({
         'id': id,
         'shopId': shopId,
         'name': name.text.trim(),
@@ -39,9 +39,9 @@ class ShopStaffProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> deleteStaff({String id, String shopId}) async {
+  Future<bool> delete({String id, String shopId}) async {
     try {
-      _shopStaffService.deleteStaff({
+      _shopStaffService.delete({
         'id': id,
         'shopId': shopId,
       });
@@ -56,9 +56,9 @@ class ShopStaffProvider with ChangeNotifier {
     name.text = '';
   }
 
-  Future<List<ShopStaffModel>> getStaffs({String shopId}) async {
+  Future<List<ShopStaffModel>> selectList({String shopId}) async {
     List<ShopStaffModel> _staffs = [];
-    await _shopStaffService.getStaffs(shopId: shopId).then((value) {
+    await _shopStaffService.selectList(shopId: shopId).then((value) {
       _staffs = value;
     });
     return _staffs;

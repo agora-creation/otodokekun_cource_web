@@ -5,7 +5,11 @@ class CustomDialog extends StatelessWidget {
   final Widget content;
   final List<Widget> actions;
 
-  CustomDialog({this.title, this.content, this.actions});
+  CustomDialog({
+    this.title,
+    this.content,
+    this.actions,
+  });
 
   @override
   Widget build(BuildContext context) {

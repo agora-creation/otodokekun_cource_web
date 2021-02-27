@@ -22,6 +22,7 @@ class CartListTile extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: Colors.black54),
+          borderRadius: BorderRadius.circular(8.0),
         ),
         child: ListTile(
           leading: image != ''
@@ -35,7 +36,7 @@ class CartListTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('¥ $price / $unit'),
-              Text('$quantity $unit'),
+              Text('数量 $quantity $unit'),
             ],
           ),
         ),
