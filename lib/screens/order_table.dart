@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/cart.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
@@ -10,7 +8,6 @@ import 'package:otodokekun_cource_web/providers/shop_staff.dart';
 import 'package:otodokekun_cource_web/widgets/cart_list_tile.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
-import 'package:otodokekun_cource_web/widgets/fill_box_icon_button.dart';
 import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 
@@ -34,7 +31,7 @@ class OrderTable extends StatefulWidget {
 class _OrderTableState extends State<OrderTable> {
   List<DatatableHeader> _headers = [
     DatatableHeader(
-      text: '顧客名',
+      text: '注文者',
       value: 'name',
       show: true,
       sortable: true,
@@ -46,7 +43,7 @@ class _OrderTableState extends State<OrderTable> {
       sortable: true,
     ),
     DatatableHeader(
-      text: 'お届け予定日',
+      text: 'お届け日',
       value: 'deliveryAtText',
       show: true,
       sortable: true,
@@ -107,66 +104,7 @@ class _OrderTableState extends State<OrderTable> {
     return CustomTable(
       title: '注文一覧',
       actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '表示期間(お届け予定日)',
-                  style: TextStyle(color: Colors.grey, fontSize: 12.0),
-                ),
-                FillBoxIconButton(
-                  iconData: Icons.calendar_today,
-                  labelText: '${DateFormat('yyyy年MM月').format(selectMonth)}',
-                  labelColor: Colors.white,
-                  backgroundColor: Colors.lightBlueAccent,
-                  onTap: () async {
-                    var selected = await showMonthPicker(
-                      context: context,
-                      initialDate: selectMonth,
-                      firstDate: firstDate,
-                      lastDate: lastDate,
-                    );
-                    if (selected == null) return;
-                    setState(() {
-                      selectMonth = selected;
-                    });
-                  },
-                ),
-              ],
-            ),
-            SizedBox(width: 16.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '配達状況',
-                  style: TextStyle(color: Colors.grey, fontSize: 12.0),
-                ),
-                DropdownButton<bool>(
-                  value: selectShipping,
-                  onChanged: (value) {
-                    setState(() {
-                      selectShipping = value;
-                    });
-                  },
-                  items: [
-                    DropdownMenuItem<bool>(
-                      value: false,
-                      child: Text('配達待ち'),
-                    ),
-                    DropdownMenuItem(
-                      value: true,
-                      child: Text('配達済み'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
+
       ],
       headers: _headers,
       source: widget.source,
@@ -300,13 +238,13 @@ class _EditOrderDialogState extends State<EditOrderDialog> {
             Text('注文日時', style: kLabelTextStyle),
             Text('${widget.data['createdAtText']}'),
             SizedBox(height: 8.0),
-            Text('お届け予定日', style: kLabelTextStyle),
+            Text('お届け日', style: kLabelTextStyle),
             Text('${widget.data['deliveryAtText']}'),
             SizedBox(height: 8.0),
-            Text('顧客名', style: kLabelTextStyle),
+            Text('注文者', style: kLabelTextStyle),
             Text('${widget.data['name']}'),
             SizedBox(height: 8.0),
-            Text('お届け住所', style: kLabelTextStyle),
+            Text('お届け先', style: kLabelTextStyle),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

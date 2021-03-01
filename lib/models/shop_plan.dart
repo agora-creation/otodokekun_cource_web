@@ -46,7 +46,7 @@ class ShopPlanModel {
         'price': price,
         'description': description,
         'deliveryAt': deliveryAt,
-        'deliveryAtText': DateFormat('yyyy/MM/dd HH:mm').format(deliveryAt),
+        'deliveryAtText': DateFormat('yyyy/MM/dd').format(deliveryAt),
         'published': published,
         'publishedText': published ? '公開' : '非公開',
         'createdAt': createdAt,
