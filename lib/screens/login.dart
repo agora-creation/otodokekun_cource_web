@@ -86,7 +86,7 @@ class LoginScreen extends StatelessWidget {
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                                 child: FillRoundButton(
-                                  labelText: 'ログイン',
+                                  labelText: 'ログインする',
                                   labelColor: Colors.white,
                                   backgroundColor: Colors.blueAccent,
                                   onTap: () async {

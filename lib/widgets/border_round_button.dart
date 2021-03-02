@@ -21,15 +21,15 @@ class BorderRoundButton extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           border: Border.all(color: borderColor),
-          borderRadius: BorderRadius.circular(20.0),
+          borderRadius: BorderRadius.circular(32.0),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+          padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
           child: Text(
             labelText,
             style: TextStyle(
               color: labelColor,
-              fontSize: 14.0,
+              fontSize: 16.0,
             ),
           ),
         ),

@@ -4,10 +4,10 @@ import 'package:otodokekun_cource_web/helpers/side_menu.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/screens/login.dart';
-import 'package:otodokekun_cource_web/widgets/border_round_button.dart';
+import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
-import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
+import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
 
 class CustomAdminScaffold extends StatelessWidget {
   final ShopProvider shopProvider;
@@ -193,27 +193,20 @@ class _EditShopDialogState extends State<EditShopDialog> {
                 );
               }).toList(),
             ),
-            SizedBox(height: 8.0),
-            Text('締日', style: kLabelTextStyle),
-            DropdownButton<String>(
-              isExpanded: true,
-              value: '末日',
-              onChanged: (value) {},
-              items: [
-                DropdownMenuItem<String>(
-                  value: '末日',
-                  child: Text('末日'),
-                ),
-              ],
-            ),
           ],
         ),
       ),
       actions: [
-        BorderRoundButton(
-          labelText: 'ログアウト',
+        BorderBoxButton(
+          labelText: '閉じる',
           labelColor: Colors.blueAccent,
           borderColor: Colors.blueAccent,
+          onTap: () => Navigator.pop(context),
+        ),
+        BorderBoxButton(
+          labelText: 'ログアウト',
+          labelColor: Colors.redAccent,
+          borderColor: Colors.redAccent,
           onTap: () {
             widget.shopProvider.signOut();
             widget.shopProvider.clearController();
@@ -226,7 +219,7 @@ class _EditShopDialogState extends State<EditShopDialog> {
             );
           },
         ),
-        FillRoundButton(
+        FillBoxButton(
           labelText: '変更を保存',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,

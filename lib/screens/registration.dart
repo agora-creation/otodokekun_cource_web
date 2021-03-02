@@ -109,14 +109,14 @@ class RegistrationScreen extends StatelessWidget {
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                                 child: BorderRoundButton(
-                                  labelText: '新規登録',
+                                  labelText: '登録する',
                                   labelColor: Colors.blueAccent,
                                   borderColor: Colors.blueAccent,
                                   onTap: () async {
                                     if (!await shopProvider.signUp()) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
-                                        SnackBar(content: Text('新規登録できませんでした')),
+                                        SnackBar(content: Text('登録できませんでした')),
                                       );
                                       return;
                                     }
@@ -129,7 +129,7 @@ class RegistrationScreen extends StatelessWidget {
                             ],
                           ),
                           LinkButton(
-                            labelText: 'ログインはコチラ',
+                            labelText: '登録済みの方はコチラ',
                             onTap: () => Navigator.pop(context),
                           ),
                         ],

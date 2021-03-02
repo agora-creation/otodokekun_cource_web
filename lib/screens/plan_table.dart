@@ -7,12 +7,12 @@ import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_plan.dart';
+import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_icon_button.dart';
-import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 
 class PlanTable extends StatefulWidget {
@@ -33,7 +33,7 @@ class PlanTable extends StatefulWidget {
 class _PlanTableState extends State<PlanTable> {
   List<DatatableHeader> _headers = [
     DatatableHeader(
-      text: 'お届け指定日',
+      text: 'お届け日',
       value: 'deliveryAtText',
       show: true,
       sortable: true,
@@ -72,7 +72,7 @@ class _PlanTableState extends State<PlanTable> {
   @override
   Widget build(BuildContext context) {
     return CustomTable(
-      title: '日付指定商品一覧',
+      title: '定期商品一覧',
       actions: [
         FillBoxButton(
           labelText: '新規登録',
@@ -80,7 +80,8 @@ class _PlanTableState extends State<PlanTable> {
           backgroundColor: Colors.blueAccent,
           onTap: () {
             widget.shopPlanProvider.clearController();
-            widget.shopPlanProvider.deliveryAt = DateTime.now();
+            widget.shopPlanProvider.deliveryAt =
+                DateTime.now().add(Duration(days: widget.shop.cancelLimit));
             showDialog(
               context: context,
               builder: (_) {
@@ -191,7 +192,7 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: '新規登録',
+      title: '定期商品の新規登録',
       content: Container(
         width: 450.0,
         child: ListView(
@@ -202,7 +203,7 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
               obscureText: false,
               textInputType: TextInputType.name,
               maxLines: 1,
-              labelText: '日付指定商品名',
+              labelText: '商品名',
               iconData: Icons.title,
             ),
             SizedBox(height: 8.0),
@@ -266,7 +267,7 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
               iconData: Icons.description,
             ),
             SizedBox(height: 8.0),
-            Text('お届け指定日', style: kLabelTextStyle),
+            Text('お届け日', style: kLabelTextStyle),
             SizedBox(height: 4.0),
             FillBoxIconButton(
               iconData: Icons.calendar_today,
@@ -279,8 +280,9 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
                   locale: const Locale('ja'),
                   context: context,
                   initialDate: widget.shopPlanProvider.deliveryAt,
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime.now().add(Duration(days: 14)),
+                  firstDate: DateTime.now()
+                      .add(Duration(days: widget.shop.cancelLimit)),
+                  lastDate: DateTime.now().add(Duration(days: 365)),
                 );
                 if (selected == null) return;
                 setState(() {
@@ -292,8 +294,14 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
         ),
       ),
       actions: [
-        FillRoundButton(
-          labelText: '登録する',
+        BorderBoxButton(
+          labelText: '閉じる',
+          labelColor: Colors.blueAccent,
+          borderColor: Colors.blueAccent,
+          onTap: () => Navigator.pop(context),
+        ),
+        FillBoxButton(
+          labelText: '新規登録',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
           onTap: () async {
@@ -332,7 +340,7 @@ class _EditPlanDialogState extends State<EditPlanDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: '${widget.data['name']}',
+      title: '${widget.data['name']}の詳細',
       content: Container(
         width: 450.0,
         child: ListView(
@@ -343,7 +351,7 @@ class _EditPlanDialogState extends State<EditPlanDialog> {
               obscureText: false,
               textInputType: TextInputType.name,
               maxLines: 1,
-              labelText: '日付指定商品名',
+              labelText: '商品名',
               iconData: Icons.title,
             ),
             SizedBox(height: 8.0),
@@ -412,7 +420,7 @@ class _EditPlanDialogState extends State<EditPlanDialog> {
               iconData: Icons.description,
             ),
             SizedBox(height: 8.0),
-            Text('お届け指定日', style: kLabelTextStyle),
+            Text('お届け日', style: kLabelTextStyle),
             SizedBox(height: 4.0),
             FillBoxIconButton(
               iconData: Icons.calendar_today,
@@ -425,8 +433,8 @@ class _EditPlanDialogState extends State<EditPlanDialog> {
                   locale: const Locale('ja'),
                   context: context,
                   initialDate: widget.shopPlanProvider.deliveryAt,
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime.now().add(Duration(days: 14)),
+                  firstDate: DateTime.now().subtract(Duration(days: 365)),
+                  lastDate: DateTime.now().add(Duration(days: 365)),
                 );
                 if (selected == null) return;
                 setState(() {
@@ -458,8 +466,14 @@ class _EditPlanDialogState extends State<EditPlanDialog> {
         ),
       ),
       actions: [
-        FillRoundButton(
-          labelText: '削除する',
+        BorderBoxButton(
+          labelText: '閉じる',
+          labelColor: Colors.blueAccent,
+          borderColor: Colors.blueAccent,
+          onTap: () => Navigator.pop(context),
+        ),
+        FillBoxButton(
+          labelText: '削除',
           labelColor: Colors.white,
           backgroundColor: Colors.redAccent,
           onTap: () async {
@@ -474,7 +488,7 @@ class _EditPlanDialogState extends State<EditPlanDialog> {
             Navigator.pop(context);
           },
         ),
-        FillRoundButton(
+        FillBoxButton(
           labelText: '変更を保存',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,

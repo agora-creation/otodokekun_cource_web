@@ -14,12 +14,12 @@ const List<MenuItem> kSideMenu = [
     icon: Icons.local_shipping,
   ),
   MenuItem(
-    title: '日付指定商品',
+    title: '定期商品',
     route: PlanScreen.id,
     icon: Icons.view_in_ar,
   ),
   MenuItem(
-    title: '商品',
+    title: '個別商品',
     route: ProductScreen.id,
     icon: Icons.view_in_ar,
   ),

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
+import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
-import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
+import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 import 'package:responsive_table/responsive_table.dart';
 
@@ -157,7 +158,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: '${widget.data['name']}',
+      title: '${widget.data['name']}の詳細',
       content: Container(
         width: 450.0,
         child: ListView(
@@ -203,7 +204,13 @@ class _EditUserDialogState extends State<EditUserDialog> {
         ),
       ),
       actions: [
-        FillRoundButton(
+        BorderBoxButton(
+          labelText: '閉じる',
+          labelColor: Colors.blueAccent,
+          borderColor: Colors.blueAccent,
+          onTap: () => Navigator.pop(context),
+        ),
+        FillBoxButton(
           labelText: '変更を保存',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,

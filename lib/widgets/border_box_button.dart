@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-class FillRoundButton extends StatelessWidget {
+class BorderBoxButton extends StatelessWidget {
   final String labelText;
   final Color labelColor;
-  final Color backgroundColor;
+  final Color borderColor;
   final Function onTap;
 
-  FillRoundButton({
+  BorderBoxButton({
     this.labelText,
     this.labelColor,
-    this.backgroundColor,
+    this.borderColor,
     this.onTap,
   });
 
@@ -20,16 +20,16 @@ class FillRoundButton extends StatelessWidget {
       child: Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(32.0),
+          border: Border.all(color: borderColor),
+          borderRadius: BorderRadius.circular(4.0),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
           child: Text(
             labelText,
             style: TextStyle(
               color: labelColor,
-              fontSize: 16.0,
+              fontSize: 14.0,
             ),
           ),
         ),

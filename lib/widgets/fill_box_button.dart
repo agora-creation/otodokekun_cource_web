@@ -24,7 +24,7 @@ class FillBoxButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(4.0),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
           child: Text(
             labelText,
             style: TextStyle(

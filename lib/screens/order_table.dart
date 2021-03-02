@@ -5,10 +5,11 @@ import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/shop_staff.dart';
 import 'package:otodokekun_cource_web/providers/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/shop_staff.dart';
+import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/cart_list_tile.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
-import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
+import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 
 class OrderTable extends StatefulWidget {
@@ -80,11 +81,6 @@ class _OrderTableState extends State<OrderTable> {
   bool _sortAscending = true;
   List<ShopStaffModel> _staffs = [];
 
-  DateTime selectMonth = DateTime.now();
-  DateTime firstDate = DateTime(DateTime.now().year - 1);
-  DateTime lastDate = DateTime(DateTime.now().year + 1);
-  bool selectShipping = false;
-
   void _init() async {
     await widget.shopStaffProvider
         .selectList(shopId: widget.shop?.id)
@@ -104,7 +100,12 @@ class _OrderTableState extends State<OrderTable> {
     return CustomTable(
       title: '注文一覧',
       actions: [
-
+        BorderBoxButton(
+          labelText: '検索',
+          labelColor: Colors.blueAccent,
+          borderColor: Colors.blueAccent,
+          onTap: () {},
+        ),
       ],
       headers: _headers,
       source: widget.source,
@@ -213,7 +214,7 @@ class _EditOrderDialogState extends State<EditOrderDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: '注文詳細',
+      title: '注文の詳細',
       content: Container(
         width: 450.0,
         child: ListView(
@@ -302,7 +303,13 @@ class _EditOrderDialogState extends State<EditOrderDialog> {
         ),
       ),
       actions: [
-        FillRoundButton(
+        BorderBoxButton(
+          labelText: '閉じる',
+          labelColor: Colors.blueAccent,
+          borderColor: Colors.blueAccent,
+          onTap: () => Navigator.pop(context),
+        ),
+        FillBoxButton(
           labelText: '変更を保存',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,

@@ -5,12 +5,11 @@ import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/providers/shop_notice.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/providers/user_notice.dart';
-import 'package:otodokekun_cource_web/widgets/border_round_button.dart';
+import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
-import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 
 class NoticeTable extends StatefulWidget {
@@ -189,7 +188,7 @@ class _AddNoticeDialogState extends State<AddNoticeDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: '新規登録',
+      title: 'お知らせの新規登録',
       content: Container(
         width: 450.0,
         child: ListView(
@@ -216,8 +215,14 @@ class _AddNoticeDialogState extends State<AddNoticeDialog> {
         ),
       ),
       actions: [
-        FillRoundButton(
-          labelText: '登録する',
+        BorderBoxButton(
+          labelText: '閉じる',
+          labelColor: Colors.blueAccent,
+          borderColor: Colors.blueAccent,
+          onTap: () => Navigator.pop(context),
+        ),
+        FillBoxButton(
+          labelText: '新規登録',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
           onTap: () async {
@@ -261,7 +266,7 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: '${widget.data['title']}',
+      title: '${widget.data['title']}の詳細',
       content: Container(
         width: 450.0,
         child: ListView(
@@ -327,8 +332,14 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
         ),
       ),
       actions: [
+        BorderBoxButton(
+          labelText: '閉じる',
+          labelColor: Colors.blueAccent,
+          borderColor: Colors.blueAccent,
+          onTap: () => Navigator.pop(context),
+        ),
         users.length > 0
-            ? BorderRoundButton(
+            ? BorderBoxButton(
                 labelText: '送信する',
                 labelColor: Colors.blueAccent,
                 borderColor: Colors.blueAccent,
@@ -346,7 +357,7 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
                 },
               )
             : Container(),
-        FillRoundButton(
+        FillBoxButton(
           labelText: '削除する',
           labelColor: Colors.white,
           backgroundColor: Colors.redAccent,
@@ -362,7 +373,7 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
             Navigator.pop(context);
           },
         ),
-        FillRoundButton(
+        FillBoxButton(
           labelText: '変更を保存',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,

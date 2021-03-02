@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_product.dart';
+import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
-import 'package:otodokekun_cource_web/widgets/fill_round_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 
 class ProductTable extends StatefulWidget {
@@ -64,7 +64,7 @@ class _ProductTableState extends State<ProductTable> {
   @override
   Widget build(BuildContext context) {
     return CustomTable(
-      title: '商品一覧',
+      title: '個別商品一覧',
       actions: [
         FillBoxButton(
           labelText: '新規登録',
@@ -181,7 +181,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: '新規登録',
+      title: '個別商品の新規登録',
       content: Container(
         width: 450.0,
         child: ListView(
@@ -259,8 +259,14 @@ class _AddProductDialogState extends State<AddProductDialog> {
         ),
       ),
       actions: [
-        FillRoundButton(
-          labelText: '登録する',
+        BorderBoxButton(
+          labelText: '閉じる',
+          labelColor: Colors.blueAccent,
+          borderColor: Colors.blueAccent,
+          onTap: () => Navigator.pop(context),
+        ),
+        FillBoxButton(
+          labelText: '新規登録',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
           onTap: () async {
@@ -299,7 +305,7 @@ class _EditProductDialogState extends State<EditProductDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: '${widget.data['name']}',
+      title: '${widget.data['name']}の詳細',
       content: Container(
         width: 450.0,
         child: ListView(
@@ -403,8 +409,14 @@ class _EditProductDialogState extends State<EditProductDialog> {
         ),
       ),
       actions: [
-        FillRoundButton(
-          labelText: '削除する',
+        BorderBoxButton(
+          labelText: '閉じる',
+          labelColor: Colors.blueAccent,
+          borderColor: Colors.blueAccent,
+          onTap: () => Navigator.pop(context),
+        ),
+        FillBoxButton(
+          labelText: '削除',
           labelColor: Colors.white,
           backgroundColor: Colors.redAccent,
           onTap: () async {
@@ -419,7 +431,7 @@ class _EditProductDialogState extends State<EditProductDialog> {
             Navigator.pop(context);
           },
         ),
-        FillRoundButton(
+        FillBoxButton(
           labelText: '変更を保存',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
