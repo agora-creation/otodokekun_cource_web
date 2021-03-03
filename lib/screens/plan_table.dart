@@ -433,7 +433,7 @@ class _EditPlanDialogState extends State<EditPlanDialog> {
                   locale: const Locale('ja'),
                   context: context,
                   initialDate: widget.shopPlanProvider.deliveryAt,
-                  firstDate: DateTime.now().subtract(Duration(days: 365)),
+                  firstDate: DateTime.now(),
                   lastDate: DateTime.now().add(Duration(days: 365)),
                 );
                 if (selected == null) return;
