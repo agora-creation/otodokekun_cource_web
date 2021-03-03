@@ -21,8 +21,12 @@ class CartListTile extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 8.0),
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.black54),
-          borderRadius: BorderRadius.circular(8.0),
+          border: Border(
+            bottom: BorderSide(
+              width: 1.0,
+              color: Colors.grey.shade300,
+            ),
+          ),
         ),
         child: ListTile(
           leading: image != ''

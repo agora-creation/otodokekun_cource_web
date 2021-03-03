@@ -20,7 +20,7 @@ class OrderScreen extends StatelessWidget {
         .collection('shop')
         .doc(shopProvider.shop?.id)
         .collection('order')
-        .orderBy('createdAt', descending: true)
+        .orderBy('deliveryAt', descending: true)
         .snapshots();
     List<Map<String, dynamic>> _source = [];
 

@@ -314,8 +314,10 @@ class _EditOrderDialogState extends State<EditOrderDialog> {
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
           onTap: () async {
-            if (!await widget.shopOrderProvider
-                .update(id: widget.data['id'], shopId: widget.data['shopId'])) {
+            if (!await widget.shopOrderProvider.update(
+                id: widget.data['id'],
+                shopId: widget.data['shopId'],
+                userId: widget.data['userId'])) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(
