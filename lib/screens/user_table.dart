@@ -205,12 +205,14 @@ class _EditUserDialogState extends State<EditUserDialog> {
       ),
       actions: [
         BorderBoxButton(
+          iconData: Icons.close,
           labelText: '閉じる',
-          labelColor: Colors.blueAccent,
-          borderColor: Colors.blueAccent,
+          labelColor: Colors.blueGrey,
+          borderColor: Colors.blueGrey,
           onTap: () => Navigator.pop(context),
         ),
         FillBoxButton(
+          iconData: Icons.check,
           labelText: '変更を保存',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,

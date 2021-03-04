@@ -12,7 +12,7 @@ import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
-import 'package:otodokekun_cource_web/widgets/fill_box_icon_button.dart';
+import 'package:otodokekun_cource_web/widgets/fill_box_form_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 
 class PlanTable extends StatefulWidget {
@@ -75,6 +75,7 @@ class _PlanTableState extends State<PlanTable> {
       title: '定期商品一覧',
       actions: [
         FillBoxButton(
+          iconData: Icons.add,
           labelText: '新規登録',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
@@ -269,7 +270,7 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
             SizedBox(height: 8.0),
             Text('お届け日', style: kLabelTextStyle),
             SizedBox(height: 4.0),
-            FillBoxIconButton(
+            FillBoxFormButton(
               iconData: Icons.calendar_today,
               labelText:
                   '${DateFormat('yyyy/MM/dd').format(widget.shopPlanProvider.deliveryAt)}',
@@ -295,12 +296,14 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
       ),
       actions: [
         BorderBoxButton(
+          iconData: Icons.close,
           labelText: '閉じる',
-          labelColor: Colors.blueAccent,
-          borderColor: Colors.blueAccent,
+          labelColor: Colors.blueGrey,
+          borderColor: Colors.blueGrey,
           onTap: () => Navigator.pop(context),
         ),
         FillBoxButton(
+          iconData: Icons.add,
           labelText: '新規登録',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
@@ -422,7 +425,7 @@ class _EditPlanDialogState extends State<EditPlanDialog> {
             SizedBox(height: 8.0),
             Text('お届け日', style: kLabelTextStyle),
             SizedBox(height: 4.0),
-            FillBoxIconButton(
+            FillBoxFormButton(
               iconData: Icons.calendar_today,
               labelText:
                   '${DateFormat('yyyy/MM/dd').format(widget.shopPlanProvider.deliveryAt)}',
@@ -467,12 +470,14 @@ class _EditPlanDialogState extends State<EditPlanDialog> {
       ),
       actions: [
         BorderBoxButton(
+          iconData: Icons.close,
           labelText: '閉じる',
-          labelColor: Colors.blueAccent,
-          borderColor: Colors.blueAccent,
+          labelColor: Colors.blueGrey,
+          borderColor: Colors.blueGrey,
           onTap: () => Navigator.pop(context),
         ),
         FillBoxButton(
+          iconData: Icons.delete,
           labelText: '削除',
           labelColor: Colors.white,
           backgroundColor: Colors.redAccent,
@@ -489,6 +494,7 @@ class _EditPlanDialogState extends State<EditPlanDialog> {
           },
         ),
         FillBoxButton(
+          iconData: Icons.check,
           labelText: '変更を保存',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,

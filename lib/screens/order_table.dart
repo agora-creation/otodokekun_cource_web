@@ -100,11 +100,40 @@ class _OrderTableState extends State<OrderTable> {
     return CustomTable(
       title: '注文一覧',
       actions: [
-        BorderBoxButton(
-          labelText: '検索',
-          labelColor: Colors.blueAccent,
-          borderColor: Colors.blueAccent,
-          onTap: () {},
+        Row(
+          children: [
+            BorderBoxButton(
+              iconData: Icons.arrow_drop_down,
+              labelText: '注文者',
+              labelColor: Colors.lightBlue,
+              borderColor: Colors.lightBlue,
+              onTap: () {},
+            ),
+            SizedBox(width: 4.0),
+            BorderBoxButton(
+              iconData: Icons.calendar_today,
+              labelText: '2021年03月',
+              labelColor: Colors.lightBlue,
+              borderColor: Colors.lightBlue,
+              onTap: () {},
+            ),
+            SizedBox(width: 4.0),
+            BorderBoxButton(
+              iconData: Icons.arrow_drop_down,
+              labelText: '担当者',
+              labelColor: Colors.lightBlue,
+              borderColor: Colors.lightBlue,
+              onTap: () {},
+            ),
+            SizedBox(width: 4.0),
+            BorderBoxButton(
+              iconData: Icons.arrow_drop_down,
+              labelText: '配達状況',
+              labelColor: Colors.lightBlue,
+              borderColor: Colors.lightBlue,
+              onTap: () {},
+            ),
+          ],
         ),
       ],
       headers: _headers,
@@ -304,12 +333,30 @@ class _EditOrderDialogState extends State<EditOrderDialog> {
       ),
       actions: [
         BorderBoxButton(
+          iconData: Icons.close,
           labelText: '閉じる',
-          labelColor: Colors.blueAccent,
-          borderColor: Colors.blueAccent,
+          labelColor: Colors.blueGrey,
+          borderColor: Colors.blueGrey,
           onTap: () => Navigator.pop(context),
         ),
+        BorderBoxButton(
+          iconData: Icons.cancel_outlined,
+          labelText: 'キャンセル',
+          labelColor: Colors.redAccent,
+          borderColor: Colors.redAccent,
+          onTap: () async {
+            if (!await widget.shopOrderProvider
+                .delete(id: widget.data['id'], shopId: widget.data['shopId'])) {
+              return;
+            }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('キャンセルしました')),
+            );
+            Navigator.pop(context);
+          },
+        ),
         FillBoxButton(
+          iconData: Icons.check,
           labelText: '変更を保存',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,

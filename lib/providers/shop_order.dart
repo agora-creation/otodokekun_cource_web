@@ -27,4 +27,17 @@ class ShopOrderProvider with ChangeNotifier {
       return false;
     }
   }
+
+  Future<bool> delete({String id, String shopId}) async {
+    try {
+      _shopOrderService.delete({
+        'id': id,
+        'shopId': shopId,
+      });
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
 }

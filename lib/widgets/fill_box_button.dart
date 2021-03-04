@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 class FillBoxButton extends StatelessWidget {
+  final IconData iconData;
   final String labelText;
   final Color labelColor;
   final Color backgroundColor;
   final Function onTap;
 
   FillBoxButton({
+    this.iconData,
     this.labelText,
     this.labelColor,
     this.backgroundColor,
@@ -25,12 +27,23 @@ class FillBoxButton extends StatelessWidget {
         ),
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          child: Text(
-            labelText,
-            style: TextStyle(
-              color: labelColor,
-              fontSize: 14.0,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(
+                iconData,
+                size: 14.0,
+                color: labelColor,
+              ),
+              SizedBox(width: 4.0),
+              Text(
+                labelText,
+                style: TextStyle(
+                  color: labelColor,
+                  fontSize: 14.0,
+                ),
+              ),
+            ],
           ),
         ),
       ),

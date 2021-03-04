@@ -13,4 +13,13 @@ class ShopOrderService {
         .doc(values['id'])
         .update(values);
   }
+
+  void delete(Map<String, dynamic> values) {
+    _firebaseFirestore
+        .collection(_collection)
+        .doc(values['shopId'])
+        .collection(_subCollection)
+        .doc(values['id'])
+        .delete();
+  }
 }

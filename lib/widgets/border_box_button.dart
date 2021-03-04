@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 class BorderBoxButton extends StatelessWidget {
+  final IconData iconData;
   final String labelText;
   final Color labelColor;
   final Color borderColor;
   final Function onTap;
 
   BorderBoxButton({
+    this.iconData,
     this.labelText,
     this.labelColor,
     this.borderColor,
@@ -25,12 +27,23 @@ class BorderBoxButton extends StatelessWidget {
         ),
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          child: Text(
-            labelText,
-            style: TextStyle(
-              color: labelColor,
-              fontSize: 14.0,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(
+                iconData,
+                size: 14.0,
+                color: labelColor,
+              ),
+              SizedBox(width: 4.0),
+              Text(
+                labelText,
+                style: TextStyle(
+                  color: labelColor,
+                  fontSize: 14.0,
+                ),
+              ),
+            ],
           ),
         ),
       ),

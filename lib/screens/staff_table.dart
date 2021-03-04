@@ -50,6 +50,7 @@ class _StaffTableState extends State<StaffTable> {
       title: '担当者一覧',
       actions: [
         FillBoxButton(
+          iconData: Icons.add,
           labelText: '新規登録',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
@@ -177,12 +178,14 @@ class _AddStaffDialogState extends State<AddStaffDialog> {
       ),
       actions: [
         BorderBoxButton(
+          iconData: Icons.close,
           labelText: '閉じる',
-          labelColor: Colors.blueAccent,
-          borderColor: Colors.blueAccent,
+          labelColor: Colors.blueGrey,
+          borderColor: Colors.blueGrey,
           onTap: () => Navigator.pop(context),
         ),
         FillBoxButton(
+          iconData: Icons.add,
           labelText: '新規登録',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
@@ -239,12 +242,14 @@ class _EditStaffDialogState extends State<EditStaffDialog> {
       ),
       actions: [
         BorderBoxButton(
+          iconData: Icons.close,
           labelText: '閉じる',
-          labelColor: Colors.blueAccent,
-          borderColor: Colors.blueAccent,
+          labelColor: Colors.blueGrey,
+          borderColor: Colors.blueGrey,
           onTap: () => Navigator.pop(context),
         ),
         FillBoxButton(
+          iconData: Icons.delete,
           labelText: '削除',
           labelColor: Colors.white,
           backgroundColor: Colors.redAccent,
@@ -261,6 +266,7 @@ class _EditStaffDialogState extends State<EditStaffDialog> {
           },
         ),
         FillBoxButton(
+          iconData: Icons.check,
           labelText: '変更を保存',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,

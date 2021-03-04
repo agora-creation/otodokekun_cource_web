@@ -67,6 +67,7 @@ class _ProductTableState extends State<ProductTable> {
       title: '個別商品一覧',
       actions: [
         FillBoxButton(
+          iconData: Icons.add,
           labelText: '新規登録',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
@@ -260,12 +261,14 @@ class _AddProductDialogState extends State<AddProductDialog> {
       ),
       actions: [
         BorderBoxButton(
+          iconData: Icons.close,
           labelText: '閉じる',
-          labelColor: Colors.blueAccent,
-          borderColor: Colors.blueAccent,
+          labelColor: Colors.blueGrey,
+          borderColor: Colors.blueGrey,
           onTap: () => Navigator.pop(context),
         ),
         FillBoxButton(
+          iconData: Icons.add,
           labelText: '新規登録',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
@@ -410,12 +413,14 @@ class _EditProductDialogState extends State<EditProductDialog> {
       ),
       actions: [
         BorderBoxButton(
+          iconData: Icons.close,
           labelText: '閉じる',
-          labelColor: Colors.blueAccent,
-          borderColor: Colors.blueAccent,
+          labelColor: Colors.blueGrey,
+          borderColor: Colors.blueGrey,
           onTap: () => Navigator.pop(context),
         ),
         FillBoxButton(
+          iconData: Icons.delete,
           labelText: '削除',
           labelColor: Colors.white,
           backgroundColor: Colors.redAccent,
@@ -432,6 +437,7 @@ class _EditProductDialogState extends State<EditProductDialog> {
           },
         ),
         FillBoxButton(
+          iconData: Icons.check,
           labelText: '変更を保存',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,

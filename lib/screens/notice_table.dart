@@ -77,6 +77,7 @@ class _NoticeTableState extends State<NoticeTable> {
       title: 'お知らせ一覧',
       actions: [
         FillBoxButton(
+          iconData: Icons.add,
           labelText: '新規登録',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
@@ -216,12 +217,14 @@ class _AddNoticeDialogState extends State<AddNoticeDialog> {
       ),
       actions: [
         BorderBoxButton(
+          iconData: Icons.close,
           labelText: '閉じる',
-          labelColor: Colors.blueAccent,
-          borderColor: Colors.blueAccent,
+          labelColor: Colors.blueGrey,
+          borderColor: Colors.blueGrey,
           onTap: () => Navigator.pop(context),
         ),
         FillBoxButton(
+          iconData: Icons.add,
           labelText: '新規登録',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
@@ -333,31 +336,14 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
       ),
       actions: [
         BorderBoxButton(
+          iconData: Icons.close,
           labelText: '閉じる',
-          labelColor: Colors.blueAccent,
-          borderColor: Colors.blueAccent,
+          labelColor: Colors.blueGrey,
+          borderColor: Colors.blueGrey,
           onTap: () => Navigator.pop(context),
         ),
-        users.length > 0
-            ? BorderBoxButton(
-                labelText: '送信する',
-                labelColor: Colors.blueAccent,
-                borderColor: Colors.blueAccent,
-                onTap: () async {
-                  if (!await widget.userNoticeProvider.create(
-                      users: users,
-                      title: widget.shopNoticeProvider.title.text.trim(),
-                      message: widget.shopNoticeProvider.message.text)) {
-                    return;
-                  }
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('送信が完了しました')),
-                  );
-                  Navigator.pop(context);
-                },
-              )
-            : Container(),
         FillBoxButton(
+          iconData: Icons.delete,
           labelText: '削除する',
           labelColor: Colors.white,
           backgroundColor: Colors.redAccent,
@@ -374,6 +360,7 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
           },
         ),
         FillBoxButton(
+          iconData: Icons.check,
           labelText: '変更を保存',
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
@@ -386,6 +373,24 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
               SnackBar(content: Text('変更が完了しました')),
             );
             widget.shopNoticeProvider.clearController();
+            Navigator.pop(context);
+          },
+        ),
+        BorderBoxButton(
+          iconData: Icons.send,
+          labelText: '送信する',
+          labelColor: Colors.blueAccent,
+          borderColor: Colors.blueAccent,
+          onTap: () async {
+            if (!await widget.userNoticeProvider.create(
+                users: users,
+                title: widget.shopNoticeProvider.title.text.trim(),
+                message: widget.shopNoticeProvider.message.text)) {
+              return;
+            }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('送信が完了しました')),
+            );
             Navigator.pop(context);
           },
         ),

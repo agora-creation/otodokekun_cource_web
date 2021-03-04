@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class FillBoxIconButton extends StatelessWidget {
+class FillBoxFormButton extends StatelessWidget {
   final IconData iconData;
   final String labelText;
   final Color labelColor;
   final Color backgroundColor;
   final Function onTap;
 
-  FillBoxIconButton({
+  FillBoxFormButton({
     this.iconData,
     this.labelText,
     this.labelColor,
