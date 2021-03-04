@@ -7,16 +7,17 @@ let db = admin.db;
 
 let today = new Date();
 
-exports.updateRecruiting = functions.region('asia-northeast1').pubsub.schedule('0 0 * * *').timeZone('Asia/Tokyo').onRun((_) => {
-    db.collection('shop').get().then((snapshot) => {
-        snapshot.forEach((doc) => {
-            db.collection('shop').doc('${doc.id}').collection('plan').where('deliveryAt', '<', today).get().then((snapshot) => {
-                if(snapshot.empty) {
+exports.updateShopPlan = functions.region('asia-northeast1').pubsub.schedule('0 0 * * *').timeZone('Asia/Tokyo').onRun((_) => {
+    let shopRef = db.collection('shop');
+    shopRef.get().then((shopSnapshot) => {
+        shopSnapshot.forEach((shopDoc) => {
+            shopRef.doc(shopDoc.id).collection('plan').where('deliveryAt', '<', today).get().then((planSnapshot) => {
+                if(planSnapshot.empty) {
                     console.log('No matching documents.');
                     return;
                 }
-                snapshot.forEach((doc) => {
-                    doc.ref.delete();
+                planSnapshot.forEach((planDoc) => {
+                    planDoc.delete();
                 });
             }).catch((e) => {
                 console.log('Error getting documents', e);
