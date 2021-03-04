@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/cart.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/shop_staff.dart';
+import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/providers/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/shop_staff.dart';
+import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/cart_list_tile.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
@@ -16,12 +20,14 @@ class OrderTable extends StatefulWidget {
   final ShopModel shop;
   final ShopOrderProvider shopOrderProvider;
   final ShopStaffProvider shopStaffProvider;
+  final UserProvider userProvider;
   final List<Map<String, dynamic>> source;
 
   OrderTable({
     @required this.shop,
     @required this.shopOrderProvider,
     @required this.shopStaffProvider,
+    @required this.userProvider,
     @required this.source,
   });
 
@@ -80,12 +86,16 @@ class _OrderTableState extends State<OrderTable> {
   String _sortColumn;
   bool _sortAscending = true;
   List<ShopStaffModel> _staffs = [];
+  List<UserModel> _users = [];
 
   void _init() async {
     await widget.shopStaffProvider
         .selectList(shopId: widget.shop?.id)
         .then((value) {
       _staffs = value;
+    });
+    await widget.userProvider.selectList(shopId: widget.shop?.id).then((value) {
+      _users = value;
     });
   }
 
@@ -102,36 +112,116 @@ class _OrderTableState extends State<OrderTable> {
       actions: [
         Row(
           children: [
-            BorderBoxButton(
-              iconData: Icons.arrow_drop_down,
-              labelText: '注文者',
-              labelColor: Colors.lightBlue,
-              borderColor: Colors.lightBlue,
-              onTap: () {},
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '注文者',
+                  style: TextStyle(color: Colors.lightBlue, fontSize: 12.0),
+                ),
+                BorderBoxButton(
+                  iconData: Icons.arrow_drop_down,
+                  labelText: widget.shopOrderProvider.searchName != ''
+                      ? '${widget.shopOrderProvider.searchName}'
+                      : '選択なし',
+                  labelColor: Colors.lightBlue,
+                  borderColor: Colors.lightBlue,
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) {
+                        return SearchNameDialog(
+                          shopOrderProvider: widget.shopOrderProvider,
+                          users: _users,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
             ),
             SizedBox(width: 4.0),
-            BorderBoxButton(
-              iconData: Icons.calendar_today,
-              labelText: '2021年03月',
-              labelColor: Colors.lightBlue,
-              borderColor: Colors.lightBlue,
-              onTap: () {},
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'お届け日',
+                  style: TextStyle(color: Colors.lightBlue, fontSize: 12.0),
+                ),
+                BorderBoxButton(
+                  iconData: Icons.calendar_today,
+                  labelText:
+                      '${DateFormat('yyyy年MM月').format(widget.shopOrderProvider.searchDeliveryAt)}',
+                  labelColor: Colors.lightBlue,
+                  borderColor: Colors.lightBlue,
+                  onTap: () async {
+                    var selected = await showMonthPicker(
+                      context: context,
+                      initialDate: widget.shopOrderProvider.searchDeliveryAt,
+                      firstDate: DateTime(DateTime.now().year - 1),
+                      lastDate: DateTime(DateTime.now().year + 1),
+                    );
+                    if (selected == null) return;
+                    widget.shopOrderProvider.changeSearchDeliveryAt(selected);
+                  },
+                ),
+              ],
             ),
             SizedBox(width: 4.0),
-            BorderBoxButton(
-              iconData: Icons.arrow_drop_down,
-              labelText: '担当者',
-              labelColor: Colors.lightBlue,
-              borderColor: Colors.lightBlue,
-              onTap: () {},
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '担当者',
+                  style: TextStyle(color: Colors.lightBlue, fontSize: 12.0),
+                ),
+                BorderBoxButton(
+                  iconData: Icons.arrow_drop_down,
+                  labelText: widget.shopOrderProvider.searchStaff != ''
+                      ? '${widget.shopOrderProvider.searchStaff}'
+                      : '選択なし',
+                  labelColor: Colors.lightBlue,
+                  borderColor: Colors.lightBlue,
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) {
+                        return SearchStaffDialog(
+                          shopOrderProvider: widget.shopOrderProvider,
+                          staffs: _staffs,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
             ),
             SizedBox(width: 4.0),
-            BorderBoxButton(
-              iconData: Icons.arrow_drop_down,
-              labelText: '配達状況',
-              labelColor: Colors.lightBlue,
-              borderColor: Colors.lightBlue,
-              onTap: () {},
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '配達状況',
+                  style: TextStyle(color: Colors.lightBlue, fontSize: 12.0),
+                ),
+                BorderBoxButton(
+                  iconData: Icons.arrow_drop_down,
+                  labelText:
+                      widget.shopOrderProvider.searchShipping ? '配達済み' : '配達待ち',
+                  labelColor: Colors.lightBlue,
+                  borderColor: Colors.lightBlue,
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) {
+                        return SearchShippingDialog(
+                          shopOrderProvider: widget.shopOrderProvider,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),
@@ -370,6 +460,298 @@ class _EditOrderDialogState extends State<EditOrderDialog> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('変更が完了しました')),
             );
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class SearchNameDialog extends StatefulWidget {
+  final ShopOrderProvider shopOrderProvider;
+  final List<UserModel> users;
+
+  SearchNameDialog({
+    @required this.shopOrderProvider,
+    @required this.users,
+  });
+
+  @override
+  _SearchNameDialogState createState() => _SearchNameDialogState();
+}
+
+class _SearchNameDialogState extends State<SearchNameDialog> {
+  final ScrollController _scrollController = ScrollController();
+  String _name = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _name = widget.shopOrderProvider.searchName;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomDialog(
+      title: '注文者で検索',
+      content: Container(
+        width: 350.0,
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            Container(
+              height: 300.0,
+              child: Scrollbar(
+                isAlwaysShown: true,
+                controller: _scrollController,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: ScrollPhysics(),
+                  controller: _scrollController,
+                  itemCount: widget.users.length,
+                  itemBuilder: (context, index) {
+                    UserModel _user = widget.users[index];
+                    return Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            width: 1.0,
+                            color: Colors.grey.shade300,
+                          ),
+                        ),
+                      ),
+                      child: RadioListTile(
+                        title: Text('${_user.name}'),
+                        value: _user.name,
+                        groupValue: _name,
+                        activeColor: Colors.blueAccent,
+                        onChanged: (value) {
+                          setState(() {
+                            _name = value;
+                          });
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            Divider(height: 0.0),
+          ],
+        ),
+      ),
+      actions: [
+        BorderBoxButton(
+          iconData: Icons.close,
+          labelText: '閉じる',
+          labelColor: Colors.blueGrey,
+          borderColor: Colors.blueGrey,
+          onTap: () => Navigator.pop(context),
+        ),
+        FillBoxButton(
+          iconData: Icons.search,
+          labelText: '検索する',
+          labelColor: Colors.white,
+          backgroundColor: Colors.lightBlue,
+          onTap: () {
+            widget.shopOrderProvider.changeSearchName(_name);
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class SearchStaffDialog extends StatefulWidget {
+  final ShopOrderProvider shopOrderProvider;
+  final List<ShopStaffModel> staffs;
+
+  SearchStaffDialog({
+    @required this.shopOrderProvider,
+    @required this.staffs,
+  });
+
+  @override
+  _SearchStaffDialogState createState() => _SearchStaffDialogState();
+}
+
+class _SearchStaffDialogState extends State<SearchStaffDialog> {
+  final ScrollController _scrollController = ScrollController();
+  String _staffName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _staffName = widget.shopOrderProvider.searchStaff;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomDialog(
+      title: '担当者で検索',
+      content: Container(
+        width: 350.0,
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            Container(
+              height: 300.0,
+              child: Scrollbar(
+                isAlwaysShown: true,
+                controller: _scrollController,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: ScrollPhysics(),
+                  controller: _scrollController,
+                  itemCount: widget.staffs.length,
+                  itemBuilder: (context, index) {
+                    ShopStaffModel _staff = widget.staffs[index];
+                    return Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            width: 1.0,
+                            color: Colors.grey.shade300,
+                          ),
+                        ),
+                      ),
+                      child: RadioListTile(
+                        title: Text('${_staff.name}'),
+                        value: _staff.name,
+                        groupValue: _staffName,
+                        activeColor: Colors.blueAccent,
+                        onChanged: (value) {
+                          setState(() {
+                            _staffName = value;
+                          });
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            Divider(height: 0.0),
+          ],
+        ),
+      ),
+      actions: [
+        BorderBoxButton(
+          iconData: Icons.close,
+          labelText: '閉じる',
+          labelColor: Colors.blueGrey,
+          borderColor: Colors.blueGrey,
+          onTap: () => Navigator.pop(context),
+        ),
+        FillBoxButton(
+          iconData: Icons.search,
+          labelText: '検索する',
+          labelColor: Colors.white,
+          backgroundColor: Colors.lightBlue,
+          onTap: () {
+            widget.shopOrderProvider.changeSearchStaff(_staffName);
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class SearchShippingDialog extends StatefulWidget {
+  final ShopOrderProvider shopOrderProvider;
+
+  SearchShippingDialog({
+    @required this.shopOrderProvider,
+  });
+
+  @override
+  _SearchShippingDialogState createState() => _SearchShippingDialogState();
+}
+
+class _SearchShippingDialogState extends State<SearchShippingDialog> {
+  bool _shipping = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _shipping = widget.shopOrderProvider.searchShipping;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomDialog(
+      title: '担当者で検索',
+      content: Container(
+        width: 350.0,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Divider(height: 0.0),
+            Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    width: 1.0,
+                    color: Colors.grey.shade300,
+                  ),
+                ),
+              ),
+              child: RadioListTile(
+                title: Text('配達待ち'),
+                value: false,
+                groupValue: _shipping,
+                activeColor: Colors.blueAccent,
+                onChanged: (value) {
+                  setState(() {
+                    _shipping = value;
+                  });
+                },
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    width: 1.0,
+                    color: Colors.grey.shade300,
+                  ),
+                ),
+              ),
+              child: RadioListTile(
+                title: Text('配達済み'),
+                value: true,
+                groupValue: _shipping,
+                activeColor: Colors.blueAccent,
+                onChanged: (value) {
+                  setState(() {
+                    _shipping = value;
+                  });
+                },
+              ),
+            ),
+            Divider(height: 0.0),
+          ],
+        ),
+      ),
+      actions: [
+        BorderBoxButton(
+          iconData: Icons.close,
+          labelText: '閉じる',
+          labelColor: Colors.blueGrey,
+          borderColor: Colors.blueGrey,
+          onTap: () => Navigator.pop(context),
+        ),
+        FillBoxButton(
+          iconData: Icons.search,
+          labelText: '検索する',
+          labelColor: Colors.white,
+          backgroundColor: Colors.lightBlue,
+          onTap: () {
+            widget.shopOrderProvider.changeSearchShipping(_shipping);
             Navigator.pop(context);
           },
         ),

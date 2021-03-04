@@ -295,11 +295,8 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
             SizedBox(height: 16.0),
             Text('送信先選択', style: kLabelTextStyle),
             SizedBox(height: 8.0),
+            Divider(height: 0.0),
             Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
               height: 300.0,
               child: Scrollbar(
                 isAlwaysShown: true,
@@ -312,25 +309,36 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
                   itemBuilder: (context, index) {
                     UserModel _user = widget.users[index];
                     var contain = users.where((e) => e.id == _user.id);
-                    return CheckboxListTile(
-                      title: Text('${_user.name}'),
-                      value: contain.isNotEmpty,
-                      activeColor: Colors.blueAccent,
-                      onChanged: (value) {
-                        var contain = users.where((e) => e.id == _user.id);
-                        setState(() {
-                          if (contain.isEmpty) {
-                            users.add(_user);
-                          } else {
-                            users.removeWhere((e) => e.id == _user.id);
-                          }
-                        });
-                      },
+                    return Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            width: 1.0,
+                            color: Colors.grey.shade300,
+                          ),
+                        ),
+                      ),
+                      child: CheckboxListTile(
+                        title: Text('${_user.name}'),
+                        value: contain.isNotEmpty,
+                        activeColor: Colors.blueAccent,
+                        onChanged: (value) {
+                          var contain = users.where((e) => e.id == _user.id);
+                          setState(() {
+                            if (contain.isEmpty) {
+                              users.add(_user);
+                            } else {
+                              users.removeWhere((e) => e.id == _user.id);
+                            }
+                          });
+                        },
+                      ),
                     );
                   },
                 ),
               ),
             ),
+            Divider(height: 0.0),
           ],
         ),
       ),

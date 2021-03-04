@@ -9,6 +9,31 @@ class ShopOrderProvider with ChangeNotifier {
   String staff;
   bool shipping;
 
+  String searchName = '';
+  DateTime searchDeliveryAt = DateTime.now();
+  String searchStaff = '';
+  bool searchShipping = false;
+
+  void changeSearchDeliveryAt(DateTime dateTime) {
+    searchDeliveryAt = dateTime;
+    notifyListeners();
+  }
+
+  void changeSearchName(String name) {
+    searchName = name;
+    notifyListeners();
+  }
+
+  void changeSearchStaff(String staff) {
+    searchStaff = staff;
+    notifyListeners();
+  }
+
+  void changeSearchShipping(bool shipping) {
+    searchShipping = shipping;
+    notifyListeners();
+  }
+
   Future<bool> update({String id, String shopId, String userId}) async {
     try {
       _shopOrderService.update({

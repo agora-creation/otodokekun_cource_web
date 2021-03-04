@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:otodokekun_cource_web/helpers/time_machine_util.dart';
 import 'package:otodokekun_cource_web/models/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/shop_staff.dart';
+import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/screens/order_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
 import 'package:provider/provider.dart';
@@ -16,12 +18,22 @@ class OrderScreen extends StatelessWidget {
     final shopProvider = Provider.of<ShopProvider>(context);
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
     final shopStaffProvider = Provider.of<ShopStaffProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
+    var monthMap =
+        TimeMachineUtil.getMonthDate(shopOrderProvider.searchDeliveryAt, 0);
+    final _startAt = Timestamp.fromMillisecondsSinceEpoch(
+      DateTime.parse('${monthMap['endDate']}').millisecondsSinceEpoch,
+    );
+    final _endAt = Timestamp.fromMillisecondsSinceEpoch(
+      DateTime.parse('${monthMap['startDate']}').millisecondsSinceEpoch,
+    );
     final Stream<QuerySnapshot> streamOrder = FirebaseFirestore.instance
         .collection('shop')
         .doc(shopProvider.shop?.id)
         .collection('order')
+        .where('shipping', isEqualTo: shopOrderProvider.searchShipping)
         .orderBy('deliveryAt', descending: true)
-        .snapshots();
+        .startAt([_startAt]).endAt([_endAt]).snapshots();
     List<Map<String, dynamic>> _source = [];
 
     return CustomAdminScaffold(
@@ -42,6 +54,7 @@ class OrderScreen extends StatelessWidget {
             shop: shopProvider.shop,
             shopOrderProvider: shopOrderProvider,
             shopStaffProvider: shopStaffProvider,
+            userProvider: userProvider,
             source: _source,
           );
         },
