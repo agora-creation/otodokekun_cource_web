@@ -27,13 +27,47 @@ class OrderScreen extends StatelessWidget {
     final _endAt = Timestamp.fromMillisecondsSinceEpoch(
       DateTime.parse('${monthMap['startDate']}').millisecondsSinceEpoch,
     );
-    final Stream<QuerySnapshot> streamOrder = FirebaseFirestore.instance
-        .collection('shop')
-        .doc(shopProvider.shop?.id)
-        .collection('order')
-        .where('shipping', isEqualTo: shopOrderProvider.searchShipping)
-        .orderBy('deliveryAt', descending: true)
-        .startAt([_startAt]).endAt([_endAt]).snapshots();
+    Stream<QuerySnapshot> streamOrder;
+    if (shopOrderProvider.searchName != '' &&
+        shopOrderProvider.searchStaff != '') {
+      streamOrder = FirebaseFirestore.instance
+          .collection('shop')
+          .doc(shopProvider.shop?.id)
+          .collection('order')
+          .where('shipping', isEqualTo: shopOrderProvider.searchShipping)
+          .where('name', isEqualTo: shopOrderProvider.searchName)
+          .where('staff', isEqualTo: shopOrderProvider.searchStaff)
+          .orderBy('deliveryAt', descending: true)
+          .startAt([_startAt]).endAt([_endAt]).snapshots();
+    } else if (shopOrderProvider.searchName != '' &&
+        shopOrderProvider.searchStaff == '') {
+      streamOrder = FirebaseFirestore.instance
+          .collection('shop')
+          .doc(shopProvider.shop?.id)
+          .collection('order')
+          .where('shipping', isEqualTo: shopOrderProvider.searchShipping)
+          .where('name', isEqualTo: shopOrderProvider.searchName)
+          .orderBy('deliveryAt', descending: true)
+          .startAt([_startAt]).endAt([_endAt]).snapshots();
+    } else if (shopOrderProvider.searchName == '' &&
+        shopOrderProvider.searchStaff != '') {
+      streamOrder = FirebaseFirestore.instance
+          .collection('shop')
+          .doc(shopProvider.shop?.id)
+          .collection('order')
+          .where('shipping', isEqualTo: shopOrderProvider.searchShipping)
+          .where('staff', isEqualTo: shopOrderProvider.searchStaff)
+          .orderBy('deliveryAt', descending: true)
+          .startAt([_startAt]).endAt([_endAt]).snapshots();
+    } else {
+      streamOrder = FirebaseFirestore.instance
+          .collection('shop')
+          .doc(shopProvider.shop?.id)
+          .collection('order')
+          .where('shipping', isEqualTo: shopOrderProvider.searchShipping)
+          .orderBy('deliveryAt', descending: true)
+          .startAt([_startAt]).endAt([_endAt]).snapshots();
+    }
     List<Map<String, dynamic>> _source = [];
 
     return CustomAdminScaffold(

@@ -35,7 +35,7 @@ class FillBoxButton extends StatelessWidget {
                 size: 14.0,
                 color: labelColor,
               ),
-              SizedBox(width: 4.0),
+              SizedBox(width: 8.0),
               Text(
                 labelText,
                 style: TextStyle(
