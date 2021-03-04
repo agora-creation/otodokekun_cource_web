@@ -18,7 +18,7 @@ class PlanScreen extends StatelessWidget {
         .collection('shop')
         .doc(shopProvider.shop?.id)
         .collection('plan')
-        .orderBy('deliveryAt', descending: true)
+        .orderBy('deliveryAt', descending: false)
         .snapshots();
     List<Map<String, dynamic>> _source = [];
 
