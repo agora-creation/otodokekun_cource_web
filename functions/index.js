@@ -3,11 +3,11 @@ const functions = require('firebase-functions');
 
 admin.initializeApp(functions.config().firebase);
 
-let db = admin.db;
+let db = admin.firestore();
 
 let today = new Date();
 
-exports.updateShopPlan = functions.region('asia-northeast1').pubsub.schedule('0 0 * * *').timeZone('Asia/Tokyo').onRun((_) => {
+exports.deleteShopPlan = functions.region('asia-northeast1').pubsub.schedule('0 0 * * *').timeZone('Asia/Tokyo').onRun((_) => {
     let shopRef = db.collection('shop');
     shopRef.get().then((shopSnapshot) => {
         shopSnapshot.forEach((shopDoc) => {
@@ -17,10 +17,22 @@ exports.updateShopPlan = functions.region('asia-northeast1').pubsub.schedule('0 
                     return;
                 }
                 planSnapshot.forEach((planDoc) => {
-                    planDoc.delete();
+                    planDoc.ref.delete();
                 });
             }).catch((e) => {
                 console.log('Error getting documents', e);
+            });
+        });
+    });
+});
+
+exports.updateShopPlan = functions.region('asia-northeast1').pubsub.schedule('0 0 * * 1').timeZone('Asia/Tokyo').onRun((_) => {
+    let shopRef = db.collection('shop');
+    let userRef = db.collection('user');
+    userRef.where('fixed' == true).get().then((userSnapshot) => {
+        userSnapshot.forEach((userDoc) => {
+            shopRef.doc(userDoc.data()['shopId']).collection('plan').get().then((planSnapshot) => {
+                console.log('data:');
             });
         });
     });

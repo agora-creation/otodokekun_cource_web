@@ -484,11 +484,16 @@ class SearchNameDialog extends StatefulWidget {
 class _SearchNameDialogState extends State<SearchNameDialog> {
   final ScrollController _scrollController = ScrollController();
   String _name = '';
+  List<String> names = [];
 
   @override
   void initState() {
     super.initState();
     _name = widget.shopOrderProvider.searchName;
+    for (UserModel user in widget.users) {
+      names.add(user.name);
+    }
+    names.insert(0, '');
   }
 
   @override
@@ -509,9 +514,8 @@ class _SearchNameDialogState extends State<SearchNameDialog> {
                   shrinkWrap: true,
                   physics: ScrollPhysics(),
                   controller: _scrollController,
-                  itemCount: widget.users.length,
+                  itemCount: names.length,
                   itemBuilder: (context, index) {
-                    UserModel _user = widget.users[index];
                     return Container(
                       decoration: BoxDecoration(
                         border: Border(
@@ -522,8 +526,8 @@ class _SearchNameDialogState extends State<SearchNameDialog> {
                         ),
                       ),
                       child: RadioListTile(
-                        title: Text('${_user.name}'),
-                        value: _user.name,
+                        title: Text(names[index] == '' ? '選択なし' : names[index]),
+                        value: names[index],
                         groupValue: _name,
                         activeColor: Colors.blueAccent,
                         onChanged: (value) {
@@ -580,11 +584,16 @@ class SearchStaffDialog extends StatefulWidget {
 class _SearchStaffDialogState extends State<SearchStaffDialog> {
   final ScrollController _scrollController = ScrollController();
   String _staffName = '';
+  List<String> staffs = [];
 
   @override
   void initState() {
     super.initState();
     _staffName = widget.shopOrderProvider.searchStaff;
+    for (ShopStaffModel staff in widget.staffs) {
+      staffs.add(staff.name);
+    }
+    staffs.insert(0, '');
   }
 
   @override
@@ -605,9 +614,8 @@ class _SearchStaffDialogState extends State<SearchStaffDialog> {
                   shrinkWrap: true,
                   physics: ScrollPhysics(),
                   controller: _scrollController,
-                  itemCount: widget.staffs.length,
+                  itemCount: staffs.length,
                   itemBuilder: (context, index) {
-                    ShopStaffModel _staff = widget.staffs[index];
                     return Container(
                       decoration: BoxDecoration(
                         border: Border(
@@ -618,8 +626,9 @@ class _SearchStaffDialogState extends State<SearchStaffDialog> {
                         ),
                       ),
                       child: RadioListTile(
-                        title: Text('${_staff.name}'),
-                        value: _staff.name,
+                        title:
+                            Text(staffs[index] == '' ? '選択なし' : staffs[index]),
+                        value: staffs[index],
                         groupValue: _staffName,
                         activeColor: Colors.blueAccent,
                         onChanged: (value) {
