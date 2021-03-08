@@ -100,14 +100,14 @@ class _OrderTableState extends State<OrderTable> {
     await widget.userProvider.selectList(shopId: widget.shop?.id).then((value) {
       _users = value;
     });
-    widget.shopOrderProvider.searchOpenedAt = widget.shop?.openedAt;
-    widget.shopOrderProvider.searchClosedAt = widget.shop?.closedAt;
   }
 
   @override
   void initState() {
     super.initState();
     _init();
+    widget.shopOrderProvider.searchOpenedAt = widget.shop?.openedAt;
+    widget.shopOrderProvider.searchClosedAt = widget.shop?.closedAt;
   }
 
   @override

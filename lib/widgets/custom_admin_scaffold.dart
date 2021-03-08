@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/helpers/side_menu.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
+import 'package:otodokekun_cource_web/providers/shop_order.dart';
 import 'package:otodokekun_cource_web/screens/login.dart';
 import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
@@ -14,13 +15,15 @@ import 'package:otodokekun_cource_web/widgets/fill_box_form_button.dart';
 
 class CustomAdminScaffold extends StatelessWidget {
   final ShopProvider shopProvider;
+  final ShopOrderProvider shopOrderProvider;
   final String selectedRoute;
   final Widget body;
 
   CustomAdminScaffold({
-    this.shopProvider,
-    this.selectedRoute,
-    this.body,
+    @required this.shopProvider,
+    @required this.shopOrderProvider,
+    @required this.selectedRoute,
+    @required this.body,
   });
 
   @override
@@ -51,7 +54,10 @@ class CustomAdminScaffold extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (_) {
-                  return EditShopDialog(shopProvider: shopProvider);
+                  return EditShopDialog(
+                    shopProvider: shopProvider,
+                    shopOrderProvider: shopOrderProvider,
+                  );
                 },
               );
             },
@@ -102,8 +108,12 @@ class CustomAdminScaffold extends StatelessWidget {
 
 class EditShopDialog extends StatefulWidget {
   final ShopProvider shopProvider;
+  final ShopOrderProvider shopOrderProvider;
 
-  EditShopDialog({@required this.shopProvider});
+  EditShopDialog({
+    @required this.shopProvider,
+    @required this.shopOrderProvider,
+  });
 
   @override
   _EditShopDialogState createState() => _EditShopDialogState();
@@ -265,6 +275,8 @@ class _EditShopDialogState extends State<EditShopDialog> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('変更が完了しました')),
             );
+            widget.shopOrderProvider.changeSearchDateRage(
+                widget.shopProvider.openedAt, widget.shopProvider.closedAt);
             widget.shopProvider.clearController();
             widget.shopProvider.reloadShopModel();
             Navigator.pop(context);

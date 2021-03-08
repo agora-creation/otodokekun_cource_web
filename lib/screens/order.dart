@@ -67,6 +67,7 @@ class OrderScreen extends StatelessWidget {
 
     return CustomAdminScaffold(
       shopProvider: shopProvider,
+      shopOrderProvider: shopOrderProvider,
       selectedRoute: id,
       body: StreamBuilder<QuerySnapshot>(
         stream: streamOrder,
