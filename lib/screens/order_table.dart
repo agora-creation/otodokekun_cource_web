@@ -240,9 +240,9 @@ class _OrderTableState extends State<OrderTable> {
                   labelColor: Colors.green,
                   borderColor: Colors.green,
                   onTap: () {
-                    List<List<dynamic>> rows;
+                    List<List<dynamic>> rows = [];
                     for (int i = 0; i < widget.source.length; i++) {
-                      List<dynamic> row;
+                      List<dynamic> row = [];
                       row.add(widget.source[i]['name']);
                       row.add(widget.source[i]['zip']);
                       row.add(widget.source[i]['address']);
