@@ -45,7 +45,9 @@ exports.updateShopPlan = functions.region('asia-northeast1').pubsub.schedule('0 
                         'quantity': 1,
                         'totalPrice': planDoc.data()['price'],
                     });
+                    let orderId = shopRef.doc(userDoc.data()['shopId']).collection('order').doc().id;
                     shopRef.doc(userDoc.data()['shopId']).collection('order').add({
+                        id: orderId,
                         shopId: userDoc.data()['shopId'],
                         userId: userDoc.id,
                         name: userDoc.data()['name'],

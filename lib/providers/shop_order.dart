@@ -7,7 +7,6 @@ class ShopOrderProvider with ChangeNotifier {
   UserService _userService = UserService();
 
   String staff;
-  bool shipping;
 
   String searchName = '';
   DateTime searchDeliveryAt = DateTime.now();
@@ -40,7 +39,7 @@ class ShopOrderProvider with ChangeNotifier {
         'id': id,
         'shopId': shopId,
         'staff': staff,
-        'shipping': shipping,
+        'shipping': true,
       });
       _userService.update({
         'id': userId,

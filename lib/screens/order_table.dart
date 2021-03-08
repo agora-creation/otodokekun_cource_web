@@ -223,6 +223,23 @@ class _OrderTableState extends State<OrderTable> {
                 ),
               ],
             ),
+            SizedBox(width: 4.0),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '注文データ(CSV)',
+                  style: TextStyle(color: Colors.green, fontSize: 12.0),
+                ),
+                BorderBoxButton(
+                  iconData: Icons.file_download,
+                  labelText: 'ダウンロード',
+                  labelColor: Colors.green,
+                  borderColor: Colors.green,
+                  onTap: () {},
+                ),
+              ],
+            ),
           ],
         ),
       ],
@@ -232,7 +249,6 @@ class _OrderTableState extends State<OrderTable> {
       showSelect: false,
       onTabRow: (data) {
         widget.shopOrderProvider.staff = data['staff'];
-        widget.shopOrderProvider.shipping = data['shipping'];
         showDialog(
           context: context,
           builder: (_) {
@@ -397,27 +413,6 @@ class _EditOrderDialogState extends State<EditOrderDialog> {
                 );
               }).toList(),
             ),
-            SizedBox(height: 8.0),
-            Text('配達状況', style: kLabelTextStyle),
-            DropdownButton(
-              isExpanded: true,
-              value: widget.shopOrderProvider.shipping,
-              onChanged: (value) {
-                setState(() {
-                  widget.shopOrderProvider.shipping = value;
-                });
-              },
-              items: [
-                DropdownMenuItem(
-                  value: false,
-                  child: Text('配達待ち'),
-                ),
-                DropdownMenuItem(
-                  value: true,
-                  child: Text('配達済み'),
-                ),
-              ],
-            ),
           ],
         ),
       ),
@@ -429,40 +424,44 @@ class _EditOrderDialogState extends State<EditOrderDialog> {
           borderColor: Colors.blueGrey,
           onTap: () => Navigator.pop(context),
         ),
-        BorderBoxButton(
-          iconData: Icons.cancel_outlined,
-          labelText: 'キャンセル',
-          labelColor: Colors.redAccent,
-          borderColor: Colors.redAccent,
-          onTap: () async {
-            if (!await widget.shopOrderProvider
-                .delete(id: widget.data['id'], shopId: widget.data['shopId'])) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('キャンセルしました')),
-            );
-            Navigator.pop(context);
-          },
-        ),
-        FillBoxButton(
-          iconData: Icons.check,
-          labelText: '変更を保存',
-          labelColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          onTap: () async {
-            if (!await widget.shopOrderProvider.update(
-                id: widget.data['id'],
-                shopId: widget.data['shopId'],
-                userId: widget.data['userId'])) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('変更が完了しました')),
-            );
-            Navigator.pop(context);
-          },
-        ),
+        widget.data['shipping']
+            ? null
+            : BorderBoxButton(
+                iconData: Icons.cancel_outlined,
+                labelText: 'キャンセル',
+                labelColor: Colors.redAccent,
+                borderColor: Colors.redAccent,
+                onTap: () async {
+                  if (!await widget.shopOrderProvider.delete(
+                      id: widget.data['id'], shopId: widget.data['shopId'])) {
+                    return;
+                  }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('キャンセルしました')),
+                  );
+                  Navigator.pop(context);
+                },
+              ),
+        widget.data['shipping']
+            ? null
+            : FillBoxButton(
+                iconData: Icons.check,
+                labelText: '配達済みにする',
+                labelColor: Colors.white,
+                backgroundColor: Colors.blueAccent,
+                onTap: () async {
+                  if (!await widget.shopOrderProvider.update(
+                      id: widget.data['id'],
+                      shopId: widget.data['shopId'],
+                      userId: widget.data['userId'])) {
+                    return;
+                  }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('変更が完了しました')),
+                  );
+                  Navigator.pop(context);
+                },
+              ),
       ],
     );
   }
