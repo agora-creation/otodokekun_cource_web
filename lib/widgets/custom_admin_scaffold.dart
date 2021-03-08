@@ -1,5 +1,7 @@
+import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_scaffold/admin_scaffold.dart';
+import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/helpers/side_menu.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
@@ -8,6 +10,7 @@ import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
+import 'package:otodokekun_cource_web/widgets/fill_box_form_button.dart';
 
 class CustomAdminScaffold extends StatelessWidget {
   final ShopProvider shopProvider;
@@ -43,6 +46,8 @@ class CustomAdminScaffold extends StatelessWidget {
               shopProvider.email.text = shopProvider.shop?.email;
               shopProvider.remarks.text = shopProvider.shop?.remarks;
               shopProvider.cancelLimit = shopProvider.shop?.cancelLimit;
+              shopProvider.openedAt = shopProvider.shop?.openedAt;
+              shopProvider.closedAt = shopProvider.shop?.closedAt;
               showDialog(
                 context: context,
                 builder: (_) {
@@ -178,6 +183,7 @@ class _EditShopDialogState extends State<EditShopDialog> {
             ),
             SizedBox(height: 8.0),
             Text('キャンセル期限日', style: kLabelTextStyle),
+            SizedBox(height: 4.0),
             DropdownButton<int>(
               isExpanded: true,
               value: widget.shopProvider.cancelLimit,
@@ -192,6 +198,32 @@ class _EditShopDialogState extends State<EditShopDialog> {
                   child: Text('$value日前'),
                 );
               }).toList(),
+            ),
+            SizedBox(height: 8.0),
+            Text('締め日(請求期間)', style: kLabelTextStyle),
+            SizedBox(height: 4.0),
+            FillBoxFormButton(
+              iconData: Icons.calendar_today,
+              labelText:
+                  '${DateFormat('yyyy/MM/dd').format(widget.shopProvider.openedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(widget.shopProvider.closedAt)}',
+              labelColor: Colors.black,
+              backgroundColor: Colors.grey.shade100,
+              onTap: () async {
+                final List<DateTime> selected =
+                    await DateRagePicker.showDatePicker(
+                  context: context,
+                  initialFirstDate: widget.shopProvider.openedAt,
+                  initialLastDate: widget.shopProvider.closedAt,
+                  firstDate: DateTime(DateTime.now().year - 1),
+                  lastDate: DateTime(DateTime.now().year + 1),
+                );
+                if (selected != null && selected.length == 2) {
+                  setState(() {
+                    widget.shopProvider.openedAt = selected.first;
+                    widget.shopProvider.closedAt = selected.last;
+                  });
+                }
+              },
             ),
           ],
         ),

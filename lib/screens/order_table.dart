@@ -1,9 +1,9 @@
 import 'dart:html';
 
 import 'package:csv/csv.dart';
+import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/cart.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
@@ -100,6 +100,8 @@ class _OrderTableState extends State<OrderTable> {
     await widget.userProvider.selectList(shopId: widget.shop?.id).then((value) {
       _users = value;
     });
+    widget.shopOrderProvider.searchOpenedAt = widget.shop?.openedAt;
+    widget.shopOrderProvider.searchClosedAt = widget.shop?.closedAt;
   }
 
   @override
@@ -148,24 +150,28 @@ class _OrderTableState extends State<OrderTable> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'お届け日',
+                  'お届け日(請求期間)',
                   style: TextStyle(color: Colors.lightBlue, fontSize: 12.0),
                 ),
                 BorderBoxButton(
                   iconData: Icons.calendar_today,
                   labelText:
-                      '${DateFormat('yyyy年MM月').format(widget.shopOrderProvider.searchDeliveryAt)}',
+                      '${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchOpenedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchClosedAt)}',
                   labelColor: Colors.lightBlue,
                   borderColor: Colors.lightBlue,
                   onTap: () async {
-                    var selected = await showMonthPicker(
+                    final List<DateTime> selected =
+                        await DateRagePicker.showDatePicker(
                       context: context,
-                      initialDate: widget.shopOrderProvider.searchDeliveryAt,
+                      initialFirstDate: widget.shopOrderProvider.searchOpenedAt,
+                      initialLastDate: widget.shopOrderProvider.searchClosedAt,
                       firstDate: DateTime(DateTime.now().year - 1),
                       lastDate: DateTime(DateTime.now().year + 1),
                     );
-                    if (selected == null) return;
-                    widget.shopOrderProvider.changeSearchDeliveryAt(selected);
+                    if (selected != null && selected.length == 2) {
+                      widget.shopOrderProvider
+                          .changeSearchDateRage(selected.first, selected.last);
+                    }
                   },
                 ),
               ],

@@ -10,8 +10,9 @@ class ShopModel {
   String _email;
   String _password;
   String _remarks;
-  int _invoiceLimit;
   int _cancelLimit;
+  DateTime _openedAt;
+  DateTime _closedAt;
   DateTime _createdAt;
 
   String get id => _id;
@@ -23,8 +24,9 @@ class ShopModel {
   String get email => _email;
   String get password => _password;
   String get remarks => _remarks;
-  int get invoiceLimit => _invoiceLimit;
   int get cancelLimit => _cancelLimit;
+  DateTime get openedAt => _openedAt;
+  DateTime get closedAt => _closedAt;
   DateTime get createdAt => _createdAt;
 
   ShopModel.fromSnapshot(DocumentSnapshot snapshot) {
@@ -37,8 +39,9 @@ class ShopModel {
     _email = snapshot.data()['email'];
     _password = snapshot.data()['password'];
     _remarks = snapshot.data()['remarks'];
-    _invoiceLimit = snapshot.data()['invoiceLimit'];
     _cancelLimit = snapshot.data()['cancelLimit'];
+    _openedAt = snapshot.data()['openedAt'].toDate();
+    _closedAt = snapshot.data()['closedAt'].toDate();
     _createdAt = snapshot.data()['createdAt'].toDate();
   }
 }

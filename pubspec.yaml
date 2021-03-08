@@ -23,7 +23,7 @@ dependencies:
   provider: ^4.3.3
   flutter_admin_scaffold: ^0.0.5
   responsive_table: ^0.1.1+8
-  month_picker_dialog: ^0.3.3
+  date_range_picker: ^1.0.6
   common_utils: ^1.2.4
   csv: ^4.1.0
   intl: ^0.16.1

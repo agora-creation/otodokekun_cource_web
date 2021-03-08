@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:otodokekun_cource_web/helpers/time_machine_util.dart';
 import 'package:otodokekun_cource_web/models/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_order.dart';
@@ -19,14 +18,10 @@ class OrderScreen extends StatelessWidget {
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
     final shopStaffProvider = Provider.of<ShopStaffProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
-    var monthMap =
-        TimeMachineUtil.getMonthDate(shopOrderProvider.searchDeliveryAt, 0);
     final _startAt = Timestamp.fromMillisecondsSinceEpoch(
-      DateTime.parse('${monthMap['endDate']}').millisecondsSinceEpoch,
-    );
+        shopOrderProvider.searchClosedAt.millisecondsSinceEpoch);
     final _endAt = Timestamp.fromMillisecondsSinceEpoch(
-      DateTime.parse('${monthMap['startDate']}').millisecondsSinceEpoch,
-    );
+        shopOrderProvider.searchOpenedAt.millisecondsSinceEpoch);
     Stream<QuerySnapshot> streamOrder;
     if (shopOrderProvider.searchName != '' &&
         shopOrderProvider.searchStaff != '') {

@@ -9,12 +9,14 @@ class ShopOrderProvider with ChangeNotifier {
   String staff;
 
   String searchName = '';
-  DateTime searchDeliveryAt = DateTime.now();
+  DateTime searchOpenedAt = DateTime.now();
+  DateTime searchClosedAt = DateTime.now().add(Duration(days: 7));
   String searchStaff = '';
   bool searchShipping = false;
 
-  void changeSearchDeliveryAt(DateTime dateTime) {
-    searchDeliveryAt = dateTime;
+  void changeSearchDateRage(DateTime openedAt, DateTime closedAt) {
+    searchOpenedAt = openedAt;
+    searchClosedAt = closedAt;
     notifyListeners();
   }
 
