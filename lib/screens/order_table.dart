@@ -1,3 +1,6 @@
+import 'dart:html';
+
+import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
@@ -236,7 +239,27 @@ class _OrderTableState extends State<OrderTable> {
                   labelText: 'ダウンロード',
                   labelColor: Colors.green,
                   borderColor: Colors.green,
-                  onTap: () {},
+                  onTap: () {
+                    List<List<dynamic>> rows;
+                    for (int i = 0; i < widget.source.length; i++) {
+                      List<dynamic> row;
+                      row.add(widget.source[i]['name']);
+                      row.add(widget.source[i]['zip']);
+                      row.add(widget.source[i]['address']);
+                      row.add(widget.source[i]['tel']);
+                      row.add(widget.source[i]['cartText']);
+                      row.add(widget.source[i]['deliveryAtText']);
+                      row.add(widget.source[i]['remarks']);
+                      row.add(widget.source[i]['totalPrice']);
+                      row.add(widget.source[i]['staff']);
+                      row.add(widget.source[i]['shippingText']);
+                      rows.add(row);
+                    }
+                    String csv = const ListToCsvConverter().convert(rows);
+                    AnchorElement(href: 'data:text/plain;charset=utf-8,$csv')
+                      ..setAttribute('download', 'order.csv')
+                      ..click();
+                  },
                 ),
               ],
             ),
