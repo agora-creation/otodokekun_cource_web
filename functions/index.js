@@ -25,49 +25,49 @@ exports.deleteShopPlan = functions.region('asia-northeast1').pubsub.schedule('0 
     });
 });
 
-exports.updateShopPlan = functions.region('asia-northeast1').pubsub.schedule('0 0 * * *').timeZone('Asia/Tokyo').onRun((_) => {
-    let shopRef = db.collection('shop');
-    let userRef = db.collection('user');
-    userRef.where('fixed', '==', true).get().then((userSnapshot) => {
-        userSnapshot.forEach((userDoc) => {
-            shopRef.doc(userDoc.data()['shopId']).get().then((shopDoc) => {
-                let deliveryAt = new Date();
-                deliveryAt.setDate(deliveryAt.getDate() + shopDoc.data()['cancelLimit']);
-                shopRef.doc(userDoc.data()['shopId']).collection('plan').where('deliveryAt', '==', deliveryAt).get().then((planSnapshot) => {
-                    planSnapshot.forEach((planDoc) => {
-                        let cart = [];
-                        cart.push({
-                            'id': planDoc.data()['id'],
-                            'name': planDoc.data()['name'],
-                            'image': planDoc.data()['image'],
-                            'unit': planDoc.data()['unit'],
-                            'price': planDoc.data()['price'],
-                            'quantity': 1,
-                            'totalPrice': planDoc.data()['price'],
-                        });
-                        let orderId = shopRef.doc(userDoc.data()['shopId']).collection('order').doc().id;
-                        shopRef.doc(userDoc.data()['shopId']).collection('order').add({
-                            id: orderId,
-                            shopId: userDoc.data()['shopId'],
-                            userId: userDoc.id,
-                            name: userDoc.data()['name'],
-                            zip: userDoc.data()['zip'],
-                            address: userDoc.data()['address'],
-                            tel: userDoc.data()['tel'],
-                            cart: cart,
-                            deliveryAt: planDoc.data()['deliveryAt'],
-                            remarks: '',
-                            totalPrice: planDoc.data()['price'],
-                            staff: userDoc.data()['staff'],
-                            shipping: false,
-                            createdAt: planDoc.data()['deliveryAt'],
-                        });
-                    });
-                });
-            });
-        });
-    });
-});
+//exports.updateShopPlan = functions.region('asia-northeast1').pubsub.schedule('0 0 * * *').timeZone('Asia/Tokyo').onRun((_) => {
+//    let shopRef = db.collection('shop');
+//    let userRef = db.collection('user');
+//    userRef.where('fixed', '==', true).get().then((userSnapshot) => {
+//        userSnapshot.forEach((userDoc) => {
+//            shopRef.doc(userDoc.data()['shopId']).get().then((shopDoc) => {
+//                let deliveryAt = new Date();
+//                deliveryAt.setDate(deliveryAt.getDate() + shopDoc.data()['cancelLimit']);
+//                shopRef.doc(userDoc.data()['shopId']).collection('plan').where('deliveryAt', '==', deliveryAt).get().then((planSnapshot) => {
+//                    planSnapshot.forEach((planDoc) => {
+//                        let cart = [];
+//                        cart.push({
+//                            'id': planDoc.data()['id'],
+//                            'name': planDoc.data()['name'],
+//                            'image': planDoc.data()['image'],
+//                            'unit': planDoc.data()['unit'],
+//                            'price': planDoc.data()['price'],
+//                            'quantity': 1,
+//                            'totalPrice': planDoc.data()['price'],
+//                        });
+//                        let orderId = shopRef.doc(userDoc.data()['shopId']).collection('order').doc().id;
+//                        shopRef.doc(userDoc.data()['shopId']).collection('order').add({
+//                            id: orderId,
+//                            shopId: userDoc.data()['shopId'],
+//                            userId: userDoc.id,
+//                            name: userDoc.data()['name'],
+//                            zip: userDoc.data()['zip'],
+//                            address: userDoc.data()['address'],
+//                            tel: userDoc.data()['tel'],
+//                            cart: cart,
+//                            deliveryAt: planDoc.data()['deliveryAt'],
+//                            remarks: '',
+//                            totalPrice: planDoc.data()['price'],
+//                            staff: userDoc.data()['staff'],
+//                            shipping: false,
+//                            createdAt: planDoc.data()['deliveryAt'],
+//                        });
+//                    });
+//                });
+//            });
+//        });
+//    });
+//});
 
 
 // // Create and Deploy Your First Cloud Functions

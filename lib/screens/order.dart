@@ -19,9 +19,13 @@ class OrderScreen extends StatelessWidget {
     final shopStaffProvider = Provider.of<ShopStaffProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
     final _startAt = Timestamp.fromMillisecondsSinceEpoch(
-        shopOrderProvider.searchClosedAt.millisecondsSinceEpoch);
+      DateTime.parse(shopOrderProvider.searchClosedAt.toString())
+          .millisecondsSinceEpoch,
+    );
     final _endAt = Timestamp.fromMillisecondsSinceEpoch(
-        shopOrderProvider.searchOpenedAt.millisecondsSinceEpoch);
+      DateTime.parse(shopOrderProvider.searchOpenedAt.toString())
+          .millisecondsSinceEpoch,
+    );
     Stream<QuerySnapshot> streamOrder;
     if (shopOrderProvider.searchName != '' &&
         shopOrderProvider.searchStaff != '') {
@@ -67,7 +71,6 @@ class OrderScreen extends StatelessWidget {
 
     return CustomAdminScaffold(
       shopProvider: shopProvider,
-      shopOrderProvider: shopOrderProvider,
       selectedRoute: id,
       body: StreamBuilder<QuerySnapshot>(
         stream: streamOrder,

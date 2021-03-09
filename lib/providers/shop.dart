@@ -28,8 +28,6 @@ class ShopProvider with ChangeNotifier {
   TextEditingController remarks = TextEditingController();
   List<int> cancelLimitList = [3, 4, 5, 6, 7];
   int cancelLimit;
-  DateTime openedAt;
-  DateTime closedAt;
 
   ShopProvider.initialize() : _auth = FirebaseAuth.instance {
     _auth.authStateChanges().listen(_onStateChanged);
@@ -79,8 +77,6 @@ class ShopProvider with ChangeNotifier {
           'password': password.text.trim(),
           'remarks': '',
           'cancelLimit': 3,
-          'openedAt': DateTime.now(),
-          'closedAt': DateTime.now().add(Duration(days: 7)),
           'createdAt': DateTime.now(),
         });
       });
@@ -108,8 +104,6 @@ class ShopProvider with ChangeNotifier {
           'email': email.text.trim(),
           'remarks': remarks.text,
           'cancelLimit': cancelLimit,
-          'openedAt': openedAt,
-          'closedAt': closedAt,
         });
       });
       return true;

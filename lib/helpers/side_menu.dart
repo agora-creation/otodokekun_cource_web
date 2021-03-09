@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_scaffold/admin_scaffold.dart';
+import 'package:otodokekun_cource_web/screens/invoice.dart';
 import 'package:otodokekun_cource_web/screens/notice.dart';
 import 'package:otodokekun_cource_web/screens/order.dart';
 import 'package:otodokekun_cource_web/screens/plan.dart';
@@ -37,5 +38,10 @@ const List<MenuItem> kSideMenu = [
     title: 'お知らせ',
     route: NoticeScreen.id,
     icon: Icons.notifications,
+  ),
+  MenuItem(
+    title: '締め日',
+    route: InvoiceScreen.id,
+    icon: Icons.calendar_today,
   ),
 ];

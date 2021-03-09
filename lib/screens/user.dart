@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
-import 'package:otodokekun_cource_web/providers/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/screens/user_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
@@ -14,7 +13,6 @@ class UserScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shopProvider = Provider.of<ShopProvider>(context);
-    final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
     final Stream<QuerySnapshot> streamUser = FirebaseFirestore.instance
         .collection('user')
@@ -25,7 +23,6 @@ class UserScreen extends StatelessWidget {
 
     return CustomAdminScaffold(
       shopProvider: shopProvider,
-      shopOrderProvider: shopOrderProvider,
       selectedRoute: id,
       body: StreamBuilder<QuerySnapshot>(
         stream: streamUser,

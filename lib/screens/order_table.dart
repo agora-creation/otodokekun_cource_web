@@ -106,8 +106,6 @@ class _OrderTableState extends State<OrderTable> {
   void initState() {
     super.initState();
     _init();
-    widget.shopOrderProvider.searchOpenedAt = widget.shop?.openedAt;
-    widget.shopOrderProvider.searchClosedAt = widget.shop?.closedAt;
   }
 
   @override
@@ -150,7 +148,7 @@ class _OrderTableState extends State<OrderTable> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'お届け日(請求期間)',
+                  'お届け日(期間)',
                   style: TextStyle(color: Colors.lightBlue, fontSize: 12.0),
                 ),
                 BorderBoxButton(
@@ -262,7 +260,8 @@ class _OrderTableState extends State<OrderTable> {
                       rows.add(row);
                     }
                     String csv = const ListToCsvConverter().convert(rows);
-                    AnchorElement(href: 'data:text/plain;charset=utf-8,$csv')
+                    AnchorElement(
+                        href: 'data:text/plain;charset=utf-8,$csv')
                       ..setAttribute('download', 'order.csv')
                       ..click();
                   },

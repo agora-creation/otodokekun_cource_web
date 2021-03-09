@@ -1,24 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:otodokekun_cource_web/models/shop_product.dart';
+import 'package:otodokekun_cource_web/models/shop_invoice.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
-import 'package:otodokekun_cource_web/providers/shop_product.dart';
-import 'package:otodokekun_cource_web/screens/product_table.dart';
+import 'package:otodokekun_cource_web/providers/shop_invoice.dart';
+import 'package:otodokekun_cource_web/screens/invoice_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
 import 'package:provider/provider.dart';
 
-class ProductScreen extends StatelessWidget {
-  static const String id = 'product';
+class InvoiceScreen extends StatelessWidget {
+  static const String id = 'invoice';
 
   @override
   Widget build(BuildContext context) {
     final shopProvider = Provider.of<ShopProvider>(context);
-    final shopProductProvider = Provider.of<ShopProductProvider>(context);
-    final Stream<QuerySnapshot> streamProduct = FirebaseFirestore.instance
+    final shopInvoiceProvider = Provider.of<ShopInvoiceProvider>(context);
+    final Stream<QuerySnapshot> streamInvoice = FirebaseFirestore.instance
         .collection('shop')
         .doc(shopProvider.shop?.id)
-        .collection('product')
-        .orderBy('createdAt', descending: true)
+        .collection('invoice')
+        .orderBy('openedAt', descending: true)
         .snapshots();
     List<Map<String, dynamic>> _source = [];
 
@@ -26,19 +26,19 @@ class ProductScreen extends StatelessWidget {
       shopProvider: shopProvider,
       selectedRoute: id,
       body: StreamBuilder<QuerySnapshot>(
-        stream: streamProduct,
+        stream: streamInvoice,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             _source.clear();
-            for (DocumentSnapshot product in snapshot.data.docs) {
-              ShopProductModel shopProductModel =
-                  ShopProductModel.fromSnapshot(product);
-              _source.add(shopProductModel.toMap());
+            for (DocumentSnapshot invoice in snapshot.data.docs) {
+              ShopInvoiceModel shopInvoiceModel =
+                  ShopInvoiceModel.fromSnapshot(invoice);
+              _source.add(shopInvoiceModel.toMap());
             }
           }
-          return ProductTable(
+          return InvoiceTable(
             shop: shopProvider.shop,
-            shopProductProvider: shopProductProvider,
+            shopInvoiceProvider: shopInvoiceProvider,
             source: _source,
           );
         },

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/models/shop_staff.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
-import 'package:otodokekun_cource_web/providers/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/shop_staff.dart';
 import 'package:otodokekun_cource_web/screens/staff_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
@@ -14,7 +13,6 @@ class StaffScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shopProvider = Provider.of<ShopProvider>(context);
-    final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
     final shopStaffProvider = Provider.of<ShopStaffProvider>(context);
     final Stream<QuerySnapshot> streamStaff = FirebaseFirestore.instance
         .collection('shop')
@@ -26,7 +24,6 @@ class StaffScreen extends StatelessWidget {
 
     return CustomAdminScaffold(
       shopProvider: shopProvider,
-      shopOrderProvider: shopOrderProvider,
       selectedRoute: id,
       body: StreamBuilder<QuerySnapshot>(
         stream: streamStaff,

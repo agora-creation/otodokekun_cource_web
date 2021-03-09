@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
+import 'package:otodokekun_cource_web/providers/shop_invoice.dart';
 import 'package:otodokekun_cource_web/providers/shop_notice.dart';
 import 'package:otodokekun_cource_web/providers/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/shop_plan.dart';
@@ -10,6 +11,7 @@ import 'package:otodokekun_cource_web/providers/shop_product.dart';
 import 'package:otodokekun_cource_web/providers/shop_staff.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/providers/user_notice.dart';
+import 'package:otodokekun_cource_web/screens/invoice.dart';
 import 'package:otodokekun_cource_web/screens/login.dart';
 import 'package:otodokekun_cource_web/screens/notice.dart';
 import 'package:otodokekun_cource_web/screens/order.dart';
@@ -39,6 +41,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: ShopProvider.initialize()),
+        ChangeNotifierProvider.value(value: ShopInvoiceProvider()),
         ChangeNotifierProvider.value(value: ShopNoticeProvider()),
         ChangeNotifierProvider.value(value: ShopOrderProvider()),
         ChangeNotifierProvider.value(value: ShopPlanProvider()),
@@ -60,6 +63,7 @@ class MyApp extends StatelessWidget {
         theme: theme(),
         home: SplashController(),
         routes: {
+          InvoiceScreen.id: (context) => InvoiceScreen(),
           LoginScreen.id: (context) => LoginScreen(),
           NoticeScreen.id: (context) => NoticeScreen(),
           OrderScreen.id: (context) => OrderScreen(),
