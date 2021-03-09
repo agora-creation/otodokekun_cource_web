@@ -5,14 +5,15 @@ import 'package:otodokekun_cource_web/services/shop_invoice.dart';
 class ShopInvoiceProvider with ChangeNotifier {
   ShopInvoiceService _shopInvoiceService = ShopInvoiceService();
 
-  Future<bool> create({String shopId}) async {
+  Future<bool> create(
+      {String shopId, DateTime openedAt, DateTime closedAt}) async {
     String id = _shopInvoiceService.newId(shopId: shopId);
     try {
       _shopInvoiceService.create({
         'id': id,
         'shopId': shopId,
-        'openedAt': DateTime.now(),
-        'closedAt': DateTime.now(),
+        'openedAt': openedAt,
+        'closedAt': closedAt,
         'createdAt': DateTime.now(),
       });
       return true;

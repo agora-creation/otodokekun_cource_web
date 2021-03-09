@@ -1,10 +1,14 @@
+import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_invoice.dart';
 import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
+import 'package:otodokekun_cource_web/widgets/fill_box_form_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 
 class InvoiceTable extends StatefulWidget {
@@ -152,6 +156,9 @@ class AddInvoiceDialog extends StatefulWidget {
 }
 
 class _AddInvoiceDialogState extends State<AddInvoiceDialog> {
+  DateTime openedAt = DateTime.now();
+  DateTime closedAt = DateTime.now().add(Duration(days: 7));
+
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
@@ -160,7 +167,33 @@ class _AddInvoiceDialogState extends State<AddInvoiceDialog> {
         width: 450.0,
         child: ListView(
           shrinkWrap: true,
-          children: [],
+          children: [
+            Text('締め日(期間)', style: kLabelTextStyle),
+            SizedBox(height: 4.0),
+            FillBoxFormButton(
+              iconData: Icons.calendar_today,
+              labelText:
+                  '${DateFormat('yyyy/MM/dd').format(openedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(closedAt)}',
+              labelColor: Colors.black,
+              backgroundColor: Colors.grey.shade100,
+              onTap: () async {
+                final List<DateTime> selected =
+                    await DateRagePicker.showDatePicker(
+                  context: context,
+                  initialFirstDate: openedAt,
+                  initialLastDate: closedAt,
+                  firstDate: DateTime(DateTime.now().year - 1),
+                  lastDate: DateTime(DateTime.now().year + 1),
+                );
+                if (selected != null && selected.length == 2) {
+                  setState(() {
+                    openedAt = selected.first;
+                    closedAt = selected.last;
+                  });
+                }
+              },
+            ),
+          ],
         ),
       ),
       actions: [
@@ -177,8 +210,10 @@ class _AddInvoiceDialogState extends State<AddInvoiceDialog> {
           labelColor: Colors.white,
           backgroundColor: Colors.blueAccent,
           onTap: () async {
-            if (!await widget.shopInvoiceProvider
-                .create(shopId: widget.shop?.id)) {
+            if (!await widget.shopInvoiceProvider.create(
+                shopId: widget.shop?.id,
+                openedAt: openedAt,
+                closedAt: closedAt)) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(
@@ -214,7 +249,26 @@ class _EditInvoiceDialogState extends State<EditInvoiceDialog> {
         width: 450.0,
         child: ListView(
           shrinkWrap: true,
-          children: [],
+          children: [
+            Text('締め日(期間)', style: kLabelTextStyle),
+            SizedBox(height: 4.0),
+            FillBoxFormButton(
+              iconData: Icons.calendar_today,
+              labelText:
+                  '${widget.data['openedAtText']} 〜 ${widget.data['closedAtText']}',
+              labelColor: Colors.black,
+              backgroundColor: Colors.grey.shade100,
+              onTap: () {},
+            ),
+            SizedBox(height: 4.0),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Text(
+                '※変更はできません',
+                style: TextStyle(fontSize: 14.0, color: Colors.redAccent),
+              ),
+            ),
+          ],
         ),
       ),
       actions: [

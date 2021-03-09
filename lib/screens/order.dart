@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/models/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
+import 'package:otodokekun_cource_web/providers/shop_invoice.dart';
 import 'package:otodokekun_cource_web/providers/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/shop_staff.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
@@ -15,6 +16,7 @@ class OrderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shopProvider = Provider.of<ShopProvider>(context);
+    final shopInvoiceProvider = Provider.of<ShopInvoiceProvider>(context);
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
     final shopStaffProvider = Provider.of<ShopStaffProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
@@ -85,6 +87,7 @@ class OrderScreen extends StatelessWidget {
           }
           return OrderTable(
             shop: shopProvider.shop,
+            shopInvoiceProvider: shopInvoiceProvider,
             shopOrderProvider: shopOrderProvider,
             shopStaffProvider: shopStaffProvider,
             userProvider: userProvider,

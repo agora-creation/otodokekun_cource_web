@@ -1,14 +1,15 @@
 import 'dart:html';
 
 import 'package:csv/csv.dart';
-import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/cart.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
+import 'package:otodokekun_cource_web/models/shop_invoice.dart';
 import 'package:otodokekun_cource_web/models/shop_staff.dart';
 import 'package:otodokekun_cource_web/models/user.dart';
+import 'package:otodokekun_cource_web/providers/shop_invoice.dart';
 import 'package:otodokekun_cource_web/providers/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/shop_staff.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
@@ -21,6 +22,7 @@ import 'package:responsive_table/DatatableHeader.dart';
 
 class OrderTable extends StatefulWidget {
   final ShopModel shop;
+  final ShopInvoiceProvider shopInvoiceProvider;
   final ShopOrderProvider shopOrderProvider;
   final ShopStaffProvider shopStaffProvider;
   final UserProvider userProvider;
@@ -28,6 +30,7 @@ class OrderTable extends StatefulWidget {
 
   OrderTable({
     @required this.shop,
+    @required this.shopInvoiceProvider,
     @required this.shopOrderProvider,
     @required this.shopStaffProvider,
     @required this.userProvider,
@@ -88,10 +91,16 @@ class _OrderTableState extends State<OrderTable> {
   List<Map<String, dynamic>> _selecteds = [];
   String _sortColumn;
   bool _sortAscending = true;
+  List<ShopInvoiceModel> _invoices = [];
   List<ShopStaffModel> _staffs = [];
   List<UserModel> _users = [];
 
   void _init() async {
+    await widget.shopInvoiceProvider
+        .selectList(shopId: widget.shop?.id)
+        .then((value) {
+      _invoices = value;
+    });
     await widget.shopStaffProvider
         .selectList(shopId: widget.shop?.id)
         .then((value) {
@@ -148,7 +157,7 @@ class _OrderTableState extends State<OrderTable> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'お届け日(期間)',
+                  'お届け日(締め日期間)',
                   style: TextStyle(color: Colors.lightBlue, fontSize: 12.0),
                 ),
                 BorderBoxButton(
@@ -157,19 +166,16 @@ class _OrderTableState extends State<OrderTable> {
                       '${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchOpenedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchClosedAt)}',
                   labelColor: Colors.lightBlue,
                   borderColor: Colors.lightBlue,
-                  onTap: () async {
-                    final List<DateTime> selected =
-                        await DateRagePicker.showDatePicker(
+                  onTap: () {
+                    showDialog(
                       context: context,
-                      initialFirstDate: widget.shopOrderProvider.searchOpenedAt,
-                      initialLastDate: widget.shopOrderProvider.searchClosedAt,
-                      firstDate: DateTime(DateTime.now().year - 1),
-                      lastDate: DateTime(DateTime.now().year + 1),
+                      builder: (_) {
+                        return SearchInvoiceDialog(
+                          shopOrderProvider: widget.shopOrderProvider,
+                          invoices: _invoices,
+                        );
+                      },
                     );
-                    if (selected != null && selected.length == 2) {
-                      widget.shopOrderProvider
-                          .changeSearchDateRage(selected.first, selected.last);
-                    }
                   },
                 ),
               ],
@@ -260,8 +266,7 @@ class _OrderTableState extends State<OrderTable> {
                       rows.add(row);
                     }
                     String csv = const ListToCsvConverter().convert(rows);
-                    AnchorElement(
-                        href: 'data:text/plain;charset=utf-8,$csv')
+                    AnchorElement(href: 'data:text/plain;charset=utf-8,$csv')
                       ..setAttribute('download', 'order.csv')
                       ..click();
                   },
@@ -587,6 +592,96 @@ class _SearchNameDialogState extends State<SearchNameDialog> {
           backgroundColor: Colors.lightBlue,
           onTap: () {
             widget.shopOrderProvider.changeSearchName(_name);
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class SearchInvoiceDialog extends StatefulWidget {
+  final ShopOrderProvider shopOrderProvider;
+  final List<ShopInvoiceModel> invoices;
+
+  SearchInvoiceDialog({
+    @required this.shopOrderProvider,
+    @required this.invoices,
+  });
+
+  @override
+  _SearchInvoiceDialogState createState() => _SearchInvoiceDialogState();
+}
+
+class _SearchInvoiceDialogState extends State<SearchInvoiceDialog> {
+  final ScrollController _scrollController = ScrollController();
+  ShopInvoiceModel _selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomDialog(
+      title: 'お届け日(締め日期間)で検索',
+      content: Container(
+        width: 350.0,
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            Container(
+              height: 300.0,
+              child: Scrollbar(
+                isAlwaysShown: true,
+                controller: _scrollController,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: ScrollPhysics(),
+                  controller: _scrollController,
+                  itemCount: widget.invoices.length,
+                  itemBuilder: (context, index) {
+                    ShopInvoiceModel _invoice = widget.invoices[index];
+                    return Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            width: 1.0,
+                            color: Colors.grey.shade300,
+                          ),
+                        ),
+                      ),
+                      child: RadioListTile(
+                        title: Text(
+                            '${DateFormat('yyyy/MM/dd').format(_invoice.openedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(_invoice.closedAt)}'),
+                        value: _invoice,
+                        groupValue: _selected,
+                        activeColor: Colors.blueAccent,
+                        onChanged: (value) {
+                          setState(() {
+                            _selected = value;
+                          });
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            Divider(height: 0.0),
+          ],
+        ),
+      ),
+      actions: [
+        BorderBoxButton(
+          iconData: Icons.close,
+          labelText: '閉じる',
+          labelColor: Colors.blueGrey,
+          borderColor: Colors.blueGrey,
+          onTap: () => Navigator.pop(context),
+        ),
+        FillBoxButton(
+          iconData: Icons.search,
+          labelText: '検索する',
+          labelColor: Colors.white,
+          backgroundColor: Colors.lightBlue,
+          onTap: () {
             Navigator.pop(context);
           },
         ),
