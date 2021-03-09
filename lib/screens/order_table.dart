@@ -100,6 +100,14 @@ class _OrderTableState extends State<OrderTable> {
         .selectList(shopId: widget.shop?.id)
         .then((value) {
       _invoices = value;
+      DateTime _now = DateTime.now();
+      for (ShopInvoiceModel _invoice in _invoices) {
+        if (_now.isAfter(_invoice.openedAt) &&
+            _now.isBefore(_invoice.closedAt)) {
+          widget.shopOrderProvider
+              .changeSearchDateRage(_invoice.openedAt, _invoice.closedAt);
+        }
+      }
     });
     await widget.shopStaffProvider
         .selectList(shopId: widget.shop?.id)
@@ -618,6 +626,19 @@ class _SearchInvoiceDialogState extends State<SearchInvoiceDialog> {
   ShopInvoiceModel _selected;
 
   @override
+  void initState() {
+    super.initState();
+    for (ShopInvoiceModel _invoice in widget.invoices) {
+      if (widget.shopOrderProvider.searchOpenedAt
+              .isAtSameMomentAs(_invoice.openedAt) &&
+          widget.shopOrderProvider.searchClosedAt
+              .isAtSameMomentAs(_invoice.closedAt)) {
+        _selected = _invoice;
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return CustomDialog(
       title: 'お届け日(締め日期間)で検索',
@@ -682,6 +703,8 @@ class _SearchInvoiceDialogState extends State<SearchInvoiceDialog> {
           labelColor: Colors.white,
           backgroundColor: Colors.lightBlue,
           onTap: () {
+            widget.shopOrderProvider
+                .changeSearchDateRage(_selected.openedAt, _selected.closedAt);
             Navigator.pop(context);
           },
         ),

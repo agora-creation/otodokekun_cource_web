@@ -21,13 +21,11 @@ class OrderScreen extends StatelessWidget {
     final shopStaffProvider = Provider.of<ShopStaffProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
     final _startAt = Timestamp.fromMillisecondsSinceEpoch(
-      DateTime.parse(shopOrderProvider.searchClosedAt.toString())
-          .millisecondsSinceEpoch,
-    );
+        DateTime.parse(shopOrderProvider.searchClosedAt.toString())
+            .millisecondsSinceEpoch);
     final _endAt = Timestamp.fromMillisecondsSinceEpoch(
-      DateTime.parse(shopOrderProvider.searchOpenedAt.toString())
-          .millisecondsSinceEpoch,
-    );
+        DateTime.parse(shopOrderProvider.searchOpenedAt.toString())
+            .millisecondsSinceEpoch);
     Stream<QuerySnapshot> streamOrder;
     if (shopOrderProvider.searchName != '' &&
         shopOrderProvider.searchStaff != '') {
