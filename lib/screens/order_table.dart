@@ -165,7 +165,33 @@ class _OrderTableState extends State<OrderTable> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'お届け日(締め日期間)',
+                  'お届け日(日付検索)',
+                  style: TextStyle(color: Colors.lightBlue, fontSize: 12.0),
+                ),
+                BorderBoxButton(
+                  iconData: Icons.calendar_today,
+                  labelText: '指定なし',
+                  labelColor: Colors.lightBlue,
+                  borderColor: Colors.lightBlue,
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) {
+                        return SearchDeliveryAtDialog(
+                          shopOrderProvider: widget.shopOrderProvider,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+            SizedBox(width: 4.0),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'お届け日(締め日検索)',
                   style: TextStyle(color: Colors.lightBlue, fontSize: 12.0),
                 ),
                 BorderBoxButton(
@@ -274,7 +300,8 @@ class _OrderTableState extends State<OrderTable> {
                       rows.add(row);
                     }
                     String csv = const ListToCsvConverter().convert(rows);
-                    AnchorElement(href: 'data:text/plain;charset=utf-8,$csv')
+                    AnchorElement(
+                        href: 'data:text/plain;charset=shift-jis,$csv')
                       ..setAttribute('download', 'order.csv')
                       ..click();
                   },
@@ -605,6 +632,22 @@ class _SearchNameDialogState extends State<SearchNameDialog> {
         ),
       ],
     );
+  }
+}
+
+class SearchDeliveryAtDialog extends StatefulWidget {
+  final ShopOrderProvider shopOrderProvider;
+
+  SearchDeliveryAtDialog({@required this.shopOrderProvider});
+
+  @override
+  _SearchDeliveryAtDialogState createState() => _SearchDeliveryAtDialogState();
+}
+
+class _SearchDeliveryAtDialogState extends State<SearchDeliveryAtDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
 
