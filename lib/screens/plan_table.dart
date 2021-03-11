@@ -114,13 +114,6 @@ class _PlanTableState extends State<PlanTable> {
       selecteds: _selecteds,
       showSelect: false,
       onTabRow: (data) {
-        widget.shopPlanProvider.clearController();
-        widget.shopPlanProvider.name.text = data['name'];
-        widget.shopPlanProvider.unit.text = data['unit'];
-        widget.shopPlanProvider.price.text = data['price'].toString();
-        widget.shopPlanProvider.description.text = data['description'];
-        widget.shopPlanProvider.deliveryAt = data['deliveryAt'];
-        widget.shopPlanProvider.published = data['published'];
         showDialog(
           context: context,
           builder: (_) {
@@ -365,37 +358,12 @@ class _EditPlanDialogState extends State<EditPlanDialog> {
         child: ListView(
           shrinkWrap: true,
           children: [
-            CustomTextField(
-              controller: widget.shopPlanProvider.name,
-              obscureText: false,
-              textInputType: TextInputType.name,
-              maxLines: 1,
-              labelText: '商品名',
-              iconData: Icons.title,
-            ),
+            Text('商品名', style: kLabelTextStyle),
+            Text('${widget.data['name']}'),
             SizedBox(height: 8.0),
             Text('商品画像', style: kLabelTextStyle),
             GestureDetector(
-              onTap: () {
-                InputElement _input = FileUploadInputElement()
-                  ..accept = 'image/*';
-                _input.click();
-                _input.onChange.listen((e) {
-                  widget.shopPlanProvider.imageFile = _input.files.first;
-                  final reader = FileReader();
-                  reader.readAsDataUrl(widget.shopPlanProvider.imageFile);
-                  reader.onLoadEnd.listen((e) {
-                    final encoded = reader.result as String;
-                    final stripped = encoded.replaceFirst(
-                      RegExp(r'data:image/[^;]+;base64,'),
-                      '',
-                    );
-                    setState(() {
-                      imageData = base64.decode(stripped);
-                    });
-                  });
-                });
-              },
+              onTap: () {},
               child: imageData != null
                   ? Image.memory(
                       imageData,
@@ -412,71 +380,17 @@ class _EditPlanDialogState extends State<EditPlanDialog> {
                         ),
             ),
             SizedBox(height: 8.0),
-            CustomTextField(
-              controller: widget.shopPlanProvider.unit,
-              obscureText: false,
-              textInputType: null,
-              maxLines: 1,
-              labelText: '単位',
-              iconData: Icons.ac_unit,
-            ),
+            Text('単位', style: kLabelTextStyle),
+            Text('${widget.data['unit']}'),
             SizedBox(height: 8.0),
-            CustomTextField(
-              controller: widget.shopPlanProvider.price,
-              obscureText: false,
-              textInputType: TextInputType.number,
-              maxLines: 1,
-              labelText: '価格',
-              iconData: Icons.attach_money,
-            ),
+            Text('価格', style: kLabelTextStyle),
+            Text('¥ ${widget.data['price']}'),
             SizedBox(height: 8.0),
-            CustomTextField(
-              controller: widget.shopPlanProvider.description,
-              obscureText: false,
-              textInputType: TextInputType.multiline,
-              maxLines: null,
-              labelText: '説明',
-              iconData: Icons.description,
-            ),
+            Text('説明', style: kLabelTextStyle),
+            Text('${widget.data['description']}'),
             SizedBox(height: 8.0),
             Text('お届け日', style: kLabelTextStyle),
-            SizedBox(height: 4.0),
-            FillBoxFormButton(
-              iconData: Icons.calendar_today,
-              labelText:
-                  '${DateFormat('yyyy/MM/dd').format(widget.shopPlanProvider.deliveryAt)}',
-              labelColor: Colors.black,
-              backgroundColor: Colors.grey.shade100,
-              onTap: () {},
-            ),
-            SizedBox(height: 4.0),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Text(
-                '※変更はできません',
-                style: TextStyle(fontSize: 14.0, color: Colors.redAccent),
-              ),
-            ),
-            SizedBox(height: 8.0),
-            DropdownButton<bool>(
-              isExpanded: true,
-              value: widget.shopPlanProvider.published,
-              onChanged: (value) {
-                setState(() {
-                  widget.shopPlanProvider.published = value;
-                });
-              },
-              items: [
-                DropdownMenuItem<bool>(
-                  value: false,
-                  child: Text('非公開'),
-                ),
-                DropdownMenuItem<bool>(
-                  value: true,
-                  child: Text('公開'),
-                ),
-              ],
-            ),
+            Text('${widget.data['deliveryAtText']}'),
           ],
         ),
       ),
