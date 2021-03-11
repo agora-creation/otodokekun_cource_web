@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/models/shop_plan.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_plan.dart';
+import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/screens/plan_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +15,7 @@ class PlanScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final shopProvider = Provider.of<ShopProvider>(context);
     final shopPlanProvider = Provider.of<ShopPlanProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
     final Stream<QuerySnapshot> streamPlan = FirebaseFirestore.instance
         .collection('shop')
         .doc(shopProvider.shop?.id)
@@ -38,6 +40,7 @@ class PlanScreen extends StatelessWidget {
           return PlanTable(
             shop: shopProvider.shop,
             shopPlanProvider: shopPlanProvider,
+            userProvider: userProvider,
             source: _source,
           );
         },

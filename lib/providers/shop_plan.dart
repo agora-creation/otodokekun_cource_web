@@ -2,9 +2,12 @@ import 'dart:html';
 
 import 'package:firebase/firebase.dart' as firebase;
 import 'package:flutter/material.dart';
+import 'package:otodokekun_cource_web/models/user.dart';
+import 'package:otodokekun_cource_web/services/shop_order.dart';
 import 'package:otodokekun_cource_web/services/shop_plan.dart';
 
 class ShopPlanProvider with ChangeNotifier {
+  ShopOrderService _shopOrderService = ShopOrderService();
   ShopPlanService _shopPlanService = ShopPlanService();
 
   TextEditingController name = TextEditingController();
@@ -15,7 +18,7 @@ class ShopPlanProvider with ChangeNotifier {
   DateTime deliveryAt;
   bool published;
 
-  Future<bool> create({String shopId}) async {
+  Future<bool> create({String shopId, List<UserModel> users}) async {
     if (name.text == null) return false;
     if (price.text == null) return false;
     if (deliveryAt == null) return false;
@@ -45,6 +48,35 @@ class ShopPlanProvider with ChangeNotifier {
         'published': true,
         'createdAt': DateTime.now(),
       });
+      for (UserModel _user in users) {
+        String orderId = _shopOrderService.newId(shopId: shopId);
+        List<Map> cart = [];
+        cart.add({
+          'id': id,
+          'name': name.text.trim(),
+          'image': imageUrl,
+          'unit': unit.text.trim(),
+          'price': int.parse(price.text.trim()),
+          'quantity': 1,
+          'totalPrice': int.parse(price.text.trim()),
+        });
+        _shopOrderService.create({
+          'id': orderId,
+          'shopId': shopId,
+          'userId': _user.id,
+          'name': _user.name,
+          'zip': _user.zip,
+          'address': _user.address,
+          'tel': _user.tel,
+          'cart': cart,
+          'deliveryAt': deliveryAt,
+          'remarks': '',
+          'totalPrice': int.parse(price.text.trim()),
+          'staff': _user.staff,
+          'shipping': false,
+          'createdAt': deliveryAt,
+        });
+      }
       return true;
     } catch (e) {
       print(e.toString());

@@ -1,4 +1,5 @@
-import 'dart:html';
+import 'dart:convert' show utf8;
+import 'dart:html' show AnchorElement;
 
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
@@ -286,7 +287,7 @@ class _OrderTableState extends State<OrderTable> {
                   labelText: 'ダウンロード',
                   labelColor: Colors.green,
                   borderColor: Colors.green,
-                  onTap: () {
+                  onTap: () async {
                     List<List<dynamic>> rows = [];
                     for (int i = 0; i < widget.source.length; i++) {
                       List<dynamic> row = [];
@@ -303,8 +304,11 @@ class _OrderTableState extends State<OrderTable> {
                       rows.add(row);
                     }
                     String csv = const ListToCsvConverter().convert(rows);
-                    AnchorElement(href: 'data:text/plain,$csv')
-                      ..setAttribute('download', 'order.csv')
+                    AnchorElement()
+                      ..href =
+                          '${Uri.dataFromString(csv, mimeType: 'text/csv', encoding: utf8)}'
+                      ..download = 'order.csv'
+                      ..style.display = 'none'
                       ..click();
                   },
                 ),

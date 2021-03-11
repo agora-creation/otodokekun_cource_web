@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
+import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/providers/shop_plan.dart';
+import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
@@ -18,11 +20,13 @@ import 'package:responsive_table/DatatableHeader.dart';
 class PlanTable extends StatefulWidget {
   final ShopModel shop;
   final ShopPlanProvider shopPlanProvider;
+  final UserProvider userProvider;
   final List<Map<String, dynamic>> source;
 
   PlanTable({
     @required this.shop,
     @required this.shopPlanProvider,
+    @required this.userProvider,
     @required this.source,
   });
 
@@ -56,18 +60,27 @@ class _PlanTableState extends State<PlanTable> {
       show: true,
       sortable: true,
     ),
-    DatatableHeader(
-      text: '公開設定',
-      value: 'publishedText',
-      show: true,
-      sortable: true,
-    ),
   ];
   int _currentPerPage = 10;
   int _currentPage = 1;
   List<Map<String, dynamic>> _selecteds = [];
   String _sortColumn;
   bool _sortAscending = true;
+  List<UserModel> _users = [];
+
+  void _init() async {
+    await widget.userProvider
+        .selectListFixed(shopId: widget.shop?.id)
+        .then((value) {
+      _users = value;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,6 +102,7 @@ class _PlanTableState extends State<PlanTable> {
                 return AddPlanDialog(
                   shop: widget.shop,
                   shopPlanProvider: widget.shopPlanProvider,
+                  users: _users,
                 );
               },
             );
@@ -177,10 +191,12 @@ class _PlanTableState extends State<PlanTable> {
 class AddPlanDialog extends StatefulWidget {
   final ShopModel shop;
   final ShopPlanProvider shopPlanProvider;
+  final List<UserModel> users;
 
   AddPlanDialog({
     @required this.shop,
     @required this.shopPlanProvider,
+    @required this.users,
   });
 
   @override
@@ -309,7 +325,7 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
           backgroundColor: Colors.blueAccent,
           onTap: () async {
             if (!await widget.shopPlanProvider
-                .create(shopId: widget.shop?.id)) {
+                .create(shopId: widget.shop?.id, users: widget.users)) {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(
@@ -484,23 +500,6 @@ class _EditPlanDialogState extends State<EditPlanDialog> {
             }
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('削除が完了しました')),
-            );
-            widget.shopPlanProvider.clearController();
-            Navigator.pop(context);
-          },
-        ),
-        FillBoxButton(
-          iconData: Icons.check,
-          labelText: '変更を保存',
-          labelColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          onTap: () async {
-            if (!await widget.shopPlanProvider
-                .update(id: widget.data['id'], shopId: widget.data['shopId'])) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('変更が完了しました')),
             );
             widget.shopPlanProvider.clearController();
             Navigator.pop(context);
