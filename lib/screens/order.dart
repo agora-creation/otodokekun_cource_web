@@ -20,16 +20,25 @@ class OrderScreen extends StatelessWidget {
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
     final shopStaffProvider = Provider.of<ShopStaffProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
+    String _opened;
+    String _closed;
+    if (shopOrderProvider.searchDeliveryAtDisabled) {
+      _opened = shopOrderProvider.searchOpenedAt.toString();
+      _closed = shopOrderProvider.searchClosedAt.toString();
+    } else {
+      _opened = shopOrderProvider.searchDeliveryAt
+          .subtract(Duration(days: 1))
+          .toString();
+      _closed = shopOrderProvider.searchDeliveryAt.toString();
+    }
     final _startAt = Timestamp.fromMillisecondsSinceEpoch(
-        DateTime.parse(shopOrderProvider.searchClosedAt.toString())
-            .millisecondsSinceEpoch);
+        DateTime.parse(_closed).millisecondsSinceEpoch);
     final _endAt = Timestamp.fromMillisecondsSinceEpoch(
-        DateTime.parse(shopOrderProvider.searchOpenedAt.toString())
-            .millisecondsSinceEpoch);
-    Stream<QuerySnapshot> streamOrder;
+        DateTime.parse(_opened).millisecondsSinceEpoch);
+    Stream<QuerySnapshot> _streamOrder;
     if (shopOrderProvider.searchName != '' &&
         shopOrderProvider.searchStaff != '') {
-      streamOrder = FirebaseFirestore.instance
+      _streamOrder = FirebaseFirestore.instance
           .collection('shop')
           .doc(shopProvider.shop?.id)
           .collection('order')
@@ -40,7 +49,7 @@ class OrderScreen extends StatelessWidget {
           .startAt([_startAt]).endAt([_endAt]).snapshots();
     } else if (shopOrderProvider.searchName != '' &&
         shopOrderProvider.searchStaff == '') {
-      streamOrder = FirebaseFirestore.instance
+      _streamOrder = FirebaseFirestore.instance
           .collection('shop')
           .doc(shopProvider.shop?.id)
           .collection('order')
@@ -50,7 +59,7 @@ class OrderScreen extends StatelessWidget {
           .startAt([_startAt]).endAt([_endAt]).snapshots();
     } else if (shopOrderProvider.searchName == '' &&
         shopOrderProvider.searchStaff != '') {
-      streamOrder = FirebaseFirestore.instance
+      _streamOrder = FirebaseFirestore.instance
           .collection('shop')
           .doc(shopProvider.shop?.id)
           .collection('order')
@@ -59,7 +68,7 @@ class OrderScreen extends StatelessWidget {
           .orderBy('deliveryAt', descending: true)
           .startAt([_startAt]).endAt([_endAt]).snapshots();
     } else {
-      streamOrder = FirebaseFirestore.instance
+      _streamOrder = FirebaseFirestore.instance
           .collection('shop')
           .doc(shopProvider.shop?.id)
           .collection('order')
@@ -73,7 +82,7 @@ class OrderScreen extends StatelessWidget {
       shopProvider: shopProvider,
       selectedRoute: id,
       body: StreamBuilder<QuerySnapshot>(
-        stream: streamOrder,
+        stream: _streamOrder,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             _source.clear();

@@ -431,19 +431,15 @@ class _EditPlanDialogState extends State<EditPlanDialog> {
                   '${DateFormat('yyyy/MM/dd').format(widget.shopPlanProvider.deliveryAt)}',
               labelColor: Colors.black,
               backgroundColor: Colors.grey.shade100,
-              onTap: () async {
-                var selected = await showDatePicker(
-                  locale: const Locale('ja'),
-                  context: context,
-                  initialDate: widget.shopPlanProvider.deliveryAt,
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime.now().add(Duration(days: 365)),
-                );
-                if (selected == null) return;
-                setState(() {
-                  widget.shopPlanProvider.deliveryAt = selected;
-                });
-              },
+              onTap: () {},
+            ),
+            SizedBox(height: 4.0),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Text(
+                '※変更はできません',
+                style: TextStyle(fontSize: 14.0, color: Colors.redAccent),
+              ),
             ),
             SizedBox(height: 8.0),
             DropdownButton<bool>(

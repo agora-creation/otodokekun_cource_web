@@ -18,6 +18,7 @@ import 'package:otodokekun_cource_web/widgets/cart_list_tile.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
+import 'package:otodokekun_cource_web/widgets/fill_box_form_button.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 
 class OrderTable extends StatefulWidget {
@@ -170,7 +171,9 @@ class _OrderTableState extends State<OrderTable> {
                 ),
                 BorderBoxButton(
                   iconData: Icons.calendar_today,
-                  labelText: '指定なし',
+                  labelText: widget.shopOrderProvider.searchDeliveryAtDisabled
+                      ? '指定なし'
+                      : '${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchDeliveryAt)}',
                   labelColor: Colors.lightBlue,
                   borderColor: Colors.lightBlue,
                   onTap: () {
@@ -300,8 +303,7 @@ class _OrderTableState extends State<OrderTable> {
                       rows.add(row);
                     }
                     String csv = const ListToCsvConverter().convert(rows);
-                    AnchorElement(
-                        href: 'data:text/plain;charset=shift-jis,$csv')
+                    AnchorElement(href: 'data:text/plain,$csv')
                       ..setAttribute('download', 'order.csv')
                       ..click();
                   },
@@ -645,9 +647,82 @@ class SearchDeliveryAtDialog extends StatefulWidget {
 }
 
 class _SearchDeliveryAtDialogState extends State<SearchDeliveryAtDialog> {
+  DateTime _deliveryAt = DateTime.now();
+  bool _disabled = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _deliveryAt = widget.shopOrderProvider.searchDeliveryAt;
+    _disabled = widget.shopOrderProvider.searchDeliveryAtDisabled;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return CustomDialog(
+      title: 'お届け日(日付検索)',
+      content: Container(
+        width: 350.0,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FillBoxFormButton(
+              iconData: Icons.calendar_today,
+              labelText: '${DateFormat('yyyy/MM/dd').format(_deliveryAt)}',
+              labelColor: Colors.black,
+              backgroundColor: Colors.grey.shade100,
+              onTap: () async {
+                var selected = await showDatePicker(
+                  locale: const Locale('ja'),
+                  context: context,
+                  initialDate: _deliveryAt,
+                  firstDate: widget.shopOrderProvider.searchOpenedAt,
+                  lastDate: widget.shopOrderProvider.searchClosedAt,
+                );
+                if (selected == null) return;
+                setState(() {
+                  _deliveryAt = selected;
+                  _disabled = false;
+                });
+              },
+            ),
+            SizedBox(height: 4.0),
+            CheckboxListTile(
+              title: Text('指定なし'),
+              value: _disabled,
+              activeColor: Colors.blueAccent,
+              controlAffinity: ListTileControlAffinity.leading,
+              onChanged: (value) {
+                setState(() {
+                  _deliveryAt = DateTime.now();
+                  _disabled = value;
+                });
+              },
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        BorderBoxButton(
+          iconData: Icons.close,
+          labelText: '閉じる',
+          labelColor: Colors.blueGrey,
+          borderColor: Colors.blueGrey,
+          onTap: () => Navigator.pop(context),
+        ),
+        FillBoxButton(
+          iconData: Icons.search,
+          labelText: '検索する',
+          labelColor: Colors.white,
+          backgroundColor: Colors.lightBlue,
+          onTap: () {
+            widget.shopOrderProvider.changeSearchDate(_deliveryAt, _disabled);
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
   }
 }
 
@@ -880,7 +955,7 @@ class _SearchShippingDialogState extends State<SearchShippingDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: '担当者で検索',
+      title: '配達状況で検索',
       content: Container(
         width: 350.0,
         child: Column(

@@ -55,7 +55,6 @@ class ShopPlanProvider with ChangeNotifier {
   Future<bool> update({String id, String shopId}) async {
     if (name.text == null) return false;
     if (price.text == null) return false;
-    if (deliveryAt == null) return false;
     String imagePath = '$shopId/$id';
     String imageUrl = '';
     try {
@@ -76,7 +75,6 @@ class ShopPlanProvider with ChangeNotifier {
           'unit': unit.text.trim(),
           'price': int.parse(price.text.trim()),
           'description': description.text,
-          'deliveryAt': deliveryAt,
           'published': published,
         });
       } else {
@@ -87,7 +85,6 @@ class ShopPlanProvider with ChangeNotifier {
           'unit': unit.text.trim(),
           'price': int.parse(price.text.trim()),
           'description': description.text,
-          'deliveryAt': deliveryAt,
           'published': published,
         });
       }
