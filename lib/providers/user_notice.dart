@@ -18,6 +18,11 @@ class UserNoticeProvider with ChangeNotifier {
           'read': true,
           'createdAt': DateTime.now(),
         });
+        _userNoticeService.sendPushMessage(
+          token: user.token,
+          title: title,
+          body: message,
+        );
       }
       return true;
     } catch (e) {
