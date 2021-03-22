@@ -5,7 +5,7 @@ import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
-import 'package:otodokekun_cource_web/models/cart.dart';
+import 'package:otodokekun_cource_web/models/products.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/shop_invoice.dart';
 import 'package:otodokekun_cource_web/models/shop_staff.dart';
@@ -407,7 +407,7 @@ class EditOrderDialog extends StatefulWidget {
 }
 
 class _EditOrderDialogState extends State<EditOrderDialog> {
-  List<CartModel> cart = [];
+  List<ProductsModel> cart = [];
   List<String> staffs = [];
 
   @override
@@ -435,7 +435,7 @@ class _EditOrderDialogState extends State<EditOrderDialog> {
               physics: ScrollPhysics(),
               itemCount: cart.length,
               itemBuilder: (_, index) {
-                CartModel _cart = cart[index];
+                ProductsModel _cart = cart[index];
                 return CartListTile(
                   name: _cart.name,
                   image: _cart.image,

@@ -11,26 +11,32 @@ class ShopProvider with ChangeNotifier {
   Status _status = Status.Uninitialized;
   ShopService _shopServices = ShopService();
   ShopModel _shop;
+
+  User get fUser => _fUser;
+  Status get status => _status;
+  ShopModel get shop => _shop;
+
   bool isLoading = false;
 
-  ShopModel get shop => _shop;
-  Status get status => _status;
-  User get fUser => _fUser;
-
-  TextEditingController email = TextEditingController();
-  TextEditingController password = TextEditingController();
-  TextEditingController cPassword = TextEditingController();
   TextEditingController code = TextEditingController();
   TextEditingController name = TextEditingController();
   TextEditingController zip = TextEditingController();
   TextEditingController address = TextEditingController();
   TextEditingController tel = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
+  TextEditingController cPassword = TextEditingController();
   TextEditingController remarks = TextEditingController();
   List<int> cancelLimitList = [3, 4, 5, 6, 7];
   int cancelLimit;
 
   ShopProvider.initialize() : _auth = FirebaseAuth.instance {
     _auth.authStateChanges().listen(_onStateChanged);
+  }
+
+  void changeLoading() {
+    isLoading = !isLoading;
+    notifyListeners();
   }
 
   Future<bool> signIn() async {
@@ -54,6 +60,9 @@ class ShopProvider with ChangeNotifier {
 
   Future<bool> signUp() async {
     if (name.text == null) return false;
+    if (zip.text == null) return false;
+    if (address.text == null) return false;
+    if (tel.text == null) return false;
     if (email.text == null) return false;
     if (password.text == null) return false;
     if (password.text != cPassword.text) return false;
@@ -70,9 +79,9 @@ class ShopProvider with ChangeNotifier {
           'id': value.user.uid,
           'code': '',
           'name': name.text.trim(),
-          'zip': '',
-          'address': '',
-          'tel': '',
+          'zip': zip.text.trim(),
+          'address': address.text.trim(),
+          'tel': tel.text.trim(),
           'email': email.text.trim(),
           'password': password.text.trim(),
           'remarks': '',
@@ -91,6 +100,9 @@ class ShopProvider with ChangeNotifier {
 
   Future<bool> update() async {
     if (name.text == null) return false;
+    if (zip.text == null) return false;
+    if (address.text == null) return false;
+    if (tel.text == null) return false;
     if (email.text == null) return false;
     try {
       await _auth.currentUser.updateEmail(email.text.trim()).then((value) {
@@ -116,19 +128,20 @@ class ShopProvider with ChangeNotifier {
   Future signOut() async {
     await _auth.signOut();
     _status = Status.Unauthenticated;
+    _shop = null;
     notifyListeners();
     return Future.delayed(Duration.zero);
   }
 
   void clearController() {
-    email.text = '';
-    password.text = '';
-    cPassword.text = '';
     code.text = '';
     name.text = '';
     zip.text = '';
     address.text = '';
     tel.text = '';
+    email.text = '';
+    password.text = '';
+    cPassword.text = '';
     remarks.text = '';
   }
 
@@ -145,11 +158,6 @@ class ShopProvider with ChangeNotifier {
       _status = Status.Authenticated;
       _shop = await _shopServices.select(shopId: _fUser.uid);
     }
-    notifyListeners();
-  }
-
-  void changeLoading() {
-    isLoading = !isLoading;
     notifyListeners();
   }
 }

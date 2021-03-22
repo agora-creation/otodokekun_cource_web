@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:otodokekun_cource_web/models/locations.dart';
 
 class UserModel {
   String _id;
@@ -9,6 +10,7 @@ class UserModel {
   String _tel;
   String _email;
   String _password;
+  List<LocationsModel> locations;
   bool _blacklist;
   String _staff;
   bool _fixed;
@@ -38,11 +40,21 @@ class UserModel {
     _tel = snapshot.data()['tel'];
     _email = snapshot.data()['email'];
     _password = snapshot.data()['password'];
+    locations =
+        _convertLocations(locations: snapshot.data()['locations']) ?? [];
     _blacklist = snapshot.data()['blacklist'];
     _staff = snapshot.data()['staff'];
     _fixed = snapshot.data()['fixed'];
     _token = snapshot.data()['token'];
     _createdAt = snapshot.data()['createdAt'].toDate();
+  }
+
+  List<LocationsModel> _convertLocations({List locations}) {
+    List<LocationsModel> convertedLocations = [];
+    for (Map data in locations) {
+      convertedLocations.add(LocationsModel.fromMap(data));
+    }
+    return convertedLocations;
   }
 
   Map<String, dynamic> toMap() => {
@@ -54,6 +66,7 @@ class UserModel {
         'tel': tel,
         'email': email,
         'password': password,
+        'locations': locations,
         'blacklist': blacklist,
         'blacklistText': blacklist ? '設定済み' : '設定なし',
         'staff': staff,

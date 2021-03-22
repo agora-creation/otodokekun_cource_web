@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-import 'package:otodokekun_cource_web/models/cart.dart';
+import 'package:otodokekun_cource_web/models/products.dart';
 
 class ShopOrderModel {
   String _id;
@@ -10,7 +10,7 @@ class ShopOrderModel {
   String _zip;
   String _address;
   String _tel;
-  List<CartModel> cart;
+  List<ProductsModel> products;
   DateTime _deliveryAt;
   String _remarks;
   int _totalPrice;
@@ -40,7 +40,7 @@ class ShopOrderModel {
     _zip = snapshot.data()['zip'];
     _address = snapshot.data()['address'];
     _tel = snapshot.data()['tel'];
-    cart = _convertCart(cart: snapshot.data()['cart']) ?? [];
+    products = _convertProducts(products: snapshot.data()['products']) ?? [];
     _deliveryAt = snapshot.data()['deliveryAt'].toDate();
     _remarks = snapshot.data()['remarks'];
     _totalPrice = snapshot.data()['totalPrice'];
@@ -49,12 +49,12 @@ class ShopOrderModel {
     _createdAt = snapshot.data()['createdAt'].toDate();
   }
 
-  List<CartModel> _convertCart({List cart}) {
-    List<CartModel> convertedCart = [];
-    for (Map product in cart) {
-      convertedCart.add(CartModel.fromMap(product));
+  List<ProductsModel> _convertProducts({List products}) {
+    List<ProductsModel> convertedProducts = [];
+    for (Map product in products) {
+      convertedProducts.add(ProductsModel.fromMap(product));
     }
-    return convertedCart;
+    return convertedProducts;
   }
 
   Map<String, dynamic> toMap() => {
@@ -65,8 +65,9 @@ class ShopOrderModel {
         'zip': zip,
         'address': address,
         'tel': tel,
-        'cart': cart,
-        'cartText': '${cart[0].name} (${cart[0].quantity}${cart[0].unit})',
+        'products': products,
+        'productsText':
+            '${products[0].name} (${products[0].quantity}${products[0].unit})',
         'deliveryAt': deliveryAt,
         'deliveryAtText': DateFormat('yyyy/MM/dd').format(deliveryAt),
         'remarks': remarks,
