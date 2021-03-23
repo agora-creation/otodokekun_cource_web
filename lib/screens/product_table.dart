@@ -48,12 +48,6 @@ class _ProductTableState extends State<ProductTable> {
       show: true,
       sortable: true,
     ),
-    DatatableHeader(
-      text: '公開設定',
-      value: 'publishedText',
-      show: true,
-      sortable: true,
-    ),
   ];
   int _currentPerPage = 10;
   int _currentPage = 1;
@@ -95,7 +89,6 @@ class _ProductTableState extends State<ProductTable> {
         widget.shopProductProvider.unit.text = data['unit'];
         widget.shopProductProvider.price.text = data['price'].toString();
         widget.shopProductProvider.description.text = data['description'];
-        widget.shopProductProvider.published = data['published'];
         showDialog(
           context: context,
           builder: (_) {
@@ -256,35 +249,42 @@ class _AddProductDialogState extends State<AddProductDialog> {
               labelText: '説明',
               iconData: Icons.description,
             ),
+            SizedBox(height: 16.0),
+            Divider(height: 0.0),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                BorderBoxButton(
+                  iconData: Icons.close,
+                  labelText: '閉じる',
+                  labelColor: Colors.blueGrey,
+                  borderColor: Colors.blueGrey,
+                  onTap: () => Navigator.pop(context),
+                ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.add,
+                  labelText: '新規登録',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  onTap: () async {
+                    if (!await widget.shopProductProvider
+                        .create(shopId: widget.shop?.id)) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('登録が完了しました')),
+                    );
+                    widget.shopProductProvider.clearController();
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),
-      actions: [
-        BorderBoxButton(
-          iconData: Icons.close,
-          labelText: '閉じる',
-          labelColor: Colors.blueGrey,
-          borderColor: Colors.blueGrey,
-          onTap: () => Navigator.pop(context),
-        ),
-        FillBoxButton(
-          iconData: Icons.add,
-          labelText: '新規登録',
-          labelColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          onTap: () async {
-            if (!await widget.shopProductProvider
-                .create(shopId: widget.shop?.id)) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('登録が完了しました')),
-            );
-            widget.shopProductProvider.clearController();
-            Navigator.pop(context);
-          },
-        ),
-      ],
     );
   }
 }
@@ -387,73 +387,60 @@ class _EditProductDialogState extends State<EditProductDialog> {
               labelText: '説明',
               iconData: Icons.description,
             ),
-            SizedBox(height: 8.0),
-            Text('公開設定', style: kLabelTextStyle),
-            DropdownButton<bool>(
-              isExpanded: true,
-              value: widget.shopProductProvider.published,
-              onChanged: (value) {
-                setState(() {
-                  widget.shopProductProvider.published = value;
-                });
-              },
-              items: [
-                DropdownMenuItem<bool>(
-                  value: false,
-                  child: Text('非公開'),
+            SizedBox(height: 16.0),
+            Divider(height: 0.0),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                BorderBoxButton(
+                  iconData: Icons.close,
+                  labelText: '閉じる',
+                  labelColor: Colors.blueGrey,
+                  borderColor: Colors.blueGrey,
+                  onTap: () => Navigator.pop(context),
                 ),
-                DropdownMenuItem<bool>(
-                  value: true,
-                  child: Text('公開'),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.delete,
+                  labelText: '削除',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.redAccent,
+                  onTap: () async {
+                    if (!await widget.shopProductProvider.delete(
+                        id: widget.data['id'], shopId: widget.data['shopId'])) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('削除が完了しました')),
+                    );
+                    widget.shopProductProvider.clearController();
+                    Navigator.pop(context);
+                  },
+                ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.check,
+                  labelText: '変更を保存',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  onTap: () async {
+                    if (!await widget.shopProductProvider.update(
+                        id: widget.data['id'], shopId: widget.data['shopId'])) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('変更が完了しました')),
+                    );
+                    widget.shopProductProvider.clearController();
+                    Navigator.pop(context);
+                  },
                 ),
               ],
             ),
           ],
         ),
       ),
-      actions: [
-        BorderBoxButton(
-          iconData: Icons.close,
-          labelText: '閉じる',
-          labelColor: Colors.blueGrey,
-          borderColor: Colors.blueGrey,
-          onTap: () => Navigator.pop(context),
-        ),
-        FillBoxButton(
-          iconData: Icons.delete,
-          labelText: '削除',
-          labelColor: Colors.white,
-          backgroundColor: Colors.redAccent,
-          onTap: () async {
-            if (!await widget.shopProductProvider
-                .delete(id: widget.data['id'], shopId: widget.data['shopId'])) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('削除が完了しました')),
-            );
-            widget.shopProductProvider.clearController();
-            Navigator.pop(context);
-          },
-        ),
-        FillBoxButton(
-          iconData: Icons.check,
-          labelText: '変更を保存',
-          labelColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          onTap: () async {
-            if (!await widget.shopProductProvider
-                .update(id: widget.data['id'], shopId: widget.data['shopId'])) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('変更が完了しました')),
-            );
-            widget.shopProductProvider.clearController();
-            Navigator.pop(context);
-          },
-        ),
-      ],
     );
   }
 }

@@ -15,21 +15,9 @@ class SplashScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                'お届けくん',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24.0,
-                ),
-              ),
+              Text('お届けくん', style: kTitleTextStyle),
               SizedBox(height: 8.0),
-              Text(
-                'BtoCサービス',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.0,
-                ),
-              ),
+              Text('BtoCサービス', style: kSubTitleTextStyle),
               SizedBox(height: 24.0),
               LoadingWidget(),
             ],

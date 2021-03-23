@@ -193,36 +193,43 @@ class _AddInvoiceDialogState extends State<AddInvoiceDialog> {
                 }
               },
             ),
+            SizedBox(height: 16.0),
+            Divider(height: 0.0),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                BorderBoxButton(
+                  iconData: Icons.close,
+                  labelText: '閉じる',
+                  labelColor: Colors.blueGrey,
+                  borderColor: Colors.blueGrey,
+                  onTap: () => Navigator.pop(context),
+                ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.add,
+                  labelText: '新規登録',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  onTap: () async {
+                    if (!await widget.shopInvoiceProvider.create(
+                        shopId: widget.shop?.id,
+                        openedAt: openedAt,
+                        closedAt: closedAt)) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('登録が完了しました')),
+                    );
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),
-      actions: [
-        BorderBoxButton(
-          iconData: Icons.close,
-          labelText: '閉じる',
-          labelColor: Colors.blueGrey,
-          borderColor: Colors.blueGrey,
-          onTap: () => Navigator.pop(context),
-        ),
-        FillBoxButton(
-          iconData: Icons.add,
-          labelText: '新規登録',
-          labelColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          onTap: () async {
-            if (!await widget.shopInvoiceProvider.create(
-                shopId: widget.shop?.id,
-                openedAt: openedAt,
-                closedAt: closedAt)) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('登録が完了しました')),
-            );
-            Navigator.pop(context);
-          },
-        ),
-      ],
     );
   }
 }
@@ -268,34 +275,41 @@ class _EditInvoiceDialogState extends State<EditInvoiceDialog> {
                 style: TextStyle(fontSize: 14.0, color: Colors.redAccent),
               ),
             ),
+            SizedBox(height: 16.0),
+            Divider(height: 0.0),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                BorderBoxButton(
+                  iconData: Icons.close,
+                  labelText: '閉じる',
+                  labelColor: Colors.blueGrey,
+                  borderColor: Colors.blueGrey,
+                  onTap: () => Navigator.pop(context),
+                ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.delete,
+                  labelText: '削除',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.redAccent,
+                  onTap: () async {
+                    if (!await widget.shopInvoiceProvider.delete(
+                        id: widget.data['id'], shopId: widget.data['shopId'])) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('削除が完了しました')),
+                    );
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),
-      actions: [
-        BorderBoxButton(
-          iconData: Icons.close,
-          labelText: '閉じる',
-          labelColor: Colors.blueGrey,
-          borderColor: Colors.blueGrey,
-          onTap: () => Navigator.pop(context),
-        ),
-        FillBoxButton(
-          iconData: Icons.delete,
-          labelText: '削除',
-          labelColor: Colors.white,
-          backgroundColor: Colors.redAccent,
-          onTap: () async {
-            if (!await widget.shopInvoiceProvider
-                .delete(id: widget.data['id'], shopId: widget.data['shopId'])) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('削除が完了しました')),
-            );
-            Navigator.pop(context);
-          },
-        ),
-      ],
     );
   }
 }

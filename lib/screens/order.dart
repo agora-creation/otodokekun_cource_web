@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/models/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_invoice.dart';
@@ -23,13 +24,15 @@ class OrderScreen extends StatelessWidget {
     String _opened;
     String _closed;
     if (shopOrderProvider.searchDeliveryAtDisabled) {
-      _opened = shopOrderProvider.searchOpenedAt.toString();
-      _closed = shopOrderProvider.searchClosedAt.toString();
+      _opened =
+          '${DateFormat('yyyy-MM-dd').format(shopOrderProvider.searchOpenedAt)} 00:00:00.000';
+      _closed =
+          '${DateFormat('yyyy-MM-dd').format(shopOrderProvider.searchClosedAt)} 23:59:59.999';
     } else {
-      _opened = shopOrderProvider.searchDeliveryAt
-          .subtract(Duration(days: 1))
-          .toString();
-      _closed = shopOrderProvider.searchDeliveryAt.toString();
+      _opened =
+          '${DateFormat('yyyy-MM-dd').format(shopOrderProvider.searchDeliveryAt.subtract(Duration(days: 1)))} 00:00:00.000';
+      _closed =
+          '${DateFormat('yyyy-MM-dd').format(shopOrderProvider.searchDeliveryAt)} 23:59:59.999';
     }
     final _startAt = Timestamp.fromMillisecondsSinceEpoch(
         DateTime.parse(_closed).millisecondsSinceEpoch);

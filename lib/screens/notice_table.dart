@@ -212,35 +212,42 @@ class _AddNoticeDialogState extends State<AddNoticeDialog> {
               labelText: '内容',
               iconData: Icons.message,
             ),
+            SizedBox(height: 16.0),
+            Divider(height: 0.0),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                BorderBoxButton(
+                  iconData: Icons.close,
+                  labelText: '閉じる',
+                  labelColor: Colors.blueGrey,
+                  borderColor: Colors.blueGrey,
+                  onTap: () => Navigator.pop(context),
+                ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.add,
+                  labelText: '新規登録',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  onTap: () async {
+                    if (!await widget.shopNoticeProvider
+                        .create(shopId: widget.shop?.id)) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('登録が完了しました')),
+                    );
+                    widget.shopNoticeProvider.clearController();
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),
-      actions: [
-        BorderBoxButton(
-          iconData: Icons.close,
-          labelText: '閉じる',
-          labelColor: Colors.blueGrey,
-          borderColor: Colors.blueGrey,
-          onTap: () => Navigator.pop(context),
-        ),
-        FillBoxButton(
-          iconData: Icons.add,
-          labelText: '新規登録',
-          labelColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          onTap: () async {
-            if (!await widget.shopNoticeProvider
-                .create(shopId: widget.shop?.id)) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('登録が完了しました')),
-            );
-            widget.shopNoticeProvider.clearController();
-            Navigator.pop(context);
-          },
-        ),
-      ],
     );
   }
 }
@@ -338,71 +345,79 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
                 ),
               ),
             ),
+            SizedBox(height: 16.0),
             Divider(height: 0.0),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                BorderBoxButton(
+                  iconData: Icons.close,
+                  labelText: '閉じる',
+                  labelColor: Colors.blueGrey,
+                  borderColor: Colors.blueGrey,
+                  onTap: () => Navigator.pop(context),
+                ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.delete,
+                  labelText: '削除する',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.redAccent,
+                  onTap: () async {
+                    if (!await widget.shopNoticeProvider.delete(
+                        id: widget.data['id'], shopId: widget.data['shopId'])) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('削除が完了しました')),
+                    );
+                    widget.shopNoticeProvider.clearController();
+                    Navigator.pop(context);
+                  },
+                ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.check,
+                  labelText: '変更を保存',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  onTap: () async {
+                    if (!await widget.shopNoticeProvider.update(
+                        id: widget.data['id'], shopId: widget.data['shopId'])) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('変更が完了しました')),
+                    );
+                    widget.shopNoticeProvider.clearController();
+                    Navigator.pop(context);
+                  },
+                ),
+                SizedBox(width: 4.0),
+                BorderBoxButton(
+                  iconData: Icons.send,
+                  labelText: '送信する',
+                  labelColor: Colors.blueAccent,
+                  borderColor: Colors.blueAccent,
+                  onTap: () async {
+                    if (!await widget.userNoticeProvider.create(
+                        users: users,
+                        title: widget.shopNoticeProvider.title.text.trim(),
+                        message: widget.shopNoticeProvider.message.text)) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('送信が完了しました')),
+                    );
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),
-      actions: [
-        BorderBoxButton(
-          iconData: Icons.close,
-          labelText: '閉じる',
-          labelColor: Colors.blueGrey,
-          borderColor: Colors.blueGrey,
-          onTap: () => Navigator.pop(context),
-        ),
-        FillBoxButton(
-          iconData: Icons.delete,
-          labelText: '削除する',
-          labelColor: Colors.white,
-          backgroundColor: Colors.redAccent,
-          onTap: () async {
-            if (!await widget.shopNoticeProvider
-                .delete(id: widget.data['id'], shopId: widget.data['shopId'])) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('削除が完了しました')),
-            );
-            widget.shopNoticeProvider.clearController();
-            Navigator.pop(context);
-          },
-        ),
-        FillBoxButton(
-          iconData: Icons.check,
-          labelText: '変更を保存',
-          labelColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          onTap: () async {
-            if (!await widget.shopNoticeProvider
-                .update(id: widget.data['id'], shopId: widget.data['shopId'])) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('変更が完了しました')),
-            );
-            widget.shopNoticeProvider.clearController();
-            Navigator.pop(context);
-          },
-        ),
-        BorderBoxButton(
-          iconData: Icons.send,
-          labelText: '送信する',
-          labelColor: Colors.blueAccent,
-          borderColor: Colors.blueAccent,
-          onTap: () async {
-            if (!await widget.userNoticeProvider.create(
-                users: users,
-                title: widget.shopNoticeProvider.title.text.trim(),
-                message: widget.shopNoticeProvider.message.text)) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('送信が完了しました')),
-            );
-            Navigator.pop(context);
-          },
-        ),
-      ],
     );
   }
 }

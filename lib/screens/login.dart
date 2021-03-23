@@ -28,21 +28,9 @@ class LoginScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(height: 80.0),
-                    Text(
-                      'お届けくん',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24.0,
-                      ),
-                    ),
+                    Text('お届けくん', style: kTitleTextStyle),
                     SizedBox(height: 8.0),
-                    Text(
-                      'BtoCサービス',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
-                      ),
-                    ),
+                    Text('BtoCサービス', style: kSubTitleTextStyle),
                     SizedBox(height: 24.0),
                     Container(
                       height: 380.0,
@@ -55,7 +43,7 @@ class LoginScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('店舗専用ログイン'),
+                          Text('加盟店ログイン'),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -70,7 +58,7 @@ class LoginScreen extends StatelessWidget {
                                   iconData: Icons.email,
                                 ),
                               ),
-                              SizedBox(height: 16.0),
+                              SizedBox(height: 8.0),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                                 child: CustomTextField(
@@ -82,11 +70,11 @@ class LoginScreen extends StatelessWidget {
                                   iconData: Icons.lock,
                                 ),
                               ),
-                              SizedBox(height: 24.0),
+                              SizedBox(height: 16.0),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                                 child: FillRoundButton(
-                                  labelText: 'ログインする',
+                                  labelText: 'ログイン',
                                   labelColor: Colors.white,
                                   backgroundColor: Colors.blueAccent,
                                   onTap: () async {
@@ -98,7 +86,7 @@ class LoginScreen extends StatelessWidget {
                                       return;
                                     }
                                     shopProvider.clearController();
-                                    Navigator.pushNamed(
+                                    Navigator.pushReplacementNamed(
                                         context, OrderScreen.id);
                                   },
                                 ),

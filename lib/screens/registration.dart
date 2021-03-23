@@ -18,6 +18,7 @@ class RegistrationScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: kMainColor,
       body: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
         child: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
@@ -27,21 +28,9 @@ class RegistrationScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(height: 80.0),
-                    Text(
-                      'お届けくん',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24.0,
-                      ),
-                    ),
+                    Text('お届けくん', style: kTitleTextStyle),
                     SizedBox(height: 8.0),
-                    Text(
-                      'BtoCサービス',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
-                      ),
-                    ),
+                    Text('BtoCサービス', style: kSubTitleTextStyle),
                     SizedBox(height: 24.0),
                     Container(
                       height: 480.0,
@@ -54,7 +43,7 @@ class RegistrationScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('店舗専用新規登録'),
+                          Text('加盟店新規登録'),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -66,10 +55,10 @@ class RegistrationScreen extends StatelessWidget {
                                   textInputType: TextInputType.name,
                                   maxLines: 1,
                                   labelText: '店舗名',
-                                  iconData: Icons.store_outlined,
+                                  iconData: Icons.store,
                                 ),
                               ),
-                              SizedBox(height: 16.0),
+                              SizedBox(height: 8.0),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                                 child: CustomTextField(
@@ -78,10 +67,10 @@ class RegistrationScreen extends StatelessWidget {
                                   textInputType: TextInputType.emailAddress,
                                   maxLines: 1,
                                   labelText: 'メールアドレス',
-                                  iconData: Icons.email_outlined,
+                                  iconData: Icons.email,
                                 ),
                               ),
-                              SizedBox(height: 16.0),
+                              SizedBox(height: 8.0),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                                 child: CustomTextField(
@@ -90,10 +79,10 @@ class RegistrationScreen extends StatelessWidget {
                                   textInputType: TextInputType.visiblePassword,
                                   maxLines: 1,
                                   labelText: 'パスワード',
-                                  iconData: Icons.lock_outline,
+                                  iconData: Icons.lock,
                                 ),
                               ),
-                              SizedBox(height: 16.0),
+                              SizedBox(height: 8.0),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                                 child: CustomTextField(
@@ -105,11 +94,11 @@ class RegistrationScreen extends StatelessWidget {
                                   iconData: Icons.lock_outline,
                                 ),
                               ),
-                              SizedBox(height: 24.0),
+                              SizedBox(height: 16.0),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                                 child: BorderRoundButton(
-                                  labelText: '登録する',
+                                  labelText: '新規登録',
                                   labelColor: Colors.blueAccent,
                                   borderColor: Colors.blueAccent,
                                   onTap: () async {
@@ -121,7 +110,7 @@ class RegistrationScreen extends StatelessWidget {
                                       return;
                                     }
                                     shopProvider.clearController();
-                                    Navigator.pushNamed(
+                                    Navigator.pushReplacementNamed(
                                         context, OrderScreen.id);
                                   },
                                 ),

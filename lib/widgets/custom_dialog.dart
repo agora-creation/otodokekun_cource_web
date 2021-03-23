@@ -24,7 +24,6 @@ class CustomDialog extends StatelessWidget {
       content: content,
       contentPadding: EdgeInsets.all(16.0),
       actions: actions,
-      actionsPadding: EdgeInsets.symmetric(horizontal: 8.0),
     );
   }
 }

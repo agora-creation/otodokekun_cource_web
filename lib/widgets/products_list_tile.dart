@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class CartListTile extends StatelessWidget {
+class ProductsListTile extends StatelessWidget {
   final String name;
   final String image;
   final String unit;
   final int price;
   final int quantity;
 
-  CartListTile({
+  ProductsListTile({
     this.name,
     this.image,
     this.unit,

@@ -200,33 +200,41 @@ class _EditUserDialogState extends State<EditUserDialog> {
                 ),
               ],
             ),
+            SizedBox(height: 16.0),
+            Divider(height: 0.0),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                BorderBoxButton(
+                  iconData: Icons.close,
+                  labelText: '閉じる',
+                  labelColor: Colors.blueGrey,
+                  borderColor: Colors.blueGrey,
+                  onTap: () => Navigator.pop(context),
+                ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.check,
+                  labelText: '変更を保存',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  onTap: () async {
+                    if (!await widget.userProvider
+                        .update(id: widget.data['id'])) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('変更が完了しました')),
+                    );
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),
-      actions: [
-        BorderBoxButton(
-          iconData: Icons.close,
-          labelText: '閉じる',
-          labelColor: Colors.blueGrey,
-          borderColor: Colors.blueGrey,
-          onTap: () => Navigator.pop(context),
-        ),
-        FillBoxButton(
-          iconData: Icons.check,
-          labelText: '変更を保存',
-          labelColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          onTap: () async {
-            if (!await widget.userProvider.update(id: widget.data['id'])) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('変更が完了しました')),
-            );
-            Navigator.pop(context);
-          },
-        ),
-      ],
     );
   }
 }

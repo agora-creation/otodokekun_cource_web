@@ -50,8 +50,8 @@ class ShopPlanProvider with ChangeNotifier {
       });
       for (UserModel _user in users) {
         String orderId = _shopOrderService.newId(shopId: shopId);
-        List<Map> cart = [];
-        cart.add({
+        List<Map> products = [];
+        products.add({
           'id': id,
           'name': name.text.trim(),
           'image': imageUrl,
@@ -68,7 +68,7 @@ class ShopPlanProvider with ChangeNotifier {
           'zip': _user.zip,
           'address': _user.address,
           'tel': _user.tel,
-          'cart': cart,
+          'products': products,
           'deliveryAt': deliveryAt,
           'remarks': '',
           'totalPrice': int.parse(price.text.trim()),

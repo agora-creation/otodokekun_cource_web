@@ -135,7 +135,7 @@ class _EditShopDialogState extends State<EditShopDialog> {
             CustomTextField(
               controller: widget.shopProvider.zip,
               obscureText: false,
-              textInputType: TextInputType.number,
+              textInputType: null,
               maxLines: 1,
               labelText: '郵便番号',
               iconData: Icons.location_pin,
@@ -194,52 +194,60 @@ class _EditShopDialogState extends State<EditShopDialog> {
                 );
               }).toList(),
             ),
+            SizedBox(height: 16.0),
+            Divider(height: 0.0),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                BorderBoxButton(
+                  iconData: Icons.close,
+                  labelText: '閉じる',
+                  labelColor: Colors.blueGrey,
+                  borderColor: Colors.blueGrey,
+                  onTap: () => Navigator.pop(context),
+                ),
+                SizedBox(width: 4.0),
+                BorderBoxButton(
+                  iconData: Icons.exit_to_app,
+                  labelText: 'ログアウト',
+                  labelColor: Colors.redAccent,
+                  borderColor: Colors.redAccent,
+                  onTap: () {
+                    widget.shopProvider.signOut();
+                    widget.shopProvider.clearController();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LoginScreen(),
+                        fullscreenDialog: true,
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.check,
+                  labelText: '変更を保存',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  onTap: () async {
+                    if (!await widget.shopProvider.update()) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('変更が完了しました')),
+                    );
+                    widget.shopProvider.clearController();
+                    widget.shopProvider.reloadShopModel();
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),
-      actions: [
-        BorderBoxButton(
-          iconData: Icons.close,
-          labelText: '閉じる',
-          labelColor: Colors.blueGrey,
-          borderColor: Colors.blueGrey,
-          onTap: () => Navigator.pop(context),
-        ),
-        BorderBoxButton(
-          iconData: Icons.exit_to_app,
-          labelText: 'ログアウト',
-          labelColor: Colors.redAccent,
-          borderColor: Colors.redAccent,
-          onTap: () {
-            widget.shopProvider.signOut();
-            widget.shopProvider.clearController();
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => LoginScreen(),
-                fullscreenDialog: true,
-              ),
-            );
-          },
-        ),
-        FillBoxButton(
-          iconData: Icons.check,
-          labelText: '変更を保存',
-          labelColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          onTap: () async {
-            if (!await widget.shopProvider.update()) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('変更が完了しました')),
-            );
-            widget.shopProvider.clearController();
-            widget.shopProvider.reloadShopModel();
-            Navigator.pop(context);
-          },
-        ),
-      ],
     );
   }
 }

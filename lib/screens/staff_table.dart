@@ -173,35 +173,42 @@ class _AddStaffDialogState extends State<AddStaffDialog> {
               labelText: '担当者名',
               iconData: Icons.title,
             ),
+            SizedBox(height: 16.0),
+            Divider(height: 0.0),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                BorderBoxButton(
+                  iconData: Icons.close,
+                  labelText: '閉じる',
+                  labelColor: Colors.blueGrey,
+                  borderColor: Colors.blueGrey,
+                  onTap: () => Navigator.pop(context),
+                ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.add,
+                  labelText: '新規登録',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  onTap: () async {
+                    if (!await widget.shopStaffProvider
+                        .create(shopId: widget.shop?.id)) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('登録が完了しました')),
+                    );
+                    widget.shopStaffProvider.clearController();
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),
-      actions: [
-        BorderBoxButton(
-          iconData: Icons.close,
-          labelText: '閉じる',
-          labelColor: Colors.blueGrey,
-          borderColor: Colors.blueGrey,
-          onTap: () => Navigator.pop(context),
-        ),
-        FillBoxButton(
-          iconData: Icons.add,
-          labelText: '新規登録',
-          labelColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          onTap: () async {
-            if (!await widget.shopStaffProvider
-                .create(shopId: widget.shop?.id)) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('登録が完了しました')),
-            );
-            widget.shopStaffProvider.clearController();
-            Navigator.pop(context);
-          },
-        ),
-      ],
     );
   }
 }
@@ -237,52 +244,60 @@ class _EditStaffDialogState extends State<EditStaffDialog> {
               labelText: '担当者名',
               iconData: Icons.title,
             ),
+            SizedBox(height: 16.0),
+            Divider(height: 0.0),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                BorderBoxButton(
+                  iconData: Icons.close,
+                  labelText: '閉じる',
+                  labelColor: Colors.blueGrey,
+                  borderColor: Colors.blueGrey,
+                  onTap: () => Navigator.pop(context),
+                ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.delete,
+                  labelText: '削除',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.redAccent,
+                  onTap: () async {
+                    if (!await widget.shopStaffProvider.delete(
+                        id: widget.data['id'], shopId: widget.data['shopId'])) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('削除が完了しました')),
+                    );
+                    widget.shopStaffProvider.clearController();
+                    Navigator.pop(context);
+                  },
+                ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.check,
+                  labelText: '変更を保存',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  onTap: () async {
+                    if (!await widget.shopStaffProvider.update(
+                        id: widget.data['id'], shopId: widget.data['shopId'])) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('変更が完了しました')),
+                    );
+                    widget.shopStaffProvider.clearController();
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),
-      actions: [
-        BorderBoxButton(
-          iconData: Icons.close,
-          labelText: '閉じる',
-          labelColor: Colors.blueGrey,
-          borderColor: Colors.blueGrey,
-          onTap: () => Navigator.pop(context),
-        ),
-        FillBoxButton(
-          iconData: Icons.delete,
-          labelText: '削除',
-          labelColor: Colors.white,
-          backgroundColor: Colors.redAccent,
-          onTap: () async {
-            if (!await widget.shopStaffProvider
-                .delete(id: widget.data['id'], shopId: widget.data['shopId'])) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('削除が完了しました')),
-            );
-            widget.shopStaffProvider.clearController();
-            Navigator.pop(context);
-          },
-        ),
-        FillBoxButton(
-          iconData: Icons.check,
-          labelText: '変更を保存',
-          labelColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          onTap: () async {
-            if (!await widget.shopStaffProvider
-                .update(id: widget.data['id'], shopId: widget.data['shopId'])) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('変更が完了しました')),
-            );
-            widget.shopStaffProvider.clearController();
-            Navigator.pop(context);
-          },
-        ),
-      ],
     );
   }
 }

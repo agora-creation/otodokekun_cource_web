@@ -12,6 +12,7 @@ class UserNoticeProvider with ChangeNotifier {
         String id = _userNoticeService.newId(userId: user.id);
         _userNoticeService.create({
           'id': id,
+          'shopId': user.shopId,
           'userId': user.id,
           'title': title,
           'message': message,

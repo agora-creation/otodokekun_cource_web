@@ -37,7 +37,7 @@ class PlanTable extends StatefulWidget {
 class _PlanTableState extends State<PlanTable> {
   List<DatatableHeader> _headers = [
     DatatableHeader(
-      text: 'お届け日',
+      text: 'お届け指定日',
       value: 'deliveryAtText',
       show: true,
       sortable: true,
@@ -277,7 +277,7 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
               iconData: Icons.description,
             ),
             SizedBox(height: 8.0),
-            Text('お届け日', style: kLabelTextStyle),
+            Text('お届け指定日', style: kLabelTextStyle),
             SizedBox(height: 4.0),
             FillBoxFormButton(
               iconData: Icons.calendar_today,
@@ -300,35 +300,42 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
                 });
               },
             ),
+            SizedBox(height: 16.0),
+            Divider(height: 0.0),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                BorderBoxButton(
+                  iconData: Icons.close,
+                  labelText: '閉じる',
+                  labelColor: Colors.blueGrey,
+                  borderColor: Colors.blueGrey,
+                  onTap: () => Navigator.pop(context),
+                ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.add,
+                  labelText: '新規登録',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  onTap: () async {
+                    if (!await widget.shopPlanProvider
+                        .create(shopId: widget.shop?.id, users: widget.users)) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('登録が完了しました')),
+                    );
+                    widget.shopPlanProvider.clearController();
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),
-      actions: [
-        BorderBoxButton(
-          iconData: Icons.close,
-          labelText: '閉じる',
-          labelColor: Colors.blueGrey,
-          borderColor: Colors.blueGrey,
-          onTap: () => Navigator.pop(context),
-        ),
-        FillBoxButton(
-          iconData: Icons.add,
-          labelText: '新規登録',
-          labelColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          onTap: () async {
-            if (!await widget.shopPlanProvider
-                .create(shopId: widget.shop?.id, users: widget.users)) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('登録が完了しました')),
-            );
-            widget.shopPlanProvider.clearController();
-            Navigator.pop(context);
-          },
-        ),
-      ],
     );
   }
 }
@@ -389,37 +396,44 @@ class _EditPlanDialogState extends State<EditPlanDialog> {
             Text('説明', style: kLabelTextStyle),
             Text('${widget.data['description']}'),
             SizedBox(height: 8.0),
-            Text('お届け日', style: kLabelTextStyle),
+            Text('お届け指定日', style: kLabelTextStyle),
             Text('${widget.data['deliveryAtText']}'),
+            SizedBox(height: 16.0),
+            Divider(height: 0.0),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                BorderBoxButton(
+                  iconData: Icons.close,
+                  labelText: '閉じる',
+                  labelColor: Colors.blueGrey,
+                  borderColor: Colors.blueGrey,
+                  onTap: () => Navigator.pop(context),
+                ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.delete,
+                  labelText: '削除',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.redAccent,
+                  onTap: () async {
+                    if (!await widget.shopPlanProvider.delete(
+                        id: widget.data['id'], shopId: widget.data['shopId'])) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('削除が完了しました')),
+                    );
+                    widget.shopPlanProvider.clearController();
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),
-      actions: [
-        BorderBoxButton(
-          iconData: Icons.close,
-          labelText: '閉じる',
-          labelColor: Colors.blueGrey,
-          borderColor: Colors.blueGrey,
-          onTap: () => Navigator.pop(context),
-        ),
-        FillBoxButton(
-          iconData: Icons.delete,
-          labelText: '削除',
-          labelColor: Colors.white,
-          backgroundColor: Colors.redAccent,
-          onTap: () async {
-            if (!await widget.shopPlanProvider
-                .delete(id: widget.data['id'], shopId: widget.data['shopId'])) {
-              return;
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('削除が完了しました')),
-            );
-            widget.shopPlanProvider.clearController();
-            Navigator.pop(context);
-          },
-        ),
-      ],
     );
   }
 }
