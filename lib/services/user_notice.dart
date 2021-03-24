@@ -27,33 +27,26 @@ class UserNoticeService {
         .set(values);
   }
 
-  Future<void> sendPushMessage(
-      {String token, String title, String body}) async {
-    if (token == null) return;
+  void sendNotification({String token, String title, String body}) {
     try {
-      await http.post(
-        Uri.parse('https://api.rnfirebase.io/messaging/send'),
+      http.post(
+        'https://fcm.googleapis.com/fcm/send',
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization':
+              'key=AAAA2rocNbY:APA91bGLuIaMcZODtI7NQ7oRjqqbO0qv4aCD7O1yuPwwTaB8kePJpPw71-pEep1J881_RBVLXinWPzdSlLQsamA8nmUp-QSDW-IlIksGButTPsCARVxHxQfbAvhK-InPNC8WImR3VJU1',
         },
-        body: _constructFCMPayload(token: token, title: title, body: body),
+        body: jsonEncode({
+          'to': token,
+          'priority': 'high',
+          'notification': {
+            'title': title,
+            'body': body,
+          },
+        }),
       );
     } catch (e) {
       print(e.toString());
     }
-  }
-
-  String _constructFCMPayload({String token, String title, String body}) {
-    return jsonEncode({
-      'token': token,
-      'data': {
-        'via': 'お届けくんのお知らせ',
-        'count': '1',
-      },
-      'notification': {
-        'title': title,
-        'body': body,
-      },
-    });
   }
 }
