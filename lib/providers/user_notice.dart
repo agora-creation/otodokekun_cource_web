@@ -6,10 +6,9 @@ class UserNoticeProvider with ChangeNotifier {
   UserNoticeService _userNoticeService = UserNoticeService();
 
   Future<bool> create(
-      {List<UserModel> users, String title, String message}) async {
+      {List<UserModel> users, String id, String title, String message}) async {
     try {
       for (UserModel user in users) {
-        String id = _userNoticeService.newId(userId: user.id);
         _userNoticeService.create({
           'id': id,
           'shopId': user.shopId,

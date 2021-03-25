@@ -22,6 +22,28 @@ class UserService {
     return _users;
   }
 
+  Future<List<UserModel>> selectListNotice(
+      {String noticeId, String shopId}) async {
+    List<UserModel> _users = [];
+    QuerySnapshot userSnapshot = await _firebaseFirestore
+        .collection(_collection)
+        .where('shopId', isEqualTo: shopId)
+        .orderBy('createdAt', descending: true)
+        .get();
+    for (DocumentSnapshot _user in userSnapshot.docs) {
+      DocumentSnapshot noticeSnapshot = await _firebaseFirestore
+          .collection(_collection)
+          .doc(UserModel.fromSnapshot(_user).id)
+          .collection('notice')
+          .doc(noticeId)
+          .get();
+      if (noticeSnapshot.exists == false) {
+        _users.add(UserModel.fromSnapshot(_user));
+      }
+    }
+    return _users;
+  }
+
   Future<List<UserModel>> selectListFixed({String shopId}) async {
     List<UserModel> _users = [];
     QuerySnapshot snapshot = await _firebaseFirestore

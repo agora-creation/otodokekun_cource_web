@@ -30,6 +30,17 @@ class UserProvider with ChangeNotifier {
     return _users;
   }
 
+  Future<List<UserModel>> selectListNotice(
+      {String noticeId, String shopId}) async {
+    List<UserModel> _users = [];
+    await _userServices
+        .selectListNotice(noticeId: noticeId, shopId: shopId)
+        .then((value) {
+      _users = value;
+    });
+    return _users;
+  }
+
   Future<List<UserModel>> selectListFixed({String shopId}) async {
     List<UserModel> _users = [];
     await _userServices.selectListFixed(shopId: shopId).then((value) {

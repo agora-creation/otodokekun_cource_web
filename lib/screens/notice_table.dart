@@ -57,19 +57,6 @@ class _NoticeTableState extends State<NoticeTable> {
   List<Map<String, dynamic>> _selecteds = [];
   String _sortColumn;
   bool _sortAscending = true;
-  List<UserModel> _users = [];
-
-  void _init() async {
-    await widget.userProvider.selectList(shopId: widget.shop?.id).then((value) {
-      _users = value;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _init();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,9 +95,9 @@ class _NoticeTableState extends State<NoticeTable> {
           builder: (_) {
             return EditNoticeDialog(
               shopNoticeProvider: widget.shopNoticeProvider,
+              userProvider: widget.userProvider,
               userNoticeProvider: widget.userNoticeProvider,
               data: data,
-              users: _users,
             );
           },
         );
@@ -191,7 +178,7 @@ class _AddNoticeDialogState extends State<AddNoticeDialog> {
     return CustomDialog(
       title: 'お知らせの新規登録',
       content: Container(
-        width: 450.0,
+        width: 500.0,
         child: ListView(
           shrinkWrap: true,
           children: [
@@ -254,15 +241,15 @@ class _AddNoticeDialogState extends State<AddNoticeDialog> {
 
 class EditNoticeDialog extends StatefulWidget {
   final ShopNoticeProvider shopNoticeProvider;
+  final UserProvider userProvider;
   final UserNoticeProvider userNoticeProvider;
   final dynamic data;
-  final List<UserModel> users;
 
   EditNoticeDialog({
     @required this.shopNoticeProvider,
+    @required this.userProvider,
     @required this.userNoticeProvider,
     @required this.data,
-    @required this.users,
   });
 
   @override
@@ -271,14 +258,30 @@ class EditNoticeDialog extends StatefulWidget {
 
 class _EditNoticeDialogState extends State<EditNoticeDialog> {
   final ScrollController _scrollController = ScrollController();
-  List<UserModel> users = [];
+  List<UserModel> _users = [];
+  List<UserModel> _selected = [];
+
+  void _init() async {
+    await widget.userProvider
+        .selectListNotice(
+            noticeId: widget.data['id'], shopId: widget.data['shopId'])
+        .then((value) {
+      setState(() => _users = value);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
 
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
       title: '${widget.data['title']}の詳細',
       content: Container(
-        width: 450.0,
+        width: 500.0,
         child: ListView(
           shrinkWrap: true,
           children: [
@@ -312,30 +315,24 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
                   shrinkWrap: true,
                   physics: ScrollPhysics(),
                   controller: _scrollController,
-                  itemCount: widget.users.length,
+                  itemCount: _users.length,
                   itemBuilder: (context, index) {
-                    UserModel _user = widget.users[index];
-                    var contain = users.where((e) => e.id == _user.id);
+                    UserModel _user = _users[index];
+                    var contain = _selected.where((e) => e.id == _user.id);
                     return Container(
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            width: 1.0,
-                            color: Colors.grey.shade300,
-                          ),
-                        ),
-                      ),
+                      decoration: kBottomBorderDecoration,
                       child: CheckboxListTile(
                         title: Text('${_user.name}'),
                         value: contain.isNotEmpty,
                         activeColor: Colors.blueAccent,
                         onChanged: (value) {
-                          var contain = users.where((e) => e.id == _user.id);
+                          var contain =
+                              _selected.where((e) => e.id == _user.id);
                           setState(() {
                             if (contain.isEmpty) {
-                              users.add(_user);
+                              _selected.add(_user);
                             } else {
-                              users.removeWhere((e) => e.id == _user.id);
+                              _selected.removeWhere((e) => e.id == _user.id);
                             }
                           });
                         },
@@ -402,7 +399,8 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
                   borderColor: Colors.blueAccent,
                   onTap: () async {
                     if (!await widget.userNoticeProvider.create(
-                        users: users,
+                        users: _selected,
+                        id: widget.data['id'],
                         title: widget.shopNoticeProvider.title.text.trim(),
                         message: widget.shopNoticeProvider.message.text)) {
                       return;
