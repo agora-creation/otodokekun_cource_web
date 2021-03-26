@@ -10,6 +10,7 @@ class ShopModel {
   String _email;
   String _password;
   String _remarks;
+  String _terms;
   int _cancelLimit;
   DateTime _createdAt;
 
@@ -22,6 +23,7 @@ class ShopModel {
   String get email => _email;
   String get password => _password;
   String get remarks => _remarks;
+  String get terms => _terms;
   int get cancelLimit => _cancelLimit;
   DateTime get createdAt => _createdAt;
 
@@ -35,6 +37,7 @@ class ShopModel {
     _email = snapshot.data()['email'];
     _password = snapshot.data()['password'];
     _remarks = snapshot.data()['remarks'];
+    _terms = snapshot.data()['terms'];
     _cancelLimit = snapshot.data()['cancelLimit'];
     _createdAt = snapshot.data()['createdAt'].toDate();
   }

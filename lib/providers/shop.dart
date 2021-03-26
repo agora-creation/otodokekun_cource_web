@@ -85,6 +85,7 @@ class ShopProvider with ChangeNotifier {
           'email': email.text.trim(),
           'password': password.text.trim(),
           'remarks': '',
+          'terms': '',
           'cancelLimit': 3,
           'createdAt': DateTime.now(),
         });
