@@ -28,7 +28,7 @@ exports.deleteShopPlan = functions.region('asia-northeast1').pubsub.schedule('0 
 
 exports.deleteShopInvoice = functions.region('asia-northeast1').pubsub.schedule('0 0 * * *').timeZone('Asia/Tokyo').onRun((_) => {
     let three_month = new Date();
-    three_month.setMonth(three_month.getMonth() + 3);
+    three_month.setMonth(three_month.getMonth() - 3);
 
     let shopRef = db.collection('shop');
     shopRef.get().then((shopSnapshot) => {
