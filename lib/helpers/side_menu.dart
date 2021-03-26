@@ -35,7 +35,7 @@ const List<MenuItem> kSideMenu = [
     icon: Icons.supervisor_account,
   ),
   MenuItem(
-    title: 'お知らせ',
+    title: 'お知らせ(通知)',
     route: NoticeScreen.id,
     icon: Icons.notifications,
   ),

@@ -61,7 +61,7 @@ class _NoticeTableState extends State<NoticeTable> {
   @override
   Widget build(BuildContext context) {
     return CustomTable(
-      title: 'お知らせ一覧',
+      title: 'お知らせ(通知)一覧',
       actions: [
         FillBoxButton(
           iconData: Icons.add,
@@ -176,7 +176,7 @@ class _AddNoticeDialogState extends State<AddNoticeDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: 'お知らせの新規登録',
+      title: 'お知らせ(通知)の新規登録',
       content: Container(
         width: 500.0,
         child: ListView(
@@ -394,7 +394,7 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
                 SizedBox(width: 4.0),
                 BorderBoxButton(
                   iconData: Icons.send,
-                  labelText: '送信する',
+                  labelText: '送信',
                   labelColor: Colors.blueAccent,
                   borderColor: Colors.blueAccent,
                   onTap: () async {

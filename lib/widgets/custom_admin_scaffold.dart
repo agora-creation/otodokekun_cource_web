@@ -31,25 +31,56 @@ class CustomAdminScaffold extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.store),
-            onPressed: () {
-              shopProvider.clearController();
-              shopProvider.code.text = shopProvider.shop?.code;
-              shopProvider.name.text = shopProvider.shop?.name;
-              shopProvider.zip.text = shopProvider.shop?.zip;
-              shopProvider.address.text = shopProvider.shop?.address;
-              shopProvider.tel.text = shopProvider.shop?.tel;
-              shopProvider.email.text = shopProvider.shop?.email;
-              shopProvider.remarks.text = shopProvider.shop?.remarks;
-              shopProvider.cancelLimit = shopProvider.shop?.cancelLimit;
-              showDialog(
-                context: context,
-                builder: (_) {
-                  return EditShopDialog(shopProvider: shopProvider);
-                },
-              );
-            },
+          Tooltip(
+            message: '利用規約の編集',
+            child: IconButton(
+              icon: Icon(Icons.description),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) {
+                    return EditShopTermsDialog();
+                  },
+                );
+              },
+            ),
+          ),
+          Tooltip(
+            message: '店舗からの一言',
+            child: IconButton(
+              icon: Icon(Icons.comment),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) {
+                    return EditShopRemarksDialog();
+                  },
+                );
+              },
+            ),
+          ),
+          Tooltip(
+            message: '店鋪情報の編集',
+            child: IconButton(
+              icon: Icon(Icons.store),
+              onPressed: () {
+                shopProvider.clearController();
+                shopProvider.code.text = shopProvider.shop?.code;
+                shopProvider.name.text = shopProvider.shop?.name;
+                shopProvider.zip.text = shopProvider.shop?.zip;
+                shopProvider.address.text = shopProvider.shop?.address;
+                shopProvider.tel.text = shopProvider.shop?.tel;
+                shopProvider.email.text = shopProvider.shop?.email;
+                shopProvider.remarks.text = shopProvider.shop?.remarks;
+                shopProvider.cancelLimit = shopProvider.shop?.cancelLimit;
+                showDialog(
+                  context: context,
+                  builder: (_) {
+                    return EditShopDialog(shopProvider: shopProvider);
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -108,7 +139,7 @@ class _EditShopDialogState extends State<EditShopDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: '店舗情報',
+      title: '店舗情報の編集',
       content: Container(
         width: 450.0,
         child: ListView(
@@ -120,7 +151,7 @@ class _EditShopDialogState extends State<EditShopDialog> {
               textInputType: null,
               maxLines: 1,
               labelText: '店舗コード',
-              iconData: Icons.label,
+              iconData: Icons.vpn_key,
             ),
             SizedBox(height: 8.0),
             CustomTextField(
@@ -166,15 +197,6 @@ class _EditShopDialogState extends State<EditShopDialog> {
               maxLines: 1,
               labelText: 'メールアドレス',
               iconData: Icons.email,
-            ),
-            SizedBox(height: 8.0),
-            CustomTextField(
-              controller: widget.shopProvider.remarks,
-              obscureText: false,
-              textInputType: TextInputType.multiline,
-              maxLines: null,
-              labelText: '備考',
-              iconData: Icons.message,
             ),
             SizedBox(height: 8.0),
             Text('キャンセル期限日', style: kLabelTextStyle),
@@ -242,6 +264,112 @@ class _EditShopDialogState extends State<EditShopDialog> {
                     widget.shopProvider.reloadShopModel();
                     Navigator.pop(context);
                   },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class EditShopRemarksDialog extends StatefulWidget {
+  @override
+  _EditShopRemarksDialogState createState() => _EditShopRemarksDialogState();
+}
+
+class _EditShopRemarksDialogState extends State<EditShopRemarksDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return CustomDialog(
+      title: '店舗からの一言',
+      content: Container(
+        width: 450.0,
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            CustomTextField(
+              controller: null,
+              obscureText: false,
+              textInputType: TextInputType.multiline,
+              maxLines: null,
+              labelText: '店舗からの一言',
+              iconData: Icons.comment,
+            ),
+            SizedBox(height: 16.0),
+            Divider(height: 0.0),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                BorderBoxButton(
+                  iconData: Icons.close,
+                  labelText: '閉じる',
+                  labelColor: Colors.blueGrey,
+                  borderColor: Colors.blueGrey,
+                  onTap: () => Navigator.pop(context),
+                ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.check,
+                  labelText: '変更を保存',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class EditShopTermsDialog extends StatefulWidget {
+  @override
+  _EditShopTermsDialogState createState() => _EditShopTermsDialogState();
+}
+
+class _EditShopTermsDialogState extends State<EditShopTermsDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return CustomDialog(
+      title: '利用規約を編集',
+      content: Container(
+        width: 450.0,
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            CustomTextField(
+              controller: null,
+              obscureText: false,
+              textInputType: TextInputType.multiline,
+              maxLines: null,
+              labelText: '利用規約',
+              iconData: Icons.description,
+            ),
+            SizedBox(height: 16.0),
+            Divider(height: 0.0),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                BorderBoxButton(
+                  iconData: Icons.close,
+                  labelText: '閉じる',
+                  labelColor: Colors.blueGrey,
+                  borderColor: Colors.blueGrey,
+                  onTap: () => Navigator.pop(context),
+                ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.check,
+                  labelText: '変更を保存',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  onTap: () {},
                 ),
               ],
             ),
