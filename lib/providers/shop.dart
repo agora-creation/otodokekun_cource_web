@@ -27,6 +27,7 @@ class ShopProvider with ChangeNotifier {
   TextEditingController password = TextEditingController();
   TextEditingController cPassword = TextEditingController();
   TextEditingController remarks = TextEditingController();
+  TextEditingController terms = TextEditingController();
   List<int> cancelLimitList = [3, 4, 5, 6, 7];
   int cancelLimit;
 
@@ -115,9 +116,34 @@ class ShopProvider with ChangeNotifier {
           'address': address.text.trim(),
           'tel': tel.text.trim(),
           'email': email.text.trim(),
-          'remarks': remarks.text,
           'cancelLimit': cancelLimit,
         });
+      });
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> updateRemarks() async {
+    try {
+      _shopServices.update({
+        'id': _auth.currentUser.uid,
+        'remarks': remarks.text,
+      });
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> updateTerms() async {
+    try {
+      _shopServices.update({
+        'id': _auth.currentUser.uid,
+        'terms': terms.text,
       });
       return true;
     } catch (e) {
@@ -144,6 +170,7 @@ class ShopProvider with ChangeNotifier {
     password.text = '';
     cPassword.text = '';
     remarks.text = '';
+    terms.text = '';
   }
 
   Future reloadShopModel() async {

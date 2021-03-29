@@ -36,10 +36,12 @@ class CustomAdminScaffold extends StatelessWidget {
             child: IconButton(
               icon: Icon(Icons.description),
               onPressed: () {
+                shopProvider.clearController();
+                shopProvider.terms.text = shopProvider.shop?.terms;
                 showDialog(
                   context: context,
                   builder: (_) {
-                    return EditShopTermsDialog();
+                    return EditShopTermsDialog(shopProvider: shopProvider);
                   },
                 );
               },
@@ -50,10 +52,12 @@ class CustomAdminScaffold extends StatelessWidget {
             child: IconButton(
               icon: Icon(Icons.comment),
               onPressed: () {
+                shopProvider.clearController();
+                shopProvider.remarks.text = shopProvider.shop?.remarks;
                 showDialog(
                   context: context,
                   builder: (_) {
-                    return EditShopRemarksDialog();
+                    return EditShopRemarksDialog(shopProvider: shopProvider);
                   },
                 );
               },
@@ -71,7 +75,6 @@ class CustomAdminScaffold extends StatelessWidget {
                 shopProvider.address.text = shopProvider.shop?.address;
                 shopProvider.tel.text = shopProvider.shop?.tel;
                 shopProvider.email.text = shopProvider.shop?.email;
-                shopProvider.remarks.text = shopProvider.shop?.remarks;
                 shopProvider.cancelLimit = shopProvider.shop?.cancelLimit;
                 showDialog(
                   context: context,
@@ -275,6 +278,10 @@ class _EditShopDialogState extends State<EditShopDialog> {
 }
 
 class EditShopRemarksDialog extends StatefulWidget {
+  final ShopProvider shopProvider;
+
+  EditShopRemarksDialog({@required this.shopProvider});
+
   @override
   _EditShopRemarksDialogState createState() => _EditShopRemarksDialogState();
 }
@@ -290,11 +297,11 @@ class _EditShopRemarksDialogState extends State<EditShopRemarksDialog> {
           shrinkWrap: true,
           children: [
             CustomTextField(
-              controller: null,
+              controller: widget.shopProvider.remarks,
               obscureText: false,
               textInputType: TextInputType.multiline,
               maxLines: null,
-              labelText: '店舗からの一言',
+              labelText: null,
               iconData: Icons.comment,
             ),
             SizedBox(height: 16.0),
@@ -316,7 +323,17 @@ class _EditShopRemarksDialogState extends State<EditShopRemarksDialog> {
                   labelText: '変更を保存',
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
-                  onTap: () {},
+                  onTap: () async {
+                    if (!await widget.shopProvider.updateRemarks()) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('変更が完了しました')),
+                    );
+                    widget.shopProvider.clearController();
+                    widget.shopProvider.reloadShopModel();
+                    Navigator.pop(context);
+                  },
                 ),
               ],
             ),
@@ -328,6 +345,10 @@ class _EditShopRemarksDialogState extends State<EditShopRemarksDialog> {
 }
 
 class EditShopTermsDialog extends StatefulWidget {
+  final ShopProvider shopProvider;
+
+  EditShopTermsDialog({@required this.shopProvider});
+
   @override
   _EditShopTermsDialogState createState() => _EditShopTermsDialogState();
 }
@@ -343,11 +364,11 @@ class _EditShopTermsDialogState extends State<EditShopTermsDialog> {
           shrinkWrap: true,
           children: [
             CustomTextField(
-              controller: null,
+              controller: widget.shopProvider.terms,
               obscureText: false,
               textInputType: TextInputType.multiline,
               maxLines: null,
-              labelText: '利用規約',
+              labelText: null,
               iconData: Icons.description,
             ),
             SizedBox(height: 16.0),
@@ -369,7 +390,17 @@ class _EditShopTermsDialogState extends State<EditShopTermsDialog> {
                   labelText: '変更を保存',
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
-                  onTap: () {},
+                  onTap: () async {
+                    if (!await widget.shopProvider.updateTerms()) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('変更が完了しました')),
+                    );
+                    widget.shopProvider.clearController();
+                    widget.shopProvider.reloadShopModel();
+                    Navigator.pop(context);
+                  },
                 ),
               ],
             ),
