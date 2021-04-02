@@ -74,7 +74,7 @@ class ShopOrderModel {
         'totalPrice': totalPrice,
         'staff': staff,
         'shipping': shipping,
-        'shippingText': shipping ? '配達済み' : '配達待ち',
+        'shippingText': shipping ? '配達完了' : '配達予定',
         'createdAt': createdAt,
         'createdAtText': DateFormat('yyyy/MM/dd HH:mm').format(createdAt),
       };

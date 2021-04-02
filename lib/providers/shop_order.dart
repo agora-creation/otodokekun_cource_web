@@ -21,7 +21,7 @@ class ShopOrderProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void changeSearchDate(DateTime deliveryAt, bool disabled){
+  void changeSearchDate(DateTime deliveryAt, bool disabled) {
     searchDeliveryAt = deliveryAt;
     searchDeliveryAtDisabled = disabled;
     notifyListeners();
@@ -44,6 +44,24 @@ class ShopOrderProvider with ChangeNotifier {
   }
 
   Future<bool> update({String id, String shopId, String userId}) async {
+    try {
+      _shopOrderService.update({
+        'id': id,
+        'shopId': shopId,
+        'staff': staff,
+      });
+      _userService.update({
+        'id': userId,
+        'staff': staff,
+      });
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> updateShipping({String id, String shopId, String userId}) async {
     try {
       _shopOrderService.update({
         'id': id,

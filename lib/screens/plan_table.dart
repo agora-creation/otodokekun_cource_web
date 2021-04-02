@@ -325,7 +325,7 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('登録が完了しました')),
+                      SnackBar(content: Text('定期商品情報を登録しました')),
                     );
                     widget.shopPlanProvider.clearController();
                     Navigator.pop(context);
@@ -423,7 +423,7 @@ class _EditPlanDialogState extends State<EditPlanDialog> {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('削除が完了しました')),
+                      SnackBar(content: Text('定期商品情報を削除しました')),
                     );
                     widget.shopPlanProvider.clearController();
                     Navigator.pop(context);

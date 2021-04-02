@@ -258,7 +258,7 @@ class _OrderTableState extends State<OrderTable> {
                 BorderBoxButton(
                   iconData: Icons.arrow_drop_down,
                   labelText:
-                      widget.shopOrderProvider.searchShipping ? '配達済み' : '配達待ち',
+                      widget.shopOrderProvider.searchShipping ? '配達完了' : '配達予定',
                   labelColor: Colors.lightBlue,
                   borderColor: Colors.lightBlue,
                   onTap: () {
@@ -425,7 +425,7 @@ class _EditOrderDialogState extends State<EditOrderDialog> {
     return CustomDialog(
       title: '注文の詳細',
       content: Container(
-        width: 450.0,
+        width: 550.0,
         child: ListView(
           shrinkWrap: true,
           children: [
@@ -502,7 +502,7 @@ class _EditOrderDialogState extends State<EditOrderDialog> {
                 ),
                 SizedBox(width: 4.0),
                 widget.data['shipping']
-                    ? null
+                    ? Container()
                     : BorderBoxButton(
                         iconData: Icons.cancel_outlined,
                         labelText: 'キャンセル',
@@ -515,32 +515,51 @@ class _EditOrderDialogState extends State<EditOrderDialog> {
                             return;
                           }
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('キャンセルしました')),
+                            SnackBar(content: Text('注文情報をキャンセルしました')),
                           );
                           Navigator.pop(context);
                         },
                       ),
                 SizedBox(width: 4.0),
                 widget.data['shipping']
-                    ? null
+                    ? Container()
                     : FillBoxButton(
-                        iconData: Icons.check,
-                        labelText: '配達済みにする',
+                        iconData: Icons.local_shipping,
+                        labelText: '配達完了',
                         labelColor: Colors.white,
-                        backgroundColor: Colors.blueAccent,
+                        backgroundColor: Colors.redAccent,
                         onTap: () async {
-                          if (!await widget.shopOrderProvider.update(
+                          if (!await widget.shopOrderProvider.updateShipping(
                               id: widget.data['id'],
                               shopId: widget.data['shopId'],
                               userId: widget.data['userId'])) {
                             return;
                           }
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('変更が完了しました')),
+                            SnackBar(content: Text('配達状況を配達完了しました')),
                           );
                           Navigator.pop(context);
                         },
                       ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.check,
+                  labelText: '変更',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  onTap: () async {
+                    if (!await widget.shopOrderProvider.update(
+                        id: widget.data['id'],
+                        shopId: widget.data['shopId'],
+                        userId: widget.data['userId'])) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('注文情報を変更しました')),
+                    );
+                    Navigator.pop(context);
+                  },
+                ),
               ],
             ),
           ],
@@ -981,7 +1000,7 @@ class _SearchShippingDialogState extends State<SearchShippingDialog> {
             Container(
               decoration: kBottomBorderDecoration,
               child: RadioListTile(
-                title: Text('配達待ち'),
+                title: Text('配達予定'),
                 value: false,
                 groupValue: _shipping,
                 activeColor: Colors.blueAccent,
@@ -995,7 +1014,7 @@ class _SearchShippingDialogState extends State<SearchShippingDialog> {
             Container(
               decoration: kBottomBorderDecoration,
               child: RadioListTile(
-                title: Text('配達済み'),
+                title: Text('配達完了'),
                 value: true,
                 groupValue: _shipping,
                 activeColor: Colors.blueAccent,

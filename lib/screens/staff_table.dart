@@ -198,7 +198,7 @@ class _AddStaffDialogState extends State<AddStaffDialog> {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('登録が完了しました')),
+                      SnackBar(content: Text('担当者情報を登録しました')),
                     );
                     widget.shopStaffProvider.clearController();
                     Navigator.pop(context);
@@ -269,7 +269,7 @@ class _EditStaffDialogState extends State<EditStaffDialog> {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('削除が完了しました')),
+                      SnackBar(content: Text('担当者情報を削除しました')),
                     );
                     widget.shopStaffProvider.clearController();
                     Navigator.pop(context);
@@ -287,7 +287,7 @@ class _EditStaffDialogState extends State<EditStaffDialog> {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('変更が完了しました')),
+                      SnackBar(content: Text('担当者情報を変更しました')),
                     );
                     widget.shopStaffProvider.clearController();
                     Navigator.pop(context);

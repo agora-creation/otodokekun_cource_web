@@ -274,7 +274,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('登録が完了しました')),
+                      SnackBar(content: Text('個別商品情報を登録しました')),
                     );
                     widget.shopProductProvider.clearController();
                     Navigator.pop(context);
@@ -412,7 +412,7 @@ class _EditProductDialogState extends State<EditProductDialog> {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('削除が完了しました')),
+                      SnackBar(content: Text('個別商品情報を削除しました')),
                     );
                     widget.shopProductProvider.clearController();
                     Navigator.pop(context);
@@ -430,7 +430,7 @@ class _EditProductDialogState extends State<EditProductDialog> {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('変更が完了しました')),
+                      SnackBar(content: Text('個別商品情報を変更しました')),
                     );
                     widget.shopProductProvider.clearController();
                     Navigator.pop(context);

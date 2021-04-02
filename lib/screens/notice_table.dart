@@ -224,7 +224,7 @@ class _AddNoticeDialogState extends State<AddNoticeDialog> {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('登録が完了しました')),
+                      SnackBar(content: Text('お知らせ(通知)情報を登録しました')),
                     );
                     widget.shopNoticeProvider.clearController();
                     Navigator.pop(context);
@@ -367,7 +367,7 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('削除が完了しました')),
+                      SnackBar(content: Text('お知らせ(通知)情報を削除しました')),
                     );
                     widget.shopNoticeProvider.clearController();
                     Navigator.pop(context);
@@ -385,7 +385,7 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('変更が完了しました')),
+                      SnackBar(content: Text('お知らせ(通知)情報を変更しました')),
                     );
                     widget.shopNoticeProvider.clearController();
                     Navigator.pop(context);
@@ -406,7 +406,7 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('送信が完了しました')),
+                      SnackBar(content: Text('お知らせ(通知)情報を送信しました')),
                     );
                     Navigator.pop(context);
                   },

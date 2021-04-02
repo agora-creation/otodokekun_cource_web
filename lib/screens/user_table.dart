@@ -225,7 +225,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('変更が完了しました')),
+                      SnackBar(content: Text('顧客情報を変更しました')),
                     );
                     Navigator.pop(context);
                   },

@@ -220,7 +220,7 @@ class _AddInvoiceDialogState extends State<AddInvoiceDialog> {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('登録が完了しました')),
+                      SnackBar(content: Text('締め日情報を登録しました')),
                     );
                     Navigator.pop(context);
                   },
@@ -300,7 +300,7 @@ class _EditInvoiceDialogState extends State<EditInvoiceDialog> {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('削除が完了しました')),
+                      SnackBar(content: Text('締め日情報を削除しました')),
                     );
                     Navigator.pop(context);
                   },
