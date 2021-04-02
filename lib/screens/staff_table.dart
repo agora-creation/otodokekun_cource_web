@@ -188,8 +188,8 @@ class _AddStaffDialogState extends State<AddStaffDialog> {
                 ),
                 SizedBox(width: 4.0),
                 FillBoxButton(
-                  iconData: Icons.add,
-                  labelText: '新規登録',
+                  iconData: Icons.check,
+                  labelText: '登録',
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
                   onTap: () async {
@@ -278,7 +278,7 @@ class _EditStaffDialogState extends State<EditStaffDialog> {
                 SizedBox(width: 4.0),
                 FillBoxButton(
                   iconData: Icons.check,
-                  labelText: '変更を保存',
+                  labelText: '変更',
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
                   onTap: () async {

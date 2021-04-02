@@ -216,7 +216,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                 SizedBox(width: 4.0),
                 FillBoxButton(
                   iconData: Icons.check,
-                  labelText: '変更を保存',
+                  labelText: '変更',
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
                   onTap: () async {

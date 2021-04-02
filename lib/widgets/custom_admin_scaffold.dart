@@ -48,7 +48,7 @@ class CustomAdminScaffold extends StatelessWidget {
             ),
           ),
           Tooltip(
-            message: '店舗からの一言',
+            message: '店舗説明',
             child: IconButton(
               icon: Icon(Icons.comment),
               onPressed: () {
@@ -253,7 +253,7 @@ class _EditShopDialogState extends State<EditShopDialog> {
                 SizedBox(width: 4.0),
                 FillBoxButton(
                   iconData: Icons.check,
-                  labelText: '変更を保存',
+                  labelText: '変更',
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
                   onTap: () async {
@@ -290,7 +290,7 @@ class _EditShopRemarksDialogState extends State<EditShopRemarksDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: '店舗からの一言',
+      title: '店舗説明',
       content: Container(
         width: 450.0,
         child: ListView(
@@ -320,7 +320,7 @@ class _EditShopRemarksDialogState extends State<EditShopRemarksDialog> {
                 SizedBox(width: 4.0),
                 FillBoxButton(
                   iconData: Icons.check,
-                  labelText: '変更を保存',
+                  labelText: '変更',
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
                   onTap: () async {
@@ -387,7 +387,7 @@ class _EditShopTermsDialogState extends State<EditShopTermsDialog> {
                 SizedBox(width: 4.0),
                 FillBoxButton(
                   iconData: Icons.check,
-                  labelText: '変更を保存',
+                  labelText: '変更',
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
                   onTap: () async {

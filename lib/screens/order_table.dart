@@ -631,7 +631,7 @@ class _SearchNameDialogState extends State<SearchNameDialog> {
                 SizedBox(width: 4.0),
                 FillBoxButton(
                   iconData: Icons.search,
-                  labelText: '検索する',
+                  labelText: '検索',
                   labelColor: Colors.white,
                   backgroundColor: Colors.lightBlue,
                   onTap: () {
@@ -727,7 +727,7 @@ class _SearchDeliveryAtDialogState extends State<SearchDeliveryAtDialog> {
                 SizedBox(width: 4.0),
                 FillBoxButton(
                   iconData: Icons.search,
-                  labelText: '検索する',
+                  labelText: '検索',
                   labelColor: Colors.white,
                   backgroundColor: Colors.lightBlue,
                   onTap: () {
@@ -830,7 +830,7 @@ class _SearchInvoiceDialogState extends State<SearchInvoiceDialog> {
                 SizedBox(width: 4.0),
                 FillBoxButton(
                   iconData: Icons.search,
-                  labelText: '検索する',
+                  labelText: '検索',
                   labelColor: Colors.white,
                   backgroundColor: Colors.lightBlue,
                   onTap: () {
@@ -930,7 +930,7 @@ class _SearchStaffDialogState extends State<SearchStaffDialog> {
                 SizedBox(width: 4.0),
                 FillBoxButton(
                   iconData: Icons.search,
-                  labelText: '検索する',
+                  labelText: '検索',
                   labelColor: Colors.white,
                   backgroundColor: Colors.lightBlue,
                   onTap: () {
@@ -1021,7 +1021,7 @@ class _SearchShippingDialogState extends State<SearchShippingDialog> {
                 SizedBox(width: 4.0),
                 FillBoxButton(
                   iconData: Icons.search,
-                  labelText: '検索する',
+                  labelText: '検索',
                   labelColor: Colors.white,
                   backgroundColor: Colors.lightBlue,
                   onTap: () {
