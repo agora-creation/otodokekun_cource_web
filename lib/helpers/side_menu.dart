@@ -5,10 +5,16 @@ import 'package:otodokekun_cource_web/screens/notice.dart';
 import 'package:otodokekun_cource_web/screens/order.dart';
 import 'package:otodokekun_cource_web/screens/plan.dart';
 import 'package:otodokekun_cource_web/screens/product.dart';
+import 'package:otodokekun_cource_web/screens/report.dart';
 import 'package:otodokekun_cource_web/screens/staff.dart';
 import 'package:otodokekun_cource_web/screens/user.dart';
 
 const List<MenuItem> kSideMenu = [
+  MenuItem(
+    title: '集計',
+    route: ReportScreen.id,
+    icon: Icons.view_list,
+  ),
   MenuItem(
     title: '注文',
     route: OrderScreen.id,

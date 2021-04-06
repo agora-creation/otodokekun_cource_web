@@ -18,6 +18,7 @@ import 'package:otodokekun_cource_web/screens/order.dart';
 import 'package:otodokekun_cource_web/screens/plan.dart';
 import 'package:otodokekun_cource_web/screens/product.dart';
 import 'package:otodokekun_cource_web/screens/registration.dart';
+import 'package:otodokekun_cource_web/screens/report.dart';
 import 'package:otodokekun_cource_web/screens/splash.dart';
 import 'package:otodokekun_cource_web/screens/staff.dart';
 import 'package:otodokekun_cource_web/screens/user.dart';
@@ -70,6 +71,7 @@ class MyApp extends StatelessWidget {
           PlanScreen.id: (context) => PlanScreen(),
           ProductScreen.id: (context) => ProductScreen(),
           RegistrationScreen.id: (context) => RegistrationScreen(),
+          ReportScreen.id: (context) => ReportScreen(),
           StaffScreen.id: (context) => StaffScreen(),
           UserScreen.id: (context) => UserScreen(),
         },

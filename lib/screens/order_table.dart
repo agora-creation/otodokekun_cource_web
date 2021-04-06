@@ -1,7 +1,3 @@
-import 'dart:convert' show utf8;
-import 'dart:html' show AnchorElement;
-
-import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
@@ -106,8 +102,8 @@ class _OrderTableState extends State<OrderTable> {
       for (ShopInvoiceModel _invoice in _invoices) {
         if (_now.isAfter(_invoice.openedAt) &&
             _now.isBefore(_invoice.closedAt)) {
-          widget.shopOrderProvider
-              .changeSearchDateRage(_invoice.openedAt, _invoice.closedAt);
+          widget.shopOrderProvider.changeSearchDateRage(
+              _invoice.openedAt, _invoice.closedAt, false);
         }
       }
     });
@@ -200,8 +196,10 @@ class _OrderTableState extends State<OrderTable> {
                 ),
                 BorderBoxButton(
                   iconData: Icons.calendar_today,
-                  labelText:
-                      '${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchOpenedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchClosedAt)}',
+                  labelText: widget
+                          .shopOrderProvider.searchOpenedClosedAtDisabled
+                      ? '指定なし'
+                      : '${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchOpenedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchClosedAt)}',
                   labelColor: Colors.lightBlue,
                   borderColor: Colors.lightBlue,
                   onTap: () {
@@ -274,46 +272,46 @@ class _OrderTableState extends State<OrderTable> {
                 ),
               ],
             ),
-            SizedBox(width: 4.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '注文データ(CSV)',
-                  style: TextStyle(color: Colors.green, fontSize: 12.0),
-                ),
-                BorderBoxButton(
-                  iconData: Icons.file_download,
-                  labelText: 'ダウンロード',
-                  labelColor: Colors.green,
-                  borderColor: Colors.green,
-                  onTap: () async {
-                    List<List<dynamic>> rows = [];
-                    for (int i = 0; i < widget.source.length; i++) {
-                      List<dynamic> row = [];
-                      row.add(widget.source[i]['name']);
-                      row.add(widget.source[i]['zip']);
-                      row.add(widget.source[i]['address']);
-                      row.add(widget.source[i]['tel']);
-                      row.add(widget.source[i]['productsText']);
-                      row.add(widget.source[i]['deliveryAtText']);
-                      row.add(widget.source[i]['remarks']);
-                      row.add(widget.source[i]['totalPrice']);
-                      row.add(widget.source[i]['staff']);
-                      row.add(widget.source[i]['shippingText']);
-                      rows.add(row);
-                    }
-                    String csv = const ListToCsvConverter().convert(rows);
-                    AnchorElement()
-                      ..href =
-                          '${Uri.dataFromString(csv, mimeType: 'text/csv', encoding: utf8)}'
-                      ..download = 'order.csv'
-                      ..style.display = 'none'
-                      ..click();
-                  },
-                ),
-              ],
-            ),
+            // SizedBox(width: 4.0),
+            // Column(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: [
+            //     Text(
+            //       '注文データ(CSV)',
+            //       style: TextStyle(color: Colors.green, fontSize: 12.0),
+            //     ),
+            //     BorderBoxButton(
+            //       iconData: Icons.file_download,
+            //       labelText: 'ダウンロード',
+            //       labelColor: Colors.green,
+            //       borderColor: Colors.green,
+            //       onTap: () async {
+            //         List<List<dynamic>> rows = [];
+            //         for (int i = 0; i < widget.source.length; i++) {
+            //           List<dynamic> row = [];
+            //           row.add(widget.source[i]['name']);
+            //           row.add(widget.source[i]['zip']);
+            //           row.add(widget.source[i]['address']);
+            //           row.add(widget.source[i]['tel']);
+            //           row.add(widget.source[i]['productsText']);
+            //           row.add(widget.source[i]['deliveryAtText']);
+            //           row.add(widget.source[i]['remarks']);
+            //           row.add(widget.source[i]['totalPrice']);
+            //           row.add(widget.source[i]['staff']);
+            //           row.add(widget.source[i]['shippingText']);
+            //           rows.add(row);
+            //         }
+            //         String csv = const ListToCsvConverter().convert(rows);
+            //         AnchorElement()
+            //           ..href =
+            //               '${Uri.dataFromString(csv, mimeType: 'text/csv', encoding: utf8)}'
+            //           ..download = 'order.csv'
+            //           ..style.display = 'none'
+            //           ..click();
+            //       },
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ],
@@ -707,8 +705,8 @@ class _SearchDeliveryAtDialogState extends State<SearchDeliveryAtDialog> {
                   locale: const Locale('ja'),
                   context: context,
                   initialDate: _deliveryAt,
-                  firstDate: widget.shopOrderProvider.searchOpenedAt,
-                  lastDate: widget.shopOrderProvider.searchClosedAt,
+                  firstDate: DateTime(DateTime.now().year - 1),
+                  lastDate: DateTime(DateTime.now().year + 1),
                 );
                 if (selected == null) return;
                 setState(() {
@@ -779,7 +777,9 @@ class SearchInvoiceDialog extends StatefulWidget {
 
 class _SearchInvoiceDialogState extends State<SearchInvoiceDialog> {
   final ScrollController _scrollController = ScrollController();
-  ShopInvoiceModel _selected;
+  ShopInvoiceModel _selected = ShopInvoiceModel.toNull();
+  List<ShopInvoiceModel> invoices = [];
+  bool _disabled = false;
 
   @override
   void initState() {
@@ -791,6 +791,12 @@ class _SearchInvoiceDialogState extends State<SearchInvoiceDialog> {
               .isAtSameMomentAs(_invoice.closedAt)) {
         _selected = _invoice;
       }
+      invoices.add(_invoice);
+    }
+    invoices.insert(0, ShopInvoiceModel.toNull());
+    _disabled = widget.shopOrderProvider.searchOpenedClosedAtDisabled;
+    if (widget.shopOrderProvider.searchOpenedClosedAtDisabled) {
+      _selected = ShopInvoiceModel.toNull();
     }
   }
 
@@ -812,20 +818,26 @@ class _SearchInvoiceDialogState extends State<SearchInvoiceDialog> {
                   shrinkWrap: true,
                   physics: ScrollPhysics(),
                   controller: _scrollController,
-                  itemCount: widget.invoices.length,
+                  itemCount: invoices.length,
                   itemBuilder: (context, index) {
-                    ShopInvoiceModel _invoice = widget.invoices[index];
+                    ShopInvoiceModel _invoice = invoices[index];
                     return Container(
                       decoration: kBottomBorderDecoration,
                       child: RadioListTile(
-                        title: Text(
-                            '${DateFormat('yyyy/MM/dd').format(_invoice.openedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(_invoice.closedAt)}'),
+                        title: Text(_invoice.id == ''
+                            ? '指定なし'
+                            : '${DateFormat('yyyy/MM/dd').format(_invoice.openedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(_invoice.closedAt)}'),
                         value: _invoice,
                         groupValue: _selected,
                         activeColor: Colors.blueAccent,
                         onChanged: (value) {
                           setState(() {
                             _selected = value;
+                            if (_selected.id == '') {
+                              _disabled = true;
+                            } else {
+                              _disabled = false;
+                            }
                           });
                         },
                       ),
@@ -854,7 +866,7 @@ class _SearchInvoiceDialogState extends State<SearchInvoiceDialog> {
                   backgroundColor: Colors.lightBlue,
                   onTap: () {
                     widget.shopOrderProvider.changeSearchDateRage(
-                        _selected.openedAt, _selected.closedAt);
+                        _selected.openedAt, _selected.closedAt, _disabled);
                     Navigator.pop(context);
                   },
                 ),

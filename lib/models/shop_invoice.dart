@@ -31,4 +31,12 @@ class ShopInvoiceModel {
         'closedAtText': DateFormat('yyyy/MM/dd').format(closedAt),
         'createdAt': createdAt,
       };
+
+  ShopInvoiceModel.toNull() {
+    _id = '';
+    _shopId = '';
+    _openedAt = DateTime(DateTime.now().year - 1);
+    _closedAt = DateTime(DateTime.now().year + 1);
+    _createdAt = DateTime.now();
+  }
 }

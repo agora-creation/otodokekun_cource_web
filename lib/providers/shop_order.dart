@@ -11,8 +11,9 @@ class ShopOrderProvider with ChangeNotifier {
   String searchName = '';
   DateTime searchDeliveryAt = DateTime.now();
   bool searchDeliveryAtDisabled = true;
-  DateTime searchOpenedAt = DateTime.now();
-  DateTime searchClosedAt = DateTime.now().add(Duration(days: 7));
+  DateTime searchOpenedAt = DateTime(DateTime.now().year - 1);
+  DateTime searchClosedAt = DateTime(DateTime.now().year + 1);
+  bool searchOpenedClosedAtDisabled = false;
   String searchStaff = '';
   bool searchShipping = false;
 
@@ -24,12 +25,17 @@ class ShopOrderProvider with ChangeNotifier {
   void changeSearchDate(DateTime deliveryAt, bool disabled) {
     searchDeliveryAt = deliveryAt;
     searchDeliveryAtDisabled = disabled;
+    if (!searchDeliveryAtDisabled) {
+      searchOpenedClosedAtDisabled = true;
+    }
     notifyListeners();
   }
 
-  void changeSearchDateRage(DateTime openedAt, DateTime closedAt) {
+  void changeSearchDateRage(
+      DateTime openedAt, DateTime closedAt, bool disabled) {
     searchOpenedAt = openedAt;
     searchClosedAt = closedAt;
+    searchOpenedClosedAtDisabled = disabled;
     notifyListeners();
   }
 

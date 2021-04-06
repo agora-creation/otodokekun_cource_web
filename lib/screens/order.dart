@@ -24,13 +24,20 @@ class OrderScreen extends StatelessWidget {
     String _opened;
     String _closed;
     if (shopOrderProvider.searchDeliveryAtDisabled) {
-      _opened =
-          '${DateFormat('yyyy-MM-dd').format(shopOrderProvider.searchOpenedAt)} 00:00:00.000';
-      _closed =
-          '${DateFormat('yyyy-MM-dd').format(shopOrderProvider.searchClosedAt)} 23:59:59.999';
+      if (shopOrderProvider.searchOpenedClosedAtDisabled) {
+        _opened =
+            '${DateFormat('yyyy-MM-dd').format(DateTime(DateTime.now().year - 1))} 00:00:00.000';
+        _closed =
+            '${DateFormat('yyyy-MM-dd').format(DateTime(DateTime.now().year + 1))} 23:59:59.999';
+      } else {
+        _opened =
+            '${DateFormat('yyyy-MM-dd').format(shopOrderProvider.searchOpenedAt)} 00:00:00.000';
+        _closed =
+            '${DateFormat('yyyy-MM-dd').format(shopOrderProvider.searchClosedAt)} 23:59:59.999';
+      }
     } else {
       _opened =
-          '${DateFormat('yyyy-MM-dd').format(shopOrderProvider.searchDeliveryAt.subtract(Duration(days: 1)))} 00:00:00.000';
+          '${DateFormat('yyyy-MM-dd').format(shopOrderProvider.searchDeliveryAt)} 00:00:00.000';
       _closed =
           '${DateFormat('yyyy-MM-dd').format(shopOrderProvider.searchDeliveryAt)} 23:59:59.999';
     }
