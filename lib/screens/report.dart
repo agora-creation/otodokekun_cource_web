@@ -9,12 +9,33 @@ class ReportScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shopProvider = Provider.of<ShopProvider>(context);
-    List<Map<String, dynamic>> _source = [];
 
     return CustomAdminScaffold(
       shopProvider: shopProvider,
       selectedRoute: id,
-      body: Container(),
+      body: ReportTable(),
+    );
+  }
+}
+
+class ReportTable extends StatefulWidget {
+  @override
+  _ReportTableState createState() => _ReportTableState();
+}
+
+class _ReportTableState extends State<ReportTable> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: Column(
+        children: [
+          Text(
+            '集計',
+            style: TextStyle(fontSize: 16.0),
+          ),
+        ],
+      ),
     );
   }
 }

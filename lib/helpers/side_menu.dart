@@ -6,14 +6,28 @@ import 'package:otodokekun_cource_web/screens/order.dart';
 import 'package:otodokekun_cource_web/screens/plan.dart';
 import 'package:otodokekun_cource_web/screens/product.dart';
 import 'package:otodokekun_cource_web/screens/report.dart';
+import 'package:otodokekun_cource_web/screens/shop.dart';
 import 'package:otodokekun_cource_web/screens/staff.dart';
 import 'package:otodokekun_cource_web/screens/user.dart';
 
 const List<MenuItem> kSideMenu = [
   MenuItem(
     title: '集計',
-    route: ReportScreen.id,
     icon: Icons.view_list,
+    children: [
+      MenuItem(
+        title: '注文毎',
+        route: ReportScreen.id,
+      ),
+      MenuItem(
+        title: '顧客毎',
+        route: ReportScreen.id,
+      ),
+      MenuItem(
+        title: '商品毎',
+        route: ReportScreen.id,
+      ),
+    ],
   ),
   MenuItem(
     title: '注文',
@@ -21,24 +35,28 @@ const List<MenuItem> kSideMenu = [
     icon: Icons.local_shipping,
   ),
   MenuItem(
-    title: '定期商品',
-    route: PlanScreen.id,
+    title: '商品',
     icon: Icons.view_in_ar,
-  ),
-  MenuItem(
-    title: '個別商品',
-    route: ProductScreen.id,
-    icon: Icons.view_in_ar,
+    children: [
+      MenuItem(
+        title: '定期商品',
+        route: PlanScreen.id,
+      ),
+      MenuItem(
+        title: '個別商品',
+        route: ProductScreen.id,
+      ),
+    ],
   ),
   MenuItem(
     title: '顧客',
     route: UserScreen.id,
-    icon: Icons.supervisor_account,
+    icon: Icons.person,
   ),
   MenuItem(
     title: '担当者',
     route: StaffScreen.id,
-    icon: Icons.supervisor_account,
+    icon: Icons.supervisor_account_outlined,
   ),
   MenuItem(
     title: 'お知らせ(通知)',
@@ -46,8 +64,22 @@ const List<MenuItem> kSideMenu = [
     icon: Icons.notifications,
   ),
   MenuItem(
-    title: '締め日',
+    title: '締日(期間)',
     route: InvoiceScreen.id,
-    icon: Icons.calendar_today,
+    icon: Icons.date_range,
+  ),
+  MenuItem(
+    title: '店舗',
+    icon: Icons.store,
+    children: [
+      MenuItem(
+        title: '店舗情報',
+        route: ShopScreen.id,
+      ),
+      MenuItem(
+        title: '利用規約',
+        route: ProductScreen.id,
+      ),
+    ],
   ),
 ];

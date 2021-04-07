@@ -22,16 +22,6 @@ class ShopInvoiceModel {
     _createdAt = snapshot.data()['createdAt'].toDate();
   }
 
-  Map<String, dynamic> toMap() => {
-        'id': id,
-        'shopId': shopId,
-        'openedAt': openedAt,
-        'openedAtText': DateFormat('yyyy/MM/dd').format(openedAt),
-        'closedAt': closedAt,
-        'closedAtText': DateFormat('yyyy/MM/dd').format(closedAt),
-        'createdAt': createdAt,
-      };
-
   ShopInvoiceModel.toNull() {
     _id = '';
     _shopId = '';
