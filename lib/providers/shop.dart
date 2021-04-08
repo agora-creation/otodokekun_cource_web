@@ -100,7 +100,7 @@ class ShopProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> update() async {
+  Future<bool> updateInfo() async {
     if (name.text == null) return false;
     if (zip.text == null) return false;
     if (address.text == null) return false;
@@ -116,21 +116,9 @@ class ShopProvider with ChangeNotifier {
           'address': address.text.trim(),
           'tel': tel.text.trim(),
           'email': email.text.trim(),
+          'remarks': remarks.text,
           'cancelLimit': cancelLimit,
         });
-      });
-      return true;
-    } catch (e) {
-      print(e.toString());
-      return false;
-    }
-  }
-
-  Future<bool> updateRemarks() async {
-    try {
-      _shopServices.update({
-        'id': _auth.currentUser.uid,
-        'remarks': remarks.text,
       });
       return true;
     } catch (e) {

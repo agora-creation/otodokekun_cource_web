@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
 
 class ShopStaffModel {
   String _id;
@@ -18,12 +17,4 @@ class ShopStaffModel {
     _name = snapshot.data()['name'];
     _createdAt = snapshot.data()['createdAt'].toDate();
   }
-
-  Map<String, dynamic> toMap() => {
-        'id': id,
-        'shopId': shopId,
-        'name': name,
-        'createdAt': createdAt,
-        'createdAtText': DateFormat('yyyy/MM/dd HH:mm').format(createdAt),
-      };
 }

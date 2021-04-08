@@ -4,11 +4,11 @@ import 'package:firebase/firebase.dart' as firebase;
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/services/shop_order.dart';
-import 'package:otodokekun_cource_web/services/shop_plan.dart';
+import 'package:otodokekun_cource_web/services/shop_product_regular.dart';
 
 class ShopPlanProvider with ChangeNotifier {
   ShopOrderService _shopOrderService = ShopOrderService();
-  ShopPlanService _shopPlanService = ShopPlanService();
+  ShopProductRegularService _shopPlanService = ShopProductRegularService();
 
   TextEditingController name = TextEditingController();
   TextEditingController unit = TextEditingController();

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:otodokekun_cource_web/models/locations.dart';
+import 'package:otodokekun_cource_web/models/tmp.dart';
 
 class UserModel {
   String _id;
@@ -10,10 +10,9 @@ class UserModel {
   String _tel;
   String _email;
   String _password;
-  List<LocationsModel> locations;
-  bool _blacklist;
+  List<TmpModel> tmp;
   String _staff;
-  bool _fixed;
+  bool _regular;
   String _token;
   DateTime _createdAt;
 
@@ -25,9 +24,8 @@ class UserModel {
   String get tel => _tel;
   String get email => _email;
   String get password => _password;
-  bool get blacklist => _blacklist;
   String get staff => _staff;
-  bool get fixed => _fixed;
+  bool get regular => _regular;
   String get token => _token;
   DateTime get createdAt => _createdAt;
 
@@ -40,38 +38,18 @@ class UserModel {
     _tel = snapshot.data()['tel'];
     _email = snapshot.data()['email'];
     _password = snapshot.data()['password'];
-    locations =
-        _convertLocations(locations: snapshot.data()['locations']) ?? [];
-    _blacklist = snapshot.data()['blacklist'];
+    tmp = _convertTmp(snapshot.data()['tmp']) ?? [];
     _staff = snapshot.data()['staff'];
-    _fixed = snapshot.data()['fixed'];
+    _regular = snapshot.data()['regular'];
     _token = snapshot.data()['token'];
     _createdAt = snapshot.data()['createdAt'].toDate();
   }
 
-  List<LocationsModel> _convertLocations({List locations}) {
-    List<LocationsModel> convertedLocations = [];
-    for (Map data in locations) {
-      convertedLocations.add(LocationsModel.fromMap(data));
+  List<TmpModel> _convertTmp(List tmp) {
+    List<TmpModel> convertedTmp = [];
+    for (Map data in tmp) {
+      convertedTmp.add(TmpModel.fromMap(data));
     }
-    return convertedLocations;
+    return convertedTmp;
   }
-
-  Map<String, dynamic> toMap() => {
-        'id': id,
-        'shopId': shopId,
-        'name': name,
-        'zip': zip,
-        'address': address,
-        'tel': tel,
-        'email': email,
-        'password': password,
-        'locations': locations,
-        'blacklist': blacklist,
-        'blacklistText': blacklist ? '設定済み' : '設定なし',
-        'staff': staff,
-        'fixed': fixed,
-        'token': token,
-        'createdAt': createdAt,
-      };
 }

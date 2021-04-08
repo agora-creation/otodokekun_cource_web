@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
-import 'package:otodokekun_cource_web/screens/login.dart';
-import 'package:otodokekun_cource_web/screens/shop_table.dart';
-import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
+import 'package:otodokekun_cource_web/screens/shop_terms_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
 import 'package:provider/provider.dart';
 
-class ShopScreen extends StatelessWidget {
-  static const String id = 'shop';
+class ShopTermsScreen extends StatelessWidget {
+  static const String id = 'shop_terms';
 
   @override
   Widget build(BuildContext context) {
@@ -30,31 +28,15 @@ class ShopScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('店舗情報', style: TextStyle(fontSize: 18.0)),
-                  BorderBoxButton(
-                    iconData: Icons.exit_to_app,
-                    labelText: 'ログアウト',
-                    labelColor: Colors.redAccent,
-                    borderColor: Colors.redAccent,
-                    onTap: () {
-                      shopProvider.signOut();
-                      shopProvider.clearController();
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LoginScreen(),
-                          fullscreenDialog: true,
-                        ),
-                      );
-                    },
-                  ),
+                  Text('利用規約', style: TextStyle(fontSize: 18.0)),
+                  Container(),
                 ],
               ),
               SizedBox(height: 4.0),
-              Text('店舗情報を登録できます。この情報はお客様へ公開されます。'),
+              Text('この利用規約は顧客が商品を注文する際に表示されます。'),
               SizedBox(height: 8.0),
               Expanded(
-                child: ShopTable(
+                child: ShopTermsTable(
                   shop: shopProvider.shop,
                   shopProvider: shopProvider,
                 ),

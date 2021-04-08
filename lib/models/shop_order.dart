@@ -1,16 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
-import 'package:otodokekun_cource_web/models/products.dart';
+import 'package:otodokekun_cource_web/models/cart.dart';
 
 class ShopOrderModel {
   String _id;
   String _shopId;
   String _userId;
-  String _name;
-  String _zip;
-  String _address;
-  String _tel;
-  List<ProductsModel> products;
+  String _userName;
+  String _userZip;
+  String _userAddress;
+  String _userTel;
+  List<CartModel> cart;
   DateTime _deliveryAt;
   String _remarks;
   int _totalPrice;
@@ -21,10 +20,10 @@ class ShopOrderModel {
   String get id => _id;
   String get shopId => _shopId;
   String get userId => _userId;
-  String get name => _name;
-  String get zip => _zip;
-  String get address => _address;
-  String get tel => _tel;
+  String get userName => _userName;
+  String get userZip => _userZip;
+  String get userAddress => _userAddress;
+  String get userTel => _userTel;
   DateTime get deliveryAt => _deliveryAt;
   String get remarks => _remarks;
   int get totalPrice => _totalPrice;
@@ -36,11 +35,11 @@ class ShopOrderModel {
     _id = snapshot.data()['id'];
     _shopId = snapshot.data()['shopId'];
     _userId = snapshot.data()['userId'];
-    _name = snapshot.data()['name'];
-    _zip = snapshot.data()['zip'];
-    _address = snapshot.data()['address'];
-    _tel = snapshot.data()['tel'];
-    products = _convertProducts(products: snapshot.data()['products']) ?? [];
+    _userName = snapshot.data()['userName'];
+    _userZip = snapshot.data()['userZip'];
+    _userAddress = snapshot.data()['userAddress'];
+    _userTel = snapshot.data()['userTel'];
+    cart = _convertCart(snapshot.data()['cart']) ?? [];
     _deliveryAt = snapshot.data()['deliveryAt'].toDate();
     _remarks = snapshot.data()['remarks'];
     _totalPrice = snapshot.data()['totalPrice'];
@@ -49,33 +48,11 @@ class ShopOrderModel {
     _createdAt = snapshot.data()['createdAt'].toDate();
   }
 
-  List<ProductsModel> _convertProducts({List products}) {
-    List<ProductsModel> convertedProducts = [];
-    for (Map product in products) {
-      convertedProducts.add(ProductsModel.fromMap(product));
+  List<CartModel> _convertCart(List cart) {
+    List<CartModel> convertedCart = [];
+    for (Map data in cart) {
+      convertedCart.add(CartModel.fromMap(data));
     }
-    return convertedProducts;
+    return convertedCart;
   }
-
-  Map<String, dynamic> toMap() => {
-        'id': id,
-        'shopId': shopId,
-        'userId': userId,
-        'name': name,
-        'zip': zip,
-        'address': address,
-        'tel': tel,
-        'products': products,
-        'productsText':
-            '${products[0].name} (${products[0].quantity}${products[0].unit})',
-        'deliveryAt': deliveryAt,
-        'deliveryAtText': DateFormat('yyyy/MM/dd').format(deliveryAt),
-        'remarks': remarks,
-        'totalPrice': totalPrice,
-        'staff': staff,
-        'shipping': shipping,
-        'shippingText': shipping ? '配達完了' : '配達予定',
-        'createdAt': createdAt,
-        'createdAtText': DateFormat('yyyy/MM/dd HH:mm').format(createdAt),
-      };
 }

@@ -11,7 +11,7 @@ class ReportScreen extends StatelessWidget {
     final shopProvider = Provider.of<ShopProvider>(context);
 
     return CustomAdminScaffold(
-      shopProvider: shopProvider,
+      shop: shopProvider.shop,
       selectedRoute: id,
       body: ReportTable(),
     );

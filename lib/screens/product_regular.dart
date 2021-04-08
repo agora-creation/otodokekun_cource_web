@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:otodokekun_cource_web/models/shop_plan.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_plan.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
-import 'package:otodokekun_cource_web/screens/plan_table.dart';
+import 'package:otodokekun_cource_web/screens/product_regular_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
 import 'package:provider/provider.dart';
 
@@ -25,17 +24,13 @@ class PlanScreen extends StatelessWidget {
     List<Map<String, dynamic>> _source = [];
 
     return CustomAdminScaffold(
-      shopProvider: shopProvider,
+      shop: shopProvider.shop,
       selectedRoute: id,
       body: StreamBuilder<QuerySnapshot>(
         stream: streamPlan,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             _source.clear();
-            for (DocumentSnapshot plan in snapshot.data.docs) {
-              ShopPlanModel shopPlanModel = ShopPlanModel.fromSnapshot(plan);
-              _source.add(shopPlanModel.toMap());
-            }
           }
           return PlanTable(
             shop: shopProvider.shop,

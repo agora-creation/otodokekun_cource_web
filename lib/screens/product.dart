@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:otodokekun_cource_web/models/shop_product.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_product.dart';
 import 'package:otodokekun_cource_web/screens/product_table.dart';
@@ -23,18 +22,13 @@ class ProductScreen extends StatelessWidget {
     List<Map<String, dynamic>> _source = [];
 
     return CustomAdminScaffold(
-      shopProvider: shopProvider,
+      shop: shopProvider.shop,
       selectedRoute: id,
       body: StreamBuilder<QuerySnapshot>(
         stream: streamProduct,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             _source.clear();
-            for (DocumentSnapshot product in snapshot.data.docs) {
-              ShopProductModel shopProductModel =
-                  ShopProductModel.fromSnapshot(product);
-              _source.add(shopProductModel.toMap());
-            }
           }
           return ProductTable(
             shop: shopProvider.shop,

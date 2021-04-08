@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:otodokekun_cource_web/models/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_invoice.dart';
 import 'package:otodokekun_cource_web/providers/shop_order.dart';
@@ -89,18 +88,13 @@ class OrderScreen extends StatelessWidget {
     List<Map<String, dynamic>> _source = [];
 
     return CustomAdminScaffold(
-      shopProvider: shopProvider,
+      shop: shopProvider.shop,
       selectedRoute: id,
       body: StreamBuilder<QuerySnapshot>(
         stream: _streamOrder,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             _source.clear();
-            for (DocumentSnapshot order in snapshot.data.docs) {
-              ShopOrderModel shopOrderModel =
-                  ShopOrderModel.fromSnapshot(order);
-              _source.add(shopOrderModel.toMap());
-            }
           }
           return OrderTable(
             shop: shopProvider.shop,

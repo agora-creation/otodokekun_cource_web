@@ -3,10 +3,11 @@ import 'package:flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:otodokekun_cource_web/screens/invoice.dart';
 import 'package:otodokekun_cource_web/screens/notice.dart';
 import 'package:otodokekun_cource_web/screens/order.dart';
-import 'package:otodokekun_cource_web/screens/plan.dart';
 import 'package:otodokekun_cource_web/screens/product.dart';
+import 'package:otodokekun_cource_web/screens/product_regular.dart';
 import 'package:otodokekun_cource_web/screens/report.dart';
 import 'package:otodokekun_cource_web/screens/shop.dart';
+import 'package:otodokekun_cource_web/screens/shop_terms.dart';
 import 'package:otodokekun_cource_web/screens/staff.dart';
 import 'package:otodokekun_cource_web/screens/user.dart';
 
@@ -39,12 +40,12 @@ const List<MenuItem> kSideMenu = [
     icon: Icons.view_in_ar,
     children: [
       MenuItem(
-        title: '定期商品',
-        route: PlanScreen.id,
+        title: '商品',
+        route: ProductScreen.id,
       ),
       MenuItem(
-        title: '個別商品',
-        route: ProductScreen.id,
+        title: '定期便',
+        route: PlanScreen.id,
       ),
     ],
   ),
@@ -78,7 +79,7 @@ const List<MenuItem> kSideMenu = [
       ),
       MenuItem(
         title: '利用規約',
-        route: ProductScreen.id,
+        route: ShopTermsScreen.id,
       ),
     ],
   ),

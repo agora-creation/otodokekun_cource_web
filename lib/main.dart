@@ -15,11 +15,12 @@ import 'package:otodokekun_cource_web/screens/invoice.dart';
 import 'package:otodokekun_cource_web/screens/login.dart';
 import 'package:otodokekun_cource_web/screens/notice.dart';
 import 'package:otodokekun_cource_web/screens/order.dart';
-import 'package:otodokekun_cource_web/screens/plan.dart';
 import 'package:otodokekun_cource_web/screens/product.dart';
+import 'package:otodokekun_cource_web/screens/product_regular.dart';
 import 'package:otodokekun_cource_web/screens/registration.dart';
 import 'package:otodokekun_cource_web/screens/report.dart';
 import 'package:otodokekun_cource_web/screens/shop.dart';
+import 'package:otodokekun_cource_web/screens/shop_terms.dart';
 import 'package:otodokekun_cource_web/screens/splash.dart';
 import 'package:otodokekun_cource_web/screens/staff.dart';
 import 'package:otodokekun_cource_web/screens/user.dart';
@@ -74,6 +75,7 @@ class MyApp extends StatelessWidget {
           RegistrationScreen.id: (context) => RegistrationScreen(),
           ReportScreen.id: (context) => ReportScreen(),
           ShopScreen.id: (context) => ShopScreen(),
+          ShopTermsScreen.id: (context) => ShopTermsScreen(),
           StaffScreen.id: (context) => StaffScreen(),
           UserScreen.id: (context) => UserScreen(),
         },

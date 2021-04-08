@@ -34,7 +34,7 @@ class InvoiceScreen extends StatelessWidget {
     List<ShopInvoiceModel> _invoices = [];
 
     return CustomAdminScaffold(
-      shopProvider: shopProvider,
+      shop: shopProvider.shop,
       selectedRoute: id,
       body: StreamBuilder<QuerySnapshot>(
         stream: streamInvoice,

@@ -1,23 +1,19 @@
+import 'package:data_tables/data_tables.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
-import 'package:otodokekun_cource_web/providers/user.dart';
+import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
-import 'package:otodokekun_cource_web/widgets/custom_table.dart';
-import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
-import 'package:responsive_table/DatatableHeader.dart';
-import 'package:responsive_table/responsive_table.dart';
 
 class UserTable extends StatefulWidget {
   final ShopModel shop;
-  final UserProvider userProvider;
-  final List<Map<String, dynamic>> source;
+  final List<UserModel> users;
 
   UserTable({
     @required this.shop,
-    @required this.userProvider,
-    @required this.source,
+    @required this.users,
   });
 
   @override
@@ -25,116 +21,75 @@ class UserTable extends StatefulWidget {
 }
 
 class _UserTableState extends State<UserTable> {
-  List<DatatableHeader> _headers = [
-    DatatableHeader(
-      text: '名前',
-      value: 'name',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
-      text: '電話番号',
-      value: 'tel',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
-      text: 'メールアドレス',
-      value: 'email',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
-      text: 'パスワード',
-      value: 'password',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
-      text: 'ブラックリスト',
-      value: 'blacklistText',
-      show: true,
-      sortable: true,
-    ),
-  ];
-  int _currentPerPage = 10;
-  int _currentPage = 1;
-  List<Map<String, dynamic>> _selecteds = [];
-  String _sortColumn;
+  int _rowsPerPage = PaginatedDataTable.defaultRowsPerPage;
+  int _sortColumnIndex;
   bool _sortAscending = true;
+  int _rowsOffset = 0;
 
   @override
   Widget build(BuildContext context) {
-    return CustomTable(
-      title: '顧客一覧',
-      actions: [],
-      headers: _headers,
-      source: widget.source,
-      selecteds: _selecteds,
+    return NativeDataTable.builder(
+      columns: [
+        DataColumn(label: Text('登録日時')),
+        DataColumn(label: Text('顧客名')),
+        DataColumn(label: Text('電話番号')),
+        DataColumn(label: Text('メールアドレス')),
+        DataColumn(label: Text('定期便')),
+        DataColumn(label: Text('詳細')),
+      ],
       showSelect: false,
-      onTabRow: (data) {
-        widget.userProvider.blacklist = data['blacklist'];
-        showDialog(
-          context: context,
-          builder: (_) {
-            return EditUserDialog(
-              userProvider: widget.userProvider,
-              data: data,
-            );
-          },
+      rowsPerPage: _rowsPerPage,
+      itemCount: widget.users?.length ?? 0,
+      firstRowIndex: _rowsOffset,
+      handleNext: () {
+        setState(() {
+          _rowsOffset += _rowsPerPage;
+        });
+      },
+      handlePrevious: () {
+        setState(() {
+          _rowsOffset -= _rowsPerPage;
+        });
+      },
+      itemBuilder: (index) {
+        final UserModel user = widget.users[index];
+        return DataRow.byIndex(
+          index: index,
+          cells: [
+            DataCell(Text(
+                '${DateFormat('yyyy/MM/dd HH:mm').format(user.createdAt)}')),
+            DataCell(Text('${user.name}')),
+            DataCell(Text('${user.tel}')),
+            DataCell(Text('${user.email}')),
+            DataCell(user.regular
+                ? Text(
+                    '契約中',
+                    style: TextStyle(color: Colors.redAccent),
+                  )
+                : Text('契約なし')),
+            DataCell(
+              ButtonBar(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => EditUserDialog(user: user),
+                      );
+                    },
+                    icon: Icon(Icons.info_outline, color: Colors.blueAccent),
+                  ),
+                ],
+              ),
+            ),
+          ],
         );
       },
-      onSort: (value) {
-        setState(() {
-          _sortColumn = value;
-          _sortAscending = !_sortAscending;
-          if (_sortAscending) {
-            widget.source
-                .sort((a, b) => b['$_sortColumn'].compareTo(a['$_sortColumn']));
-          } else {
-            widget.source
-                .sort((a, b) => a['$_sortColumn'].compareTo(b['$_sortColumn']));
-          }
-        });
-      },
+      sortColumnIndex: _sortColumnIndex,
       sortAscending: _sortAscending,
-      sortColumn: _sortColumn,
-      isLoading: false,
-      onSelect: (value, item) {
-        if (value) {
-          setState(() => _selecteds.add(item));
-        } else {
-          setState(() => _selecteds.removeAt(_selecteds.indexOf(item)));
-        }
-      },
-      onSelectAll: (value) {
-        if (value) {
-          setState(() =>
-              _selecteds = widget.source.map((entry) => entry).toList().cast());
-        } else {
-          setState(() => _selecteds.clear());
-        }
-      },
-      currentPerPageOnChanged: (value) {
+      onRowsPerPageChanged: (value) {
         setState(() {
-          _currentPerPage = value;
-          //リセットデータ
-        });
-      },
-      currentPage: _currentPage,
-      currentPerPage: _currentPerPage,
-      total: widget.source.length,
-      currentPageBack: () {
-        var _nextSet = _currentPage - _currentPerPage;
-        setState(() {
-          _currentPage = _nextSet > 1 ? _nextSet : 1;
-        });
-      },
-      currentPageForward: () {
-        var _nextSet = _currentPage + _currentPerPage;
-        setState(() {
-          _currentPage =
-              _nextSet < widget.source.length ? _nextSet : widget.source.length;
+          _rowsPerPage = value;
         });
       },
     );
@@ -142,12 +97,10 @@ class _UserTableState extends State<UserTable> {
 }
 
 class EditUserDialog extends StatefulWidget {
-  final UserProvider userProvider;
-  final dynamic data;
+  final UserModel user;
 
   EditUserDialog({
-    @required this.userProvider,
-    @required this.data,
+    @required this.user,
   });
 
   @override
@@ -158,50 +111,37 @@ class _EditUserDialogState extends State<EditUserDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: '${widget.data['name']}の詳細',
+      title: '顧客の詳細',
       content: Container(
         width: 450.0,
         child: ListView(
           shrinkWrap: true,
           children: [
-            Text('名前', style: kLabelTextStyle),
-            Text('${widget.data['name']}'),
+            Text('顧客名', style: kLabelTextStyle),
+            Text('${widget.user.name}'),
             SizedBox(height: 8.0),
-            Text('登録住所', style: kLabelTextStyle),
+            Text('住所', style: kLabelTextStyle),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('〒${widget.data['zip']}'),
-                Text('${widget.data['address']}'),
-                Text('${widget.data['tel']}'),
+                Text('〒${widget.user.zip}'),
+                Text('${widget.user.address}'),
               ],
             ),
+            SizedBox(height: 8.0),
+            Text('電話番号', style: kLabelTextStyle),
+            Text('${widget.user.tel}'),
             SizedBox(height: 8.0),
             Text('メールアドレス', style: kLabelTextStyle),
-            Text('${widget.data['email']}'),
+            Text('${widget.user.email}'),
             SizedBox(height: 8.0),
-            Text('ブラックリスト', style: kLabelTextStyle),
-            DropdownButton<bool>(
-              isExpanded: true,
-              value: widget.userProvider.blacklist,
-              onChanged: (value) {
-                setState(() {
-                  widget.userProvider.blacklist = value;
-                });
-              },
-              items: [
-                DropdownMenuItem<bool>(
-                  value: false,
-                  child: Text('設定なし'),
-                ),
-                DropdownMenuItem<bool>(
-                  value: true,
-                  child: Text('設定済み'),
-                ),
-              ],
-            ),
-            SizedBox(height: 16.0),
-            Divider(height: 0.0),
+            Text('定期便', style: kLabelTextStyle),
+            widget.user.regular
+                ? Text(
+                    '契約中',
+                    style: TextStyle(color: Colors.redAccent),
+                  )
+                : Text('契約なし'),
             SizedBox(height: 16.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -212,23 +152,6 @@ class _EditUserDialogState extends State<EditUserDialog> {
                   labelColor: Colors.blueGrey,
                   borderColor: Colors.blueGrey,
                   onTap: () => Navigator.pop(context),
-                ),
-                SizedBox(width: 4.0),
-                FillBoxButton(
-                  iconData: Icons.check,
-                  labelText: '変更',
-                  labelColor: Colors.white,
-                  backgroundColor: Colors.blueAccent,
-                  onTap: () async {
-                    if (!await widget.userProvider
-                        .update(id: widget.data['id'])) {
-                      return;
-                    }
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('顧客情報を変更しました')),
-                    );
-                    Navigator.pop(context);
-                  },
                 ),
               ],
             ),

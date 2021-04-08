@@ -1,30 +1,31 @@
+import 'package:data_tables/data_tables.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
+import 'package:otodokekun_cource_web/models/shop_notice.dart';
 import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/providers/shop_notice.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/providers/user_notice.dart';
 import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
-import 'package:otodokekun_cource_web/widgets/custom_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
-import 'package:responsive_table/DatatableHeader.dart';
 
 class NoticeTable extends StatefulWidget {
   final ShopModel shop;
   final ShopNoticeProvider shopNoticeProvider;
   final UserProvider userProvider;
   final UserNoticeProvider userNoticeProvider;
-  final List<Map<String, dynamic>> source;
+  final List<ShopNoticeModel> notices;
 
   NoticeTable({
     @required this.shop,
     @required this.shopNoticeProvider,
     @required this.userProvider,
     @required this.userNoticeProvider,
-    @required this.source,
+    @required this.notices,
   });
 
   @override
@@ -32,209 +33,76 @@ class NoticeTable extends StatefulWidget {
 }
 
 class _NoticeTableState extends State<NoticeTable> {
-  List<DatatableHeader> _headers = [
-    DatatableHeader(
-      text: 'タイトル',
-      value: 'title',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
-      text: '内容',
-      value: 'message',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
-      text: '登録日時',
-      value: 'createdAtText',
-      show: true,
-      sortable: true,
-    ),
-  ];
-  int _currentPerPage = 10;
-  int _currentPage = 1;
-  List<Map<String, dynamic>> _selecteds = [];
-  String _sortColumn;
+  int _rowsPerPage = PaginatedDataTable.defaultRowsPerPage;
+  int _sortColumnIndex;
   bool _sortAscending = true;
+  int _rowsOffset = 0;
 
   @override
   Widget build(BuildContext context) {
-    return CustomTable(
-      title: 'お知らせ(通知)一覧',
-      actions: [
-        FillBoxButton(
-          iconData: Icons.add,
-          labelText: '新規登録',
-          labelColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          onTap: () {
-            widget.shopNoticeProvider.clearController();
-            showDialog(
-              context: context,
-              builder: (_) {
-                return AddNoticeDialog(
-                  shop: widget.shop,
-                  shopNoticeProvider: widget.shopNoticeProvider,
-                );
-              },
-            );
-          },
-        ),
+    return NativeDataTable.builder(
+      columns: [
+        DataColumn(label: Text('登録日時')),
+        DataColumn(label: Text('タイトル')),
+        DataColumn(label: Text('内容')),
+        DataColumn(label: Text('詳細')),
       ],
-      headers: _headers,
-      source: widget.source,
-      selecteds: _selecteds,
       showSelect: false,
-      onTabRow: (data) {
-        widget.shopNoticeProvider.clearController();
-        widget.shopNoticeProvider.title.text = data['title'];
-        widget.shopNoticeProvider.message.text = data['message'];
-        showDialog(
-          context: context,
-          builder: (_) {
-            return EditNoticeDialog(
-              shopNoticeProvider: widget.shopNoticeProvider,
-              userProvider: widget.userProvider,
-              userNoticeProvider: widget.userNoticeProvider,
-              data: data,
-            );
-          },
-        );
-      },
-      onSort: (value) {
+      rowsPerPage: _rowsPerPage,
+      itemCount: widget.notices?.length ?? 0,
+      firstRowIndex: _rowsOffset,
+      handleNext: () {
         setState(() {
-          _sortColumn = value;
-          _sortAscending = !_sortAscending;
-          if (_sortAscending) {
-            widget.source
-                .sort((a, b) => b['$_sortColumn'].compareTo(a['$_sortColumn']));
-          } else {
-            widget.source
-                .sort((a, b) => a['$_sortColumn'].compareTo(b['$_sortColumn']));
-          }
+          _rowsOffset += _rowsPerPage;
         });
       },
-      sortAscending: _sortAscending,
-      sortColumn: _sortColumn,
-      isLoading: false,
-      onSelect: (value, item) {
-        if (value) {
-          setState(() => _selecteds.add(item));
-        } else {
-          setState(() => _selecteds.removeAt(_selecteds.indexOf(item)));
-        }
-      },
-      onSelectAll: (value) {
-        if (value) {
-          setState(() =>
-              _selecteds = widget.source.map((entry) => entry).toList().cast());
-        } else {
-          setState(() => _selecteds.clear());
-        }
-      },
-      currentPerPageOnChanged: (value) {
+      handlePrevious: () {
         setState(() {
-          _currentPerPage = value;
-          //リセットデータ
+          _rowsOffset -= _rowsPerPage;
         });
       },
-      currentPage: _currentPage,
-      currentPerPage: _currentPerPage,
-      total: widget.source.length,
-      currentPageBack: () {
-        var _nextSet = _currentPage - _currentPerPage;
-        setState(() {
-          _currentPage = _nextSet > 1 ? _nextSet : 1;
-        });
-      },
-      currentPageForward: () {
-        var _nextSet = _currentPage + _currentPerPage;
-        setState(() {
-          _currentPage =
-              _nextSet < widget.source.length ? _nextSet : widget.source.length;
-        });
-      },
-    );
-  }
-}
-
-class AddNoticeDialog extends StatefulWidget {
-  final ShopModel shop;
-  final ShopNoticeProvider shopNoticeProvider;
-
-  AddNoticeDialog({
-    @required this.shop,
-    @required this.shopNoticeProvider,
-  });
-
-  @override
-  _AddNoticeDialogState createState() => _AddNoticeDialogState();
-}
-
-class _AddNoticeDialogState extends State<AddNoticeDialog> {
-  @override
-  Widget build(BuildContext context) {
-    return CustomDialog(
-      title: 'お知らせ(通知)の新規登録',
-      content: Container(
-        width: 500.0,
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            CustomTextField(
-              controller: widget.shopNoticeProvider.title,
-              obscureText: false,
-              textInputType: TextInputType.name,
-              maxLines: 1,
-              labelText: 'タイトル',
-              iconData: Icons.title,
-            ),
-            SizedBox(height: 8.0),
-            CustomTextField(
-              controller: widget.shopNoticeProvider.message,
-              obscureText: false,
-              textInputType: TextInputType.multiline,
-              maxLines: null,
-              labelText: '内容',
-              iconData: Icons.message,
-            ),
-            SizedBox(height: 16.0),
-            Divider(height: 0.0),
-            SizedBox(height: 16.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                BorderBoxButton(
-                  iconData: Icons.close,
-                  labelText: '閉じる',
-                  labelColor: Colors.blueGrey,
-                  borderColor: Colors.blueGrey,
-                  onTap: () => Navigator.pop(context),
-                ),
-                SizedBox(width: 4.0),
-                FillBoxButton(
-                  iconData: Icons.check,
-                  labelText: '登録',
-                  labelColor: Colors.white,
-                  backgroundColor: Colors.blueAccent,
-                  onTap: () async {
-                    if (!await widget.shopNoticeProvider
-                        .create(shopId: widget.shop?.id)) {
-                      return;
-                    }
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('お知らせ(通知)情報を登録しました')),
-                    );
-                    widget.shopNoticeProvider.clearController();
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
+      itemBuilder: (index) {
+        final ShopNoticeModel notice = widget.notices[index];
+        return DataRow.byIndex(
+          index: index,
+          cells: [
+            DataCell(Text(
+                '${DateFormat('yyyy/MM/dd HH:mm').format(notice.createdAt)}')),
+            DataCell(Text('${notice.title}')),
+            DataCell(Text('${notice.message}')),
+            DataCell(
+              ButtonBar(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      widget.shopNoticeProvider.clearController();
+                      widget.shopNoticeProvider.title.text = notice.title;
+                      widget.shopNoticeProvider.message.text = notice.message;
+                      showDialog(
+                        context: context,
+                        builder: (_) => EditNoticeDialog(
+                          shopNoticeProvider: widget.shopNoticeProvider,
+                          userProvider: widget.userProvider,
+                          userNoticeProvider: widget.userNoticeProvider,
+                          notice: notice,
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.info_outline, color: Colors.blueAccent),
+                  ),
+                ],
+              ),
             ),
           ],
-        ),
-      ),
+        );
+      },
+      sortColumnIndex: _sortColumnIndex,
+      sortAscending: _sortAscending,
+      onRowsPerPageChanged: (value) {
+        setState(() {
+          _rowsPerPage = value;
+        });
+      },
     );
   }
 }
@@ -243,13 +111,13 @@ class EditNoticeDialog extends StatefulWidget {
   final ShopNoticeProvider shopNoticeProvider;
   final UserProvider userProvider;
   final UserNoticeProvider userNoticeProvider;
-  final dynamic data;
+  final ShopNoticeModel notice;
 
   EditNoticeDialog({
     @required this.shopNoticeProvider,
     @required this.userProvider,
     @required this.userNoticeProvider,
-    @required this.data,
+    @required this.notice,
   });
 
   @override
@@ -264,7 +132,7 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
   void _init() async {
     await widget.userProvider
         .selectListNotice(
-            noticeId: widget.data['id'], shopId: widget.data['shopId'])
+            noticeId: widget.notice.id, shopId: widget.notice.shopId)
         .then((value) {
       setState(() => _users = value);
     });
@@ -279,7 +147,7 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: '${widget.data['title']}の詳細',
+      title: 'お知らせ(通知)の詳細',
       content: Container(
         width: 500.0,
         child: ListView(
@@ -300,7 +168,7 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
               textInputType: TextInputType.multiline,
               maxLines: null,
               labelText: '内容',
-              iconData: Icons.message,
+              iconData: Icons.short_text,
             ),
             SizedBox(height: 16.0),
             Text('送信先選択', style: kLabelTextStyle),
@@ -343,8 +211,6 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
               ),
             ),
             SizedBox(height: 16.0),
-            Divider(height: 0.0),
-            SizedBox(height: 16.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -363,11 +229,11 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
                   backgroundColor: Colors.redAccent,
                   onTap: () async {
                     if (!await widget.shopNoticeProvider.delete(
-                        id: widget.data['id'], shopId: widget.data['shopId'])) {
+                        id: widget.notice.id, shopId: widget.notice.shopId)) {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('お知らせ(通知)情報を削除しました')),
+                      SnackBar(content: Text('お知らせ(通知)を削除しました')),
                     );
                     widget.shopNoticeProvider.clearController();
                     Navigator.pop(context);
@@ -376,16 +242,16 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
                 SizedBox(width: 4.0),
                 FillBoxButton(
                   iconData: Icons.check,
-                  labelText: '変更',
+                  labelText: '保存する',
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
                   onTap: () async {
                     if (!await widget.shopNoticeProvider.update(
-                        id: widget.data['id'], shopId: widget.data['shopId'])) {
+                        id: widget.notice.id, shopId: widget.notice.shopId)) {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('お知らせ(通知)情報を変更しました')),
+                      SnackBar(content: Text('お知らせ(通知)を保存しました')),
                     );
                     widget.shopNoticeProvider.clearController();
                     Navigator.pop(context);
@@ -394,19 +260,19 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
                 SizedBox(width: 4.0),
                 BorderBoxButton(
                   iconData: Icons.send,
-                  labelText: '送信',
+                  labelText: '送信する',
                   labelColor: Colors.blueAccent,
                   borderColor: Colors.blueAccent,
                   onTap: () async {
                     if (!await widget.userNoticeProvider.create(
                         users: _selected,
-                        id: widget.data['id'],
+                        id: widget.notice.id,
                         title: widget.shopNoticeProvider.title.text.trim(),
                         message: widget.shopNoticeProvider.message.text)) {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('お知らせ(通知)情報を送信しました')),
+                      SnackBar(content: Text('お知らせ(通知)を指定の顧客に送信しました')),
                     );
                     Navigator.pop(context);
                   },

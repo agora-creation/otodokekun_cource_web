@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
-import 'package:otodokekun_cource_web/models/products.dart';
+import 'package:otodokekun_cource_web/models/cart.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/shop_invoice.dart';
 import 'package:otodokekun_cource_web/models/shop_staff.dart';
@@ -11,11 +11,11 @@ import 'package:otodokekun_cource_web/providers/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/shop_staff.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
+import 'package:otodokekun_cource_web/widgets/cart_list_tile.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/custom_table.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_form_button.dart';
-import 'package:otodokekun_cource_web/widgets/products_list_tile.dart';
 import 'package:responsive_table/DatatableHeader.dart';
 
 class OrderTable extends StatefulWidget {
@@ -405,7 +405,7 @@ class EditOrderDialog extends StatefulWidget {
 }
 
 class _EditOrderDialogState extends State<EditOrderDialog> {
-  List<ProductsModel> products = [];
+  List<CartModel> products = [];
   List<String> staffs = [];
 
   @override
@@ -433,8 +433,8 @@ class _EditOrderDialogState extends State<EditOrderDialog> {
               physics: ScrollPhysics(),
               itemCount: products.length,
               itemBuilder: (_, index) {
-                ProductsModel _products = products[index];
-                return ProductsListTile(
+                CartModel _products = products[index];
+                return CartListTile(
                   name: _products.name,
                   image: _products.image,
                   unit: _products.unit,

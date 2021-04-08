@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ShopPlanService {
+class ShopProductRegularService {
   String _collection = 'shop';
-  String _subCollection = 'plan';
+  String _subCollection = 'productRegular';
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
   String newId({String shopId}) {

@@ -1,4 +1,4 @@
-class LocationsModel {
+class TmpModel {
   String _id;
   String _name;
   bool _target;
@@ -7,7 +7,7 @@ class LocationsModel {
   String get name => _name;
   bool get target => _target;
 
-  LocationsModel.fromMap(Map data) {
+  TmpModel.fromMap(Map data) {
     _id = data['id'];
     _name = data['name'];
     _target = data['target'];
