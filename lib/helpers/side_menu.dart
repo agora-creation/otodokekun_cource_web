@@ -45,7 +45,7 @@ const List<MenuItem> kSideMenu = [
       ),
       MenuItem(
         title: '定期便',
-        route: PlanScreen.id,
+        route: ProductRegularScreen.id,
       ),
     ],
   ),

@@ -6,8 +6,8 @@ import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_invoice.dart';
 import 'package:otodokekun_cource_web/providers/shop_notice.dart';
 import 'package:otodokekun_cource_web/providers/shop_order.dart';
-import 'package:otodokekun_cource_web/providers/shop_plan.dart';
 import 'package:otodokekun_cource_web/providers/shop_product.dart';
+import 'package:otodokekun_cource_web/providers/shop_product_regular.dart';
 import 'package:otodokekun_cource_web/providers/shop_staff.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/providers/user_notice.dart';
@@ -47,8 +47,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: ShopInvoiceProvider()),
         ChangeNotifierProvider.value(value: ShopNoticeProvider()),
         ChangeNotifierProvider.value(value: ShopOrderProvider()),
-        ChangeNotifierProvider.value(value: ShopPlanProvider()),
         ChangeNotifierProvider.value(value: ShopProductProvider()),
+        ChangeNotifierProvider.value(value: ShopProductRegularProvider()),
         ChangeNotifierProvider.value(value: ShopStaffProvider()),
         ChangeNotifierProvider.value(value: UserProvider()),
         ChangeNotifierProvider.value(value: UserNoticeProvider()),
@@ -70,8 +70,8 @@ class MyApp extends StatelessWidget {
           LoginScreen.id: (context) => LoginScreen(),
           NoticeScreen.id: (context) => NoticeScreen(),
           OrderScreen.id: (context) => OrderScreen(),
-          PlanScreen.id: (context) => PlanScreen(),
           ProductScreen.id: (context) => ProductScreen(),
+          ProductRegularScreen.id: (context) => ProductRegularScreen(),
           RegistrationScreen.id: (context) => RegistrationScreen(),
           ReportScreen.id: (context) => ReportScreen(),
           ShopScreen.id: (context) => ShopScreen(),
