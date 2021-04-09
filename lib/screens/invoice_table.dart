@@ -127,13 +127,9 @@ class _EditInvoiceDialogState extends State<EditInvoiceDialog> {
               backgroundColor: Colors.grey.shade100,
               onTap: () {},
             ),
-            SizedBox(height: 4.0),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Text(
-                '※変更はできません',
-                style: TextStyle(fontSize: 14.0, color: Colors.redAccent),
-              ),
+            Text(
+              '※変更はできません',
+              style: TextStyle(color: Colors.redAccent),
             ),
             SizedBox(height: 16.0),
             Divider(height: 0.0),

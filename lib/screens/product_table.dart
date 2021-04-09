@@ -2,26 +2,26 @@ import 'dart:convert';
 import 'dart:html';
 import 'dart:typed_data';
 
+import 'package:data_tables/data_tables.dart';
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
+import 'package:otodokekun_cource_web/models/shop_product.dart';
 import 'package:otodokekun_cource_web/providers/shop_product.dart';
 import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
-import 'package:otodokekun_cource_web/widgets/custom_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
-import 'package:responsive_table/DatatableHeader.dart';
 
 class ProductTable extends StatefulWidget {
   final ShopModel shop;
   final ShopProductProvider shopProductProvider;
-  final List<Map<String, dynamic>> source;
+  final List<ShopProductModel> products;
 
   ProductTable({
     @required this.shop,
     @required this.shopProductProvider,
-    @required this.source,
+    @required this.products,
   });
 
   @override
@@ -29,273 +29,95 @@ class ProductTable extends StatefulWidget {
 }
 
 class _ProductTableState extends State<ProductTable> {
-  List<DatatableHeader> _headers = [
-    DatatableHeader(
-      text: '商品名',
-      value: 'name',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
-      text: '価格',
-      value: 'price',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
-      text: '説明',
-      value: 'description',
-      show: true,
-      sortable: true,
-    ),
-  ];
-  int _currentPerPage = 10;
-  int _currentPage = 1;
-  List<Map<String, dynamic>> _selecteds = [];
-  String _sortColumn;
+  int _rowsPerPage = PaginatedDataTable.defaultRowsPerPage;
+  int _sortColumnIndex;
   bool _sortAscending = true;
+  int _rowsOffset = 0;
 
   @override
   Widget build(BuildContext context) {
-    return CustomTable(
-      title: '個別商品一覧',
-      actions: [
-        FillBoxButton(
-          iconData: Icons.add,
-          labelText: '新規登録',
-          labelColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          onTap: () {
-            widget.shopProductProvider.clearController();
-            showDialog(
-              context: context,
-              builder: (_) {
-                return AddProductDialog(
-                  shop: widget.shop,
-                  shopProductProvider: widget.shopProductProvider,
-                );
-              },
-            );
-          },
-        ),
+    return NativeDataTable.builder(
+      columns: [
+        DataColumn(label: Text('商品名')),
+        DataColumn(label: Text('価格')),
+        DataColumn(label: Text('商品説明')),
+        DataColumn(label: Text('個別注文')),
+        DataColumn(label: Text('詳細')),
       ],
-      headers: _headers,
-      source: widget.source,
-      selecteds: _selecteds,
       showSelect: false,
-      onTabRow: (data) {
-        widget.shopProductProvider.clearController();
-        widget.shopProductProvider.name.text = data['name'];
-        widget.shopProductProvider.unit.text = data['unit'];
-        widget.shopProductProvider.price.text = data['price'].toString();
-        widget.shopProductProvider.description.text = data['description'];
-        showDialog(
-          context: context,
-          builder: (_) {
-            return EditProductDialog(
-              shopProductProvider: widget.shopProductProvider,
-              data: data,
-            );
-          },
-        );
-      },
-      onSort: (value) {
+      rowsPerPage: _rowsPerPage,
+      itemCount: widget.products?.length ?? 0,
+      firstRowIndex: _rowsOffset,
+      handleNext: () {
         setState(() {
-          _sortColumn = value;
-          _sortAscending = !_sortAscending;
-          if (_sortAscending) {
-            widget.source
-                .sort((a, b) => b['$_sortColumn'].compareTo(a['$_sortColumn']));
-          } else {
-            widget.source
-                .sort((a, b) => a['$_sortColumn'].compareTo(b['$_sortColumn']));
-          }
+          _rowsOffset += _rowsPerPage;
         });
       },
-      sortAscending: _sortAscending,
-      sortColumn: _sortColumn,
-      isLoading: false,
-      onSelect: (value, item) {
-        if (value) {
-          setState(() => _selecteds.add(item));
-        } else {
-          setState(() => _selecteds.removeAt(_selecteds.indexOf(item)));
-        }
-      },
-      onSelectAll: (value) {
-        if (value) {
-          setState(() =>
-              _selecteds = widget.source.map((entry) => entry).toList().cast());
-        } else {
-          setState(() => _selecteds.clear());
-        }
-      },
-      currentPerPageOnChanged: (value) {
+      handlePrevious: () {
         setState(() {
-          _currentPerPage = value;
-          //リセットデータ
+          _rowsOffset -= _rowsPerPage;
         });
       },
-      currentPage: _currentPage,
-      currentPerPage: _currentPerPage,
-      total: widget.source.length,
-      currentPageBack: () {
-        var _nextSet = _currentPage - _currentPerPage;
-        setState(() {
-          _currentPage = _nextSet > 1 ? _nextSet : 1;
-        });
-      },
-      currentPageForward: () {
-        var _nextSet = _currentPage + _currentPerPage;
-        setState(() {
-          _currentPage =
-              _nextSet < widget.source.length ? _nextSet : widget.source.length;
-        });
-      },
-    );
-  }
-}
-
-class AddProductDialog extends StatefulWidget {
-  final ShopModel shop;
-  final ShopProductProvider shopProductProvider;
-
-  AddProductDialog({
-    @required this.shop,
-    @required this.shopProductProvider,
-  });
-
-  @override
-  _AddProductDialogState createState() => _AddProductDialogState();
-}
-
-class _AddProductDialogState extends State<AddProductDialog> {
-  Uint8List imageData;
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomDialog(
-      title: '個別商品の新規登録',
-      content: Container(
-        width: 450.0,
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            CustomTextField(
-              controller: widget.shopProductProvider.name,
-              obscureText: false,
-              textInputType: TextInputType.name,
-              maxLines: 1,
-              labelText: '商品名',
-              iconData: Icons.title,
-            ),
-            SizedBox(height: 8.0),
-            Text('商品画像', style: kLabelTextStyle),
-            GestureDetector(
-              onTap: () {
-                InputElement _input = FileUploadInputElement()
-                  ..accept = 'image/*';
-                _input.click();
-                _input.onChange.listen((e) {
-                  widget.shopProductProvider.imageFile = _input.files.first;
-                  final reader = FileReader();
-                  reader.readAsDataUrl(widget.shopProductProvider.imageFile);
-                  reader.onLoadEnd.listen((e) {
-                    final encoded = reader.result as String;
-                    final stripped = encoded.replaceFirst(
-                      RegExp(r'data:image/[^;]+;base64,'),
-                      '',
-                    );
-                    setState(() {
-                      imageData = base64.decode(stripped);
-                    });
-                  });
-                });
-              },
-              child: imageData != null
-                  ? Image.memory(
-                      imageData,
-                      fit: BoxFit.cover,
-                    )
-                  : Image.asset(
-                      'assets/images/noimage.png',
-                      fit: BoxFit.cover,
-                    ),
-            ),
-            SizedBox(height: 8.0),
-            CustomTextField(
-              controller: widget.shopProductProvider.unit,
-              obscureText: false,
-              textInputType: null,
-              maxLines: 1,
-              labelText: '単位',
-              iconData: Icons.ac_unit,
-            ),
-            SizedBox(height: 8.0),
-            CustomTextField(
-              controller: widget.shopProductProvider.price,
-              obscureText: false,
-              textInputType: TextInputType.number,
-              maxLines: 1,
-              labelText: '価格',
-              iconData: Icons.attach_money,
-            ),
-            SizedBox(height: 8.0),
-            CustomTextField(
-              controller: widget.shopProductProvider.description,
-              obscureText: false,
-              textInputType: TextInputType.multiline,
-              maxLines: null,
-              labelText: '説明',
-              iconData: Icons.description,
-            ),
-            SizedBox(height: 16.0),
-            Divider(height: 0.0),
-            SizedBox(height: 16.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                BorderBoxButton(
-                  iconData: Icons.close,
-                  labelText: '閉じる',
-                  labelColor: Colors.blueGrey,
-                  borderColor: Colors.blueGrey,
-                  onTap: () => Navigator.pop(context),
-                ),
-                SizedBox(width: 4.0),
-                FillBoxButton(
-                  iconData: Icons.check,
-                  labelText: '登録',
-                  labelColor: Colors.white,
-                  backgroundColor: Colors.blueAccent,
-                  onTap: () async {
-                    if (!await widget.shopProductProvider
-                        .create(shopId: widget.shop?.id)) {
-                      return;
-                    }
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('個別商品情報を登録しました')),
-                    );
-                    widget.shopProductProvider.clearController();
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
+      itemBuilder: (index) {
+        final ShopProductModel product = widget.products[index];
+        return DataRow.byIndex(
+          index: index,
+          cells: [
+            DataCell(Text('${product.name}')),
+            DataCell(Text('¥ ${product.price}')),
+            DataCell(Text('${product.description}')),
+            DataCell(product.published
+                ? Text(
+                    '表示中',
+                    style: TextStyle(color: Colors.redAccent),
+                  )
+                : Text('表示しない')),
+            DataCell(
+              ButtonBar(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      widget.shopProductProvider.clearController();
+                      widget.shopProductProvider.name.text = product.name;
+                      widget.shopProductProvider.unit.text = product.unit;
+                      widget.shopProductProvider.price.text =
+                          product.price.toString();
+                      widget.shopProductProvider.description.text =
+                          product.description;
+                      showDialog(
+                        context: context,
+                        builder: (_) => EditProductDialog(
+                          shopProductProvider: widget.shopProductProvider,
+                          product: product,
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.info_outline, color: Colors.blueAccent),
+                  ),
+                ],
+              ),
             ),
           ],
-        ),
-      ),
+        );
+      },
+      sortColumnIndex: _sortColumnIndex,
+      sortAscending: _sortAscending,
+      onRowsPerPageChanged: (value) {
+        setState(() {
+          _rowsPerPage = value;
+        });
+      },
     );
   }
 }
 
 class EditProductDialog extends StatefulWidget {
   final ShopProductProvider shopProductProvider;
-  final dynamic data;
+  final ShopProductModel product;
 
   EditProductDialog({
     @required this.shopProductProvider,
-    @required this.data,
+    @required this.product,
   });
 
   @override
@@ -304,11 +126,18 @@ class EditProductDialog extends StatefulWidget {
 
 class _EditProductDialogState extends State<EditProductDialog> {
   Uint8List imageData;
+  bool _published = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _published = widget.product.published;
+  }
 
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: '${widget.data['name']}の詳細',
+      title: '商品の詳細',
       content: Container(
         width: 450.0,
         child: ListView(
@@ -350,9 +179,9 @@ class _EditProductDialogState extends State<EditProductDialog> {
                       imageData,
                       fit: BoxFit.cover,
                     )
-                  : widget.data['image'] != ''
+                  : widget.product.image != ''
                       ? Image.network(
-                          widget.data['image'],
+                          widget.product.image,
                           fit: BoxFit.cover,
                         )
                       : Image.asset(
@@ -367,7 +196,11 @@ class _EditProductDialogState extends State<EditProductDialog> {
               textInputType: null,
               maxLines: 1,
               labelText: '単位',
-              iconData: Icons.ac_unit,
+              iconData: Icons.category,
+            ),
+            Text(
+              '例) 個、枚、台など',
+              style: TextStyle(color: Colors.redAccent),
             ),
             SizedBox(height: 8.0),
             CustomTextField(
@@ -376,7 +209,7 @@ class _EditProductDialogState extends State<EditProductDialog> {
               textInputType: TextInputType.number,
               maxLines: 1,
               labelText: '価格',
-              iconData: Icons.attach_money,
+              iconData: Icons.money,
             ),
             SizedBox(height: 8.0),
             CustomTextField(
@@ -384,11 +217,21 @@ class _EditProductDialogState extends State<EditProductDialog> {
               obscureText: false,
               textInputType: TextInputType.multiline,
               maxLines: null,
-              labelText: '説明',
-              iconData: Icons.description,
+              labelText: '商品説明',
+              iconData: Icons.short_text,
             ),
-            SizedBox(height: 16.0),
-            Divider(height: 0.0),
+            SizedBox(height: 8.0),
+            CheckboxListTile(
+              title: Text('「個別注文」へ表示する'),
+              value: _published,
+              activeColor: Colors.blueAccent,
+              controlAffinity: ListTileControlAffinity.leading,
+              onChanged: (value) {
+                setState(() {
+                  _published = value;
+                });
+              },
+            ),
             SizedBox(height: 16.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -403,16 +246,16 @@ class _EditProductDialogState extends State<EditProductDialog> {
                 SizedBox(width: 4.0),
                 FillBoxButton(
                   iconData: Icons.delete,
-                  labelText: '削除',
+                  labelText: '削除する',
                   labelColor: Colors.white,
                   backgroundColor: Colors.redAccent,
                   onTap: () async {
                     if (!await widget.shopProductProvider.delete(
-                        id: widget.data['id'], shopId: widget.data['shopId'])) {
+                        id: widget.product.id, shopId: widget.product.shopId)) {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('個別商品情報を削除しました')),
+                      SnackBar(content: Text('商品を削除しました')),
                     );
                     widget.shopProductProvider.clearController();
                     Navigator.pop(context);
@@ -421,16 +264,18 @@ class _EditProductDialogState extends State<EditProductDialog> {
                 SizedBox(width: 4.0),
                 FillBoxButton(
                   iconData: Icons.check,
-                  labelText: '変更',
+                  labelText: '保存する',
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
                   onTap: () async {
                     if (!await widget.shopProductProvider.update(
-                        id: widget.data['id'], shopId: widget.data['shopId'])) {
+                        id: widget.product.id,
+                        shopId: widget.product.shopId,
+                        published: _published)) {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('個別商品情報を変更しました')),
+                      SnackBar(content: Text('商品を保存しました')),
                     );
                     widget.shopProductProvider.clearController();
                     Navigator.pop(context);

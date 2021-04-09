@@ -12,9 +12,8 @@ class ShopProductProvider with ChangeNotifier {
   TextEditingController price = TextEditingController();
   TextEditingController description = TextEditingController();
   File imageFile;
-  bool published;
 
-  Future<bool> create({String shopId}) async {
+  Future<bool> create({String shopId, bool published}) async {
     if (name.text == null) return false;
     if (price.text == null) return false;
     String id = _shopProductService.newId(shopId: shopId);
@@ -39,7 +38,7 @@ class ShopProductProvider with ChangeNotifier {
         'unit': unit.text.trim(),
         'price': int.parse(price.text.trim()),
         'description': description.text,
-        'published': true,
+        'published': published,
         'createdAt': DateTime.now(),
       });
       return true;
@@ -49,7 +48,7 @@ class ShopProductProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> update({String id, String shopId}) async {
+  Future<bool> update({String id, String shopId, bool published}) async {
     if (name.text == null) return false;
     if (price.text == null) return false;
     String imagePath = '$shopId/$id';
