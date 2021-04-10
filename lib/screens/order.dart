@@ -1,13 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:otodokekun_cource_web/helpers/style.dart';
+import 'package:otodokekun_cource_web/models/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_invoice.dart';
 import 'package:otodokekun_cource_web/providers/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/shop_staff.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
-import 'package:otodokekun_cource_web/screens/order_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
+import 'package:otodokekun_cource_web/widgets/loading.dart';
 import 'package:provider/provider.dart';
 
 class OrderScreen extends StatelessWidget {
@@ -85,7 +87,7 @@ class OrderScreen extends StatelessWidget {
           .orderBy('deliveryAt', descending: true)
           .startAt([_startAt]).endAt([_endAt]).snapshots();
     }
-    List<Map<String, dynamic>> _source = [];
+    List<ShopOrderModel> _orders = [];
 
     return CustomAdminScaffold(
       shop: shopProvider.shop,
@@ -94,16 +96,37 @@ class OrderScreen extends StatelessWidget {
         stream: _streamOrder,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            _source.clear();
+            _orders.clear();
+            for (DocumentSnapshot order in snapshot.data.docs) {
+              _orders.add(ShopOrderModel.fromSnapshot(order));
+            }
+            return Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: kSubColor),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('注文', style: TextStyle(fontSize: 18.0)),
+                        Container(),
+                      ],
+                    ),
+                    SizedBox(height: 4.0),
+                    Text('顧客からの注文が表示されます。注文情報を確認の上、配達してください。'),
+                    SizedBox(height: 8.0),
+                  ],
+                ),
+              ),
+            );
+          } else {
+            return LoadingWidget();
           }
-          return OrderTable(
-            shop: shopProvider.shop,
-            shopInvoiceProvider: shopInvoiceProvider,
-            shopOrderProvider: shopOrderProvider,
-            shopStaffProvider: shopStaffProvider,
-            userProvider: userProvider,
-            source: _source,
-          );
         },
       ),
     );

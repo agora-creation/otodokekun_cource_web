@@ -5,7 +5,9 @@ import 'package:otodokekun_cource_web/screens/notice.dart';
 import 'package:otodokekun_cource_web/screens/order.dart';
 import 'package:otodokekun_cource_web/screens/product.dart';
 import 'package:otodokekun_cource_web/screens/product_regular.dart';
-import 'package:otodokekun_cource_web/screens/report.dart';
+import 'package:otodokekun_cource_web/screens/report_order.dart';
+import 'package:otodokekun_cource_web/screens/report_product.dart';
+import 'package:otodokekun_cource_web/screens/report_user.dart';
 import 'package:otodokekun_cource_web/screens/shop.dart';
 import 'package:otodokekun_cource_web/screens/shop_terms.dart';
 import 'package:otodokekun_cource_web/screens/staff.dart';
@@ -18,15 +20,15 @@ const List<MenuItem> kSideMenu = [
     children: [
       MenuItem(
         title: '注文毎',
-        route: ReportScreen.id,
-      ),
-      MenuItem(
-        title: '顧客毎',
-        route: ReportScreen.id,
+        route: ReportOrderScreen.id,
       ),
       MenuItem(
         title: '商品毎',
-        route: ReportScreen.id,
+        route: ReportProductScreen.id,
+      ),
+      MenuItem(
+        title: '顧客毎',
+        route: ReportUserScreen.id,
       ),
     ],
   ),

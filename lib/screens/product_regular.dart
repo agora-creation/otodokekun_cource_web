@@ -8,6 +8,7 @@ import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_product_regular.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
+import 'package:otodokekun_cource_web/screens/product_regular_table.dart';
 import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
@@ -80,8 +81,15 @@ class ProductRegularScreen extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: 4.0),
-                    Text('登録した商品を「定期注文」として登録できます。本日以前のデータは自動的に削除されます。'),
+                    Text('登録した商品を「定期便」として登録できます。本日以前のデータは自動的に削除されます。'),
                     SizedBox(height: 8.0),
+                    Expanded(
+                      child: ProductRegularTable(
+                        shop: shopProvider.shop,
+                        shopProductRegularProvider: shopProductRegularProvider,
+                        productRegular: _productRegulars,
+                      ),
+                    ),
                   ],
                 ),
               ),

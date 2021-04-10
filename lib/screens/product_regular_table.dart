@@ -1,149 +1,84 @@
+import 'package:data_tables/data_tables.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
-import 'package:otodokekun_cource_web/models/user.dart';
+import 'package:otodokekun_cource_web/models/shop_product_regular.dart';
 import 'package:otodokekun_cource_web/providers/shop_product_regular.dart';
-import 'package:otodokekun_cource_web/providers/user.dart';
-import 'package:otodokekun_cource_web/widgets/custom_table.dart';
-import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
-import 'package:responsive_table/DatatableHeader.dart';
 
-class PlanTable extends StatefulWidget {
+class ProductRegularTable extends StatefulWidget {
   final ShopModel shop;
-  final ShopProductRegularProvider shopPlanProvider;
-  final UserProvider userProvider;
-  final List<Map<String, dynamic>> source;
+  final ShopProductRegularProvider shopProductRegularProvider;
+  final List<ShopProductRegularModel> productRegular;
 
-  PlanTable({
+  ProductRegularTable({
     @required this.shop,
-    @required this.shopPlanProvider,
-    @required this.userProvider,
-    @required this.source,
+    @required this.shopProductRegularProvider,
+    @required this.productRegular,
   });
 
   @override
-  _PlanTableState createState() => _PlanTableState();
+  _ProductRegularTableState createState() => _ProductRegularTableState();
 }
 
-class _PlanTableState extends State<PlanTable> {
-  List<DatatableHeader> _headers = [
-    DatatableHeader(
-      text: 'お届け指定日',
-      value: 'deliveryAtText',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
-      text: '商品名',
-      value: 'name',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
-      text: '価格',
-      value: 'price',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
-      text: '説明',
-      value: 'description',
-      show: true,
-      sortable: true,
-    ),
-  ];
-  int _currentPerPage = 10;
-  int _currentPage = 1;
-  List<Map<String, dynamic>> _selecteds = [];
-  String _sortColumn;
+class _ProductRegularTableState extends State<ProductRegularTable> {
+  int _rowsPerPage = PaginatedDataTable.defaultRowsPerPage;
+  int _sortColumnIndex;
   bool _sortAscending = true;
-  List<UserModel> _users = [];
-
-  void _init() async {
-    await widget.userProvider
-        .selectListFixed(shopId: widget.shop?.id)
-        .then((value) {
-      _users = value;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _init();
-  }
+  int _rowsOffset = 0;
 
   @override
   Widget build(BuildContext context) {
-    return CustomTable(
-      title: '定期商品一覧',
-      actions: [
-        FillBoxButton(
-          iconData: Icons.add,
-          labelText: '新規登録',
-          labelColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          onTap: () {
-            widget.shopPlanProvider.deliveryAt =
-                DateTime.now().add(Duration(days: widget.shop.cancelLimit));
-          },
-        ),
+    return NativeDataTable.builder(
+      columns: [
+        DataColumn(label: Text('お届け日')),
+        DataColumn(label: Text('商品名')),
+        DataColumn(label: Text('価格')),
+        DataColumn(label: Text('商品説明')),
+        DataColumn(label: Text('詳細')),
       ],
-      headers: _headers,
-      source: widget.source,
-      selecteds: _selecteds,
       showSelect: false,
-      onTabRow: (data) {},
-      onSort: (value) {
+      rowsPerPage: _rowsPerPage,
+      itemCount: widget.productRegular?.length ?? 0,
+      firstRowIndex: _rowsOffset,
+      handleNext: () {
         setState(() {
-          _sortColumn = value;
-          _sortAscending = !_sortAscending;
-          if (_sortAscending) {
-            widget.source
-                .sort((a, b) => b['$_sortColumn'].compareTo(a['$_sortColumn']));
-          } else {
-            widget.source
-                .sort((a, b) => a['$_sortColumn'].compareTo(b['$_sortColumn']));
-          }
+          _rowsOffset += _rowsPerPage;
         });
       },
+      handlePrevious: () {
+        setState(() {
+          _rowsOffset -= _rowsPerPage;
+        });
+      },
+      itemBuilder: (index) {
+        final ShopProductRegularModel productRegular =
+            widget.productRegular[index];
+        return DataRow.byIndex(
+          index: index,
+          cells: [
+            DataCell(Text(
+                '${DateFormat('yyyy/MM/dd').format(productRegular.deliveryAt)}')),
+            DataCell(Text('${productRegular.productName}')),
+            DataCell(Text('¥ ${productRegular.productPrice}')),
+            DataCell(Text('${productRegular.productDescription}')),
+            DataCell(
+              ButtonBar(
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.info_outline, color: Colors.blueAccent),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+      sortColumnIndex: _sortColumnIndex,
       sortAscending: _sortAscending,
-      sortColumn: _sortColumn,
-      isLoading: false,
-      onSelect: (value, item) {
-        if (value) {
-          setState(() => _selecteds.add(item));
-        } else {
-          setState(() => _selecteds.removeAt(_selecteds.indexOf(item)));
-        }
-      },
-      onSelectAll: (value) {
-        if (value) {
-          setState(() =>
-              _selecteds = widget.source.map((entry) => entry).toList().cast());
-        } else {
-          setState(() => _selecteds.clear());
-        }
-      },
-      currentPerPageOnChanged: (value) {
+      onRowsPerPageChanged: (value) {
         setState(() {
-          _currentPerPage = value;
-          //リセットデータ
-        });
-      },
-      currentPage: _currentPage,
-      currentPerPage: _currentPerPage,
-      total: widget.source.length,
-      currentPageBack: () {
-        var _nextSet = _currentPage - _currentPerPage;
-        setState(() {
-          _currentPage = _nextSet > 1 ? _nextSet : 1;
-        });
-      },
-      currentPageForward: () {
-        var _nextSet = _currentPage + _currentPerPage;
-        setState(() {
-          _currentPage =
-              _nextSet < widget.source.length ? _nextSet : widget.source.length;
+          _rowsPerPage = value;
         });
       },
     );
