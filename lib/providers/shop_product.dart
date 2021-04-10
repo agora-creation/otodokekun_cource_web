@@ -2,6 +2,7 @@ import 'dart:html';
 
 import 'package:firebase/firebase.dart' as firebase;
 import 'package:flutter/material.dart';
+import 'package:otodokekun_cource_web/models/shop_product.dart';
 import 'package:otodokekun_cource_web/services/shop_product.dart';
 
 class ShopProductProvider with ChangeNotifier {
@@ -117,5 +118,13 @@ class ShopProductProvider with ChangeNotifier {
     unit.text = '';
     price.text = '';
     description.text = '';
+  }
+
+  Future<List<ShopProductModel>> selectList({String shopId}) async {
+    List<ShopProductModel> _products = [];
+    await _shopProductService.selectList(shopId: shopId).then((value) {
+      _products = value;
+    });
+    return _products;
   }
 }

@@ -1,9 +1,13 @@
 import 'package:data_tables/data_tables.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/shop_product_regular.dart';
 import 'package:otodokekun_cource_web/providers/shop_product_regular.dart';
+import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
+import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
+import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
 
 class ProductRegularTable extends StatefulWidget {
   final ShopModel shop;
@@ -65,7 +69,16 @@ class _ProductRegularTableState extends State<ProductRegularTable> {
               ButtonBar(
                 children: [
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => EditProductRegularDialog(
+                          shopProductRegularProvider:
+                              widget.shopProductRegularProvider,
+                          productRegular: productRegular,
+                        ),
+                      );
+                    },
                     icon: Icon(Icons.info_outline, color: Colors.blueAccent),
                   ),
                 ],
@@ -85,100 +98,90 @@ class _ProductRegularTableState extends State<ProductRegularTable> {
   }
 }
 
-// class EditPlanDialog extends StatefulWidget {
-//   final ShopProductRegularProvider shopPlanProvider;
-//   final dynamic data;
-//
-//   EditPlanDialog({
-//     @required this.shopPlanProvider,
-//     @required this.data,
-//   });
-//
-//   @override
-//   _EditPlanDialogState createState() => _EditPlanDialogState();
-// }
-//
-// class _EditPlanDialogState extends State<EditPlanDialog> {
-//   Uint8List imageData;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return CustomDialog(
-//       title: '${widget.data['name']}の詳細',
-//       content: Container(
-//         width: 450.0,
-//         child: ListView(
-//           shrinkWrap: true,
-//           children: [
-//             Text('商品名', style: kLabelTextStyle),
-//             Text('${widget.data['name']}'),
-//             SizedBox(height: 8.0),
-//             Text('商品画像', style: kLabelTextStyle),
-//             GestureDetector(
-//               onTap: () {},
-//               child: imageData != null
-//                   ? Image.memory(
-//                       imageData,
-//                       fit: BoxFit.cover,
-//                     )
-//                   : widget.data['image'] != ''
-//                       ? Image.network(
-//                           widget.data['image'],
-//                           fit: BoxFit.cover,
-//                         )
-//                       : Image.asset(
-//                           'assets/images/noimage.png',
-//                           fit: BoxFit.cover,
-//                         ),
-//             ),
-//             SizedBox(height: 8.0),
-//             Text('単位', style: kLabelTextStyle),
-//             Text('${widget.data['unit']}'),
-//             SizedBox(height: 8.0),
-//             Text('価格', style: kLabelTextStyle),
-//             Text('¥ ${widget.data['price']}'),
-//             SizedBox(height: 8.0),
-//             Text('説明', style: kLabelTextStyle),
-//             Text('${widget.data['description']}'),
-//             SizedBox(height: 8.0),
-//             Text('お届け指定日', style: kLabelTextStyle),
-//             Text('${widget.data['deliveryAtText']}'),
-//             SizedBox(height: 16.0),
-//             Divider(height: 0.0),
-//             SizedBox(height: 16.0),
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.end,
-//               children: [
-//                 BorderBoxButton(
-//                   iconData: Icons.close,
-//                   labelText: '閉じる',
-//                   labelColor: Colors.blueGrey,
-//                   borderColor: Colors.blueGrey,
-//                   onTap: () => Navigator.pop(context),
-//                 ),
-//                 SizedBox(width: 4.0),
-//                 FillBoxButton(
-//                   iconData: Icons.delete,
-//                   labelText: '削除',
-//                   labelColor: Colors.white,
-//                   backgroundColor: Colors.redAccent,
-//                   onTap: () async {
-//                     if (!await widget.shopPlanProvider.delete(
-//                         id: widget.data['id'], shopId: widget.data['shopId'])) {
-//                       return;
-//                     }
-//                     ScaffoldMessenger.of(context).showSnackBar(
-//                       SnackBar(content: Text('定期商品情報を削除しました')),
-//                     );
-//                     widget.shopPlanProvider.clearController();
-//                     Navigator.pop(context);
-//                   },
-//                 ),
-//               ],
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+class EditProductRegularDialog extends StatefulWidget {
+  final ShopProductRegularProvider shopProductRegularProvider;
+  final ShopProductRegularModel productRegular;
+
+  EditProductRegularDialog({
+    @required this.shopProductRegularProvider,
+    @required this.productRegular,
+  });
+
+  @override
+  _EditProductRegularDialogState createState() =>
+      _EditProductRegularDialogState();
+}
+
+class _EditProductRegularDialogState extends State<EditProductRegularDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return CustomDialog(
+      title: '定期便の詳細',
+      content: Container(
+        width: 450.0,
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            Text('お届け日', style: kLabelTextStyle),
+            Text(
+                '${DateFormat('yyyy/MM/dd').format(widget.productRegular.deliveryAt)}'),
+            SizedBox(height: 8.0),
+            Text('商品名', style: kLabelTextStyle),
+            Text('${widget.productRegular.productName}'),
+            SizedBox(height: 8.0),
+            Text('商品画像', style: kLabelTextStyle),
+            widget.productRegular.productImage != ''
+                ? Image.network(
+                    widget.productRegular.productImage,
+                    fit: BoxFit.cover,
+                  )
+                : Image.asset(
+                    'assets/images/noimage.png',
+                    fit: BoxFit.cover,
+                  ),
+            SizedBox(height: 8.0),
+            Text('単位', style: kLabelTextStyle),
+            Text('${widget.productRegular.productUnit}'),
+            SizedBox(height: 8.0),
+            Text('価格', style: kLabelTextStyle),
+            Text('¥ ${widget.productRegular.productPrice}'),
+            SizedBox(height: 8.0),
+            Text('商品説明', style: kLabelTextStyle),
+            Text('¥ ${widget.productRegular.productDescription}'),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                BorderBoxButton(
+                  iconData: Icons.close,
+                  labelText: '閉じる',
+                  labelColor: Colors.blueGrey,
+                  borderColor: Colors.blueGrey,
+                  onTap: () => Navigator.pop(context),
+                ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.delete,
+                  labelText: '削除する',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.redAccent,
+                  onTap: () async {
+                    if (!await widget.shopProductRegularProvider.delete(
+                        id: widget.productRegular.id,
+                        shopId: widget.productRegular.shopId)) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('定期便を削除しました')),
+                    );
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:otodokekun_cource_web/models/shop_product.dart';
 
 class ShopProductService {
   String _collection = 'shop';
@@ -40,5 +41,19 @@ class ShopProductService {
         .collection(_subCollection)
         .doc(values['id'])
         .delete();
+  }
+
+  Future<List<ShopProductModel>> selectList({String shopId}) async {
+    List<ShopProductModel> _products = [];
+    QuerySnapshot snapshot = await _firebaseFirestore
+        .collection(_collection)
+        .doc(shopId)
+        .collection(_subCollection)
+        .orderBy('createdAt', descending: true)
+        .get();
+    for (DocumentSnapshot _product in snapshot.docs) {
+      _products.add(ShopProductModel.fromSnapshot(_product));
+    }
+    return _products;
   }
 }

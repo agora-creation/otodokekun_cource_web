@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otodokekun_cource_web/models/shop_product.dart';
 import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/services/shop_order.dart';
 import 'package:otodokekun_cource_web/services/shop_product_regular.dart';
@@ -8,23 +9,25 @@ class ShopProductRegularProvider with ChangeNotifier {
   ShopProductRegularService _shopProductRegularService =
       ShopProductRegularService();
 
-  DateTime deliveryAt;
-
-  Future<bool> create({String shopId, List<UserModel> users}) async {
+  Future<bool> create(
+      {String shopId,
+      DateTime deliveryAt,
+      ShopProductModel product,
+      List<UserModel> users}) async {
     if (deliveryAt == null) return false;
+    if (product == null) return false;
     String id = _shopProductRegularService.newId(shopId: shopId);
     try {
       _shopProductRegularService.create({
         'id': id,
         'shopId': shopId,
-        'productId': '',
-        'productName': '',
-        'productImage': '',
-        'productUnit': '',
-        'productPrice': 0,
-        'productDescription': '',
+        'productId': product.id,
+        'productName': product.name,
+        'productImage': product.image,
+        'productUnit': product.unit,
+        'productPrice': product.price,
+        'productDescription': product.description,
         'deliveryAt': deliveryAt,
-        'published': true,
         'createdAt': DateTime.now(),
       });
       for (UserModel _user in users) {
