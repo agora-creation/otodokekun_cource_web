@@ -61,21 +61,38 @@ class ProductRegularScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('定期便', style: TextStyle(fontSize: 18.0)),
-                        FillBoxButton(
-                          iconData: Icons.add,
-                          labelText: '新規登録',
-                          labelColor: Colors.white,
-                          backgroundColor: Colors.blueAccent,
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (_) => AddProductRegularDialog(
-                                shop: shopProvider.shop,
-                                shopProductProvider: shopProductProvider,
-                                shopProductRegularProvider:
-                                    shopProductRegularProvider,
-                              ),
-                            );
+                        FutureBuilder(
+                          future: shopProductProvider.selectList(
+                              shopId: shopProvider.shop?.id),
+                          builder: (context, snapshot) {
+                            if (snapshot.data == null) {
+                              return FillBoxButton(
+                                iconData: Icons.add,
+                                labelText: '新規登録',
+                                labelColor: Colors.white,
+                                backgroundColor: Colors.grey,
+                                onTap: null,
+                              );
+                            } else {
+                              List<ShopProductModel> _products = snapshot.data;
+                              return FillBoxButton(
+                                iconData: Icons.add,
+                                labelText: '新規登録',
+                                labelColor: Colors.white,
+                                backgroundColor: Colors.blueAccent,
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (_) => AddProductRegularDialog(
+                                      shop: shopProvider.shop,
+                                      shopProductRegularProvider:
+                                          shopProductRegularProvider,
+                                      products: _products,
+                                    ),
+                                  );
+                                },
+                              );
+                            }
                           },
                         ),
                       ],
@@ -105,13 +122,13 @@ class ProductRegularScreen extends StatelessWidget {
 
 class AddProductRegularDialog extends StatefulWidget {
   final ShopModel shop;
-  final ShopProductProvider shopProductProvider;
   final ShopProductRegularProvider shopProductRegularProvider;
+  final List<ShopProductModel> products;
 
   AddProductRegularDialog({
     @required this.shop,
-    @required this.shopProductProvider,
     @required this.shopProductRegularProvider,
+    @required this.products,
   });
 
   @override
@@ -125,6 +142,7 @@ class _AddProductRegularDialogState extends State<AddProductRegularDialog> {
 
   void _init() async {
     _deliveryAt = DateTime.now().add(Duration(days: widget.shop?.cancelLimit));
+    _product = widget.products.first;
   }
 
   @override
@@ -165,31 +183,20 @@ class _AddProductRegularDialogState extends State<AddProductRegularDialog> {
             ),
             SizedBox(height: 8.0),
             Text('商品を選ぶ', style: kLabelTextStyle),
-            FutureBuilder<List<ShopProductModel>>(
-              future: widget.shopProductProvider
-                  .selectList(shopId: widget.shop?.id),
-              builder: (context, snapshot) {
-                if (snapshot.data == null) {
-                  return Container();
-                } else {
-                  _product = snapshot.data.first;
-                  return DropdownButton<ShopProductModel>(
-                    isExpanded: true,
-                    value: _product,
-                    onChanged: (value) {
-                      setState(() {
-                        _product = value;
-                      });
-                    },
-                    items: snapshot.data.map((value) {
-                      return DropdownMenuItem<ShopProductModel>(
-                        value: value,
-                        child: Text('${value.name}'),
-                      );
-                    }).toList(),
-                  );
-                }
+            DropdownButton<ShopProductModel>(
+              isExpanded: true,
+              value: _product,
+              onChanged: (value) {
+                setState(() {
+                  _product = value;
+                });
               },
+              items: widget.products.map((value) {
+                return DropdownMenuItem<ShopProductModel>(
+                  value: value,
+                  child: Text('${value.name}'),
+                );
+              }).toList(),
             ),
             SizedBox(height: 16.0),
             Row(

@@ -1,9 +1,11 @@
+import 'package:data_tables/data_tables.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/cart.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/shop_invoice.dart';
+import 'package:otodokekun_cource_web/models/shop_order.dart';
 import 'package:otodokekun_cource_web/models/shop_staff.dart';
 import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/providers/shop_invoice.dart';
@@ -13,10 +15,8 @@ import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/cart_list_tile.dart';
 import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
-import 'package:otodokekun_cource_web/widgets/custom_table.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_form_button.dart';
-import 'package:responsive_table/DatatableHeader.dart';
 
 class OrderTable extends StatefulWidget {
   final ShopModel shop;
@@ -24,7 +24,7 @@ class OrderTable extends StatefulWidget {
   final ShopOrderProvider shopOrderProvider;
   final ShopStaffProvider shopStaffProvider;
   final UserProvider userProvider;
-  final List<Map<String, dynamic>> source;
+  final List<ShopOrderModel> orders;
 
   OrderTable({
     @required this.shop,
@@ -32,7 +32,7 @@ class OrderTable extends StatefulWidget {
     @required this.shopOrderProvider,
     @required this.shopStaffProvider,
     @required this.userProvider,
-    @required this.source,
+    @required this.orders,
   });
 
   @override
@@ -40,349 +40,72 @@ class OrderTable extends StatefulWidget {
 }
 
 class _OrderTableState extends State<OrderTable> {
-  List<DatatableHeader> _headers = [
-    DatatableHeader(
-      text: '注文者',
-      value: 'name',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
-      text: '注文商品(数量)',
-      value: 'productsText',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
-      text: 'お届け日',
-      value: 'deliveryAtText',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
-      text: '備考',
-      value: 'remarks',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
-      text: '合計金額',
-      value: 'totalPrice',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
-      text: '担当者',
-      value: 'staff',
-      show: true,
-      sortable: true,
-    ),
-    DatatableHeader(
-      text: '配達状況',
-      value: 'shippingText',
-      show: true,
-      sortable: true,
-    ),
-  ];
-  int _currentPerPage = 10;
-  int _currentPage = 1;
-  List<Map<String, dynamic>> _selecteds = [];
-  String _sortColumn;
+  int _rowsPerPage = PaginatedDataTable.defaultRowsPerPage;
+  int _sortColumnIndex;
   bool _sortAscending = true;
-  List<ShopInvoiceModel> _invoices = [];
-  List<ShopStaffModel> _staffs = [];
-  List<UserModel> _users = [];
-
-  void _init() async {
-    await widget.shopInvoiceProvider
-        .selectList(shopId: widget.shop?.id)
-        .then((value) {
-      _invoices = value;
-      DateTime _now = DateTime.now();
-      for (ShopInvoiceModel _invoice in _invoices) {
-        if (_now.isAfter(_invoice.openedAt) &&
-            _now.isBefore(_invoice.closedAt)) {
-          widget.shopOrderProvider.changeSearchDateRage(
-              _invoice.openedAt, _invoice.closedAt, false);
-        }
-      }
-    });
-    await widget.shopStaffProvider
-        .selectList(shopId: widget.shop?.id)
-        .then((value) {
-      _staffs = value;
-    });
-    await widget.userProvider.selectList(shopId: widget.shop?.id).then((value) {
-      _users = value;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _init();
-  }
+  int _rowsOffset = 0;
 
   @override
   Widget build(BuildContext context) {
-    return CustomTable(
-      title: '注文一覧',
-      actions: [
-        Row(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '注文者',
-                  style: TextStyle(color: Colors.lightBlue, fontSize: 12.0),
-                ),
-                BorderBoxButton(
-                  iconData: Icons.arrow_drop_down,
-                  labelText: widget.shopOrderProvider.searchName != ''
-                      ? '${widget.shopOrderProvider.searchName}'
-                      : '選択なし',
-                  labelColor: Colors.lightBlue,
-                  borderColor: Colors.lightBlue,
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) {
-                        return SearchNameDialog(
-                          shopOrderProvider: widget.shopOrderProvider,
-                          users: _users,
-                        );
-                      },
-                    );
-                  },
-                ),
-              ],
-            ),
-            SizedBox(width: 4.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'お届け日(日付検索)',
-                  style: TextStyle(color: Colors.lightBlue, fontSize: 12.0),
-                ),
-                BorderBoxButton(
-                  iconData: Icons.calendar_today,
-                  labelText: widget.shopOrderProvider.searchDeliveryAtDisabled
-                      ? '指定なし'
-                      : '${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchDeliveryAt)}',
-                  labelColor: Colors.lightBlue,
-                  borderColor: Colors.lightBlue,
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) {
-                        return SearchDeliveryAtDialog(
-                          shopOrderProvider: widget.shopOrderProvider,
-                        );
-                      },
-                    );
-                  },
-                ),
-              ],
-            ),
-            SizedBox(width: 4.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'お届け日(締め日検索)',
-                  style: TextStyle(color: Colors.lightBlue, fontSize: 12.0),
-                ),
-                BorderBoxButton(
-                  iconData: Icons.calendar_today,
-                  labelText: widget
-                          .shopOrderProvider.searchOpenedClosedAtDisabled
-                      ? '指定なし'
-                      : '${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchOpenedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchClosedAt)}',
-                  labelColor: Colors.lightBlue,
-                  borderColor: Colors.lightBlue,
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) {
-                        return SearchInvoiceDialog(
-                          shopOrderProvider: widget.shopOrderProvider,
-                          invoices: _invoices,
-                        );
-                      },
-                    );
-                  },
-                ),
-              ],
-            ),
-            SizedBox(width: 4.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '担当者',
-                  style: TextStyle(color: Colors.lightBlue, fontSize: 12.0),
-                ),
-                BorderBoxButton(
-                  iconData: Icons.arrow_drop_down,
-                  labelText: widget.shopOrderProvider.searchStaff != ''
-                      ? '${widget.shopOrderProvider.searchStaff}'
-                      : '選択なし',
-                  labelColor: Colors.lightBlue,
-                  borderColor: Colors.lightBlue,
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) {
-                        return SearchStaffDialog(
-                          shopOrderProvider: widget.shopOrderProvider,
-                          staffs: _staffs,
-                        );
-                      },
-                    );
-                  },
-                ),
-              ],
-            ),
-            SizedBox(width: 4.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '配達状況',
-                  style: TextStyle(color: Colors.lightBlue, fontSize: 12.0),
-                ),
-                BorderBoxButton(
-                  iconData: Icons.arrow_drop_down,
-                  labelText:
-                      widget.shopOrderProvider.searchShipping ? '配達完了' : '配達予定',
-                  labelColor: Colors.lightBlue,
-                  borderColor: Colors.lightBlue,
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) {
-                        return SearchShippingDialog(
-                          shopOrderProvider: widget.shopOrderProvider,
-                        );
-                      },
-                    );
-                  },
-                ),
-              ],
-            ),
-            // SizedBox(width: 4.0),
-            // Column(
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            //   children: [
-            //     Text(
-            //       '注文データ(CSV)',
-            //       style: TextStyle(color: Colors.green, fontSize: 12.0),
-            //     ),
-            //     BorderBoxButton(
-            //       iconData: Icons.file_download,
-            //       labelText: 'ダウンロード',
-            //       labelColor: Colors.green,
-            //       borderColor: Colors.green,
-            //       onTap: () async {
-            //         List<List<dynamic>> rows = [];
-            //         for (int i = 0; i < widget.source.length; i++) {
-            //           List<dynamic> row = [];
-            //           row.add(widget.source[i]['name']);
-            //           row.add(widget.source[i]['zip']);
-            //           row.add(widget.source[i]['address']);
-            //           row.add(widget.source[i]['tel']);
-            //           row.add(widget.source[i]['productsText']);
-            //           row.add(widget.source[i]['deliveryAtText']);
-            //           row.add(widget.source[i]['remarks']);
-            //           row.add(widget.source[i]['totalPrice']);
-            //           row.add(widget.source[i]['staff']);
-            //           row.add(widget.source[i]['shippingText']);
-            //           rows.add(row);
-            //         }
-            //         String csv = const ListToCsvConverter().convert(rows);
-            //         AnchorElement()
-            //           ..href =
-            //               '${Uri.dataFromString(csv, mimeType: 'text/csv', encoding: utf8)}'
-            //           ..download = 'order.csv'
-            //           ..style.display = 'none'
-            //           ..click();
-            //       },
-            //     ),
-            //   ],
-            // ),
-          ],
-        ),
+    return NativeDataTable.builder(
+      columns: [
+        DataColumn(label: Text('お届け日')),
+        DataColumn(label: Text('注文者')),
+        DataColumn(label: Text('注文商品')),
+        DataColumn(label: Text('合計金額')),
+        DataColumn(label: Text('担当者')),
+        DataColumn(label: Text('配達状況')),
+        DataColumn(label: Text('詳細')),
       ],
-      headers: _headers,
-      source: widget.source,
-      selecteds: _selecteds,
       showSelect: false,
-      onTabRow: (data) {
-        widget.shopOrderProvider.staff = data['staff'];
-        showDialog(
-          context: context,
-          builder: (_) {
-            return EditOrderDialog(
-              shopOrderProvider: widget.shopOrderProvider,
-              data: data,
-              staffs: _staffs,
-            );
-          },
+      rowsPerPage: _rowsPerPage,
+      itemCount: widget.orders?.length ?? 0,
+      firstRowIndex: _rowsOffset,
+      handleNext: () {
+        setState(() {
+          _rowsOffset += _rowsPerPage;
+        });
+      },
+      handlePrevious: () {
+        setState(() {
+          _rowsOffset -= _rowsPerPage;
+        });
+      },
+      itemBuilder: (index) {
+        final ShopOrderModel order = widget.orders[index];
+        return DataRow.byIndex(
+          index: index,
+          cells: [
+            DataCell(
+                Text('${DateFormat('yyyy/MM/dd').format(order.deliveryAt)}')),
+            DataCell(Text('${order.userName}')),
+            DataCell(Text('${order.cart[0].name} 他')),
+            DataCell(Text('¥ ${order.totalPrice}')),
+            DataCell(Text('${order.staff}')),
+            DataCell(order.shipping
+                ? Text('配達完了')
+                : Text(
+                    '未配達',
+                    style: TextStyle(color: Colors.redAccent),
+                  )),
+            DataCell(
+              ButtonBar(
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.info_outline, color: Colors.blueAccent),
+                  ),
+                ],
+              ),
+            ),
+          ],
         );
       },
-      onSort: (value) {
-        setState(() {
-          _sortColumn = value;
-          _sortAscending = !_sortAscending;
-          if (_sortAscending) {
-            widget.source
-                .sort((a, b) => b['$_sortColumn'].compareTo(a['$_sortColumn']));
-          } else {
-            widget.source
-                .sort((a, b) => a['$_sortColumn'].compareTo(b['$_sortColumn']));
-          }
-        });
-      },
+      sortColumnIndex: _sortColumnIndex,
       sortAscending: _sortAscending,
-      sortColumn: _sortColumn,
-      isLoading: false,
-      onSelect: (value, item) {
-        if (value) {
-          setState(() => _selecteds.add(item));
-        } else {
-          setState(() => _selecteds.removeAt(_selecteds.indexOf(item)));
-        }
-      },
-      onSelectAll: (value) {
-        if (value) {
-          setState(() =>
-              _selecteds = widget.source.map((entry) => entry).toList().cast());
-        } else {
-          setState(() => _selecteds.clear());
-        }
-      },
-      currentPerPageOnChanged: (value) {
+      onRowsPerPageChanged: (value) {
         setState(() {
-          _currentPerPage = value;
-          //リセットデータ
-        });
-      },
-      currentPage: _currentPage,
-      currentPerPage: _currentPerPage,
-      total: widget.source.length,
-      currentPageBack: () {
-        var _nextSet = _currentPage - _currentPerPage;
-        setState(() {
-          _currentPage = _nextSet > 1 ? _nextSet : 1;
-        });
-      },
-      currentPageForward: () {
-        var _nextSet = _currentPage + _currentPerPage;
-        setState(() {
-          _currentPage =
-              _nextSet < widget.source.length ? _nextSet : widget.source.length;
+          _rowsPerPage = value;
         });
       },
     );

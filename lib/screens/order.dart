@@ -8,6 +8,7 @@ import 'package:otodokekun_cource_web/providers/shop_invoice.dart';
 import 'package:otodokekun_cource_web/providers/shop_order.dart';
 import 'package:otodokekun_cource_web/providers/shop_staff.dart';
 import 'package:otodokekun_cource_web/providers/user.dart';
+import 'package:otodokekun_cource_web/screens/order_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
 import 'package:otodokekun_cource_web/widgets/loading.dart';
 import 'package:provider/provider.dart';
@@ -120,6 +121,16 @@ class OrderScreen extends StatelessWidget {
                     SizedBox(height: 4.0),
                     Text('顧客からの注文が表示されます。注文情報を確認の上、配達してください。'),
                     SizedBox(height: 8.0),
+                    Expanded(
+                      child: OrderTable(
+                        shop: shopProvider.shop,
+                        shopInvoiceProvider: shopInvoiceProvider,
+                        shopOrderProvider: shopOrderProvider,
+                        shopStaffProvider: shopStaffProvider,
+                        userProvider: userProvider,
+                        orders: _orders,
+                      ),
+                    ),
                   ],
                 ),
               ),
