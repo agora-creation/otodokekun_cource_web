@@ -81,7 +81,6 @@ class NoticeScreen extends StatelessWidget {
                     SizedBox(height: 8.0),
                     Expanded(
                       child: NoticeTable(
-                        shop: shopProvider.shop,
                         shopNoticeProvider: shopNoticeProvider,
                         userProvider: userProvider,
                         userNoticeProvider: userNoticeProvider,

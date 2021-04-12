@@ -77,7 +77,6 @@ class StaffScreen extends StatelessWidget {
                     SizedBox(height: 8.0),
                     Expanded(
                       child: StaffTable(
-                        shop: shopProvider.shop,
                         shopStaffProvider: shopStaffProvider,
                         staffs: _staffs,
                       ),

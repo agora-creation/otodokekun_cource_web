@@ -44,12 +44,12 @@ class UserService {
     return _users;
   }
 
-  Future<List<UserModel>> selectListFixed({String shopId}) async {
+  Future<List<UserModel>> selectListRegular({String shopId}) async {
     List<UserModel> _users = [];
     QuerySnapshot snapshot = await _firebaseFirestore
         .collection(_collection)
         .where('shopId', isEqualTo: shopId)
-        .where('fixed', isEqualTo: true)
+        .where('regular', isEqualTo: true)
         .orderBy('createdAt', descending: true)
         .get();
     for (DocumentSnapshot _user in snapshot.docs) {

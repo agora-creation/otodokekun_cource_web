@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/cart.dart';
-import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/shop_order.dart';
 import 'package:otodokekun_cource_web/models/shop_staff.dart';
 import 'package:otodokekun_cource_web/providers/shop_order.dart';
@@ -13,13 +12,11 @@ import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
 
 class OrderTable extends StatefulWidget {
-  final ShopModel shop;
   final ShopOrderProvider shopOrderProvider;
   final List<ShopOrderModel> orders;
   final List<ShopStaffModel> staffs;
 
   OrderTable({
-    @required this.shop,
     @required this.shopOrderProvider,
     @required this.orders,
     @required this.staffs,

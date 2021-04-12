@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
+import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
 import 'package:provider/provider.dart';
 
 class ReportProductScreen extends StatelessWidget {
@@ -28,7 +29,13 @@ class ReportProductScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('集計 - 商品毎', style: TextStyle(fontSize: 18.0)),
-                  Container(),
+                  FillBoxButton(
+                    iconData: Icons.file_download,
+                    labelText: 'CSVダウンロード',
+                    labelColor: Colors.white,
+                    backgroundColor: Colors.teal,
+                    onTap: () {},
+                  ),
                 ],
               ),
               SizedBox(height: 4.0),

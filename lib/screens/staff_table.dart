@@ -1,7 +1,6 @@
 import 'package:data_tables/data_tables.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/shop_staff.dart';
 import 'package:otodokekun_cource_web/providers/shop_staff.dart';
 import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
@@ -10,12 +9,10 @@ import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
 
 class StaffTable extends StatefulWidget {
-  final ShopModel shop;
   final ShopStaffProvider shopStaffProvider;
   final List<ShopStaffModel> staffs;
 
   StaffTable({
-    @required this.shop,
     @required this.shopStaffProvider,
     @required this.staffs,
   });

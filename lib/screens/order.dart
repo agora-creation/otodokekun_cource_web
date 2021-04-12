@@ -166,7 +166,9 @@ class OrderScreen extends StatelessWidget {
                                 ),
                                 BorderBoxButton(
                                   iconData: Icons.date_range,
-                                  labelText: '2021/01/01 〜 2021/12/31',
+                                  labelText: shopOrderProvider.invoiceDisabled
+                                      ? '指定なし'
+                                      : '${DateFormat('yyyy/MM/dd').format(shopOrderProvider.openedAt)}} 〜 ${DateFormat('yyyy/MM/dd').format(shopOrderProvider.closedAt)}',
                                   labelColor: Colors.blueAccent,
                                   borderColor: Colors.blueAccent,
                                   onTap: () {
@@ -194,7 +196,10 @@ class OrderScreen extends StatelessWidget {
                                 ),
                                 BorderBoxButton(
                                   iconData: Icons.today,
-                                  labelText: '指定なし',
+                                  labelText: shopOrderProvider
+                                          .deliveryAtDisabled
+                                      ? '指定なし'
+                                      : '${DateFormat('yyyy/MM/dd').format(shopOrderProvider.deliveryAt)}',
                                   labelColor: Colors.blueAccent,
                                   borderColor: Colors.blueAccent,
                                   onTap: () {
@@ -221,7 +226,9 @@ class OrderScreen extends StatelessWidget {
                                 ),
                                 BorderBoxButton(
                                   iconData: Icons.person,
-                                  labelText: '指定なし',
+                                  labelText: shopOrderProvider.userName == ''
+                                      ? '指定なし'
+                                      : '${shopOrderProvider.userName}',
                                   labelColor: Colors.blueAccent,
                                   borderColor: Colors.blueAccent,
                                   onTap: () {
@@ -249,7 +256,9 @@ class OrderScreen extends StatelessWidget {
                                 ),
                                 BorderBoxButton(
                                   iconData: Icons.supervisor_account_outlined,
-                                  labelText: '指定なし',
+                                  labelText: shopOrderProvider.staff == ''
+                                      ? '指定なし'
+                                      : '${shopOrderProvider.staff}',
                                   labelColor: Colors.blueAccent,
                                   borderColor: Colors.blueAccent,
                                   onTap: () {
@@ -277,7 +286,9 @@ class OrderScreen extends StatelessWidget {
                                 ),
                                 BorderBoxButton(
                                   iconData: Icons.local_shipping,
-                                  labelText: '未配達',
+                                  labelText: shopOrderProvider.shipping
+                                      ? '配達完了'
+                                      : '未配達',
                                   labelColor: Colors.blueAccent,
                                   borderColor: Colors.blueAccent,
                                   onTap: () {
@@ -296,7 +307,6 @@ class OrderScreen extends StatelessWidget {
                         SizedBox(height: 8.0),
                         Expanded(
                           child: OrderTable(
-                            shop: shopProvider.shop,
                             shopOrderProvider: shopOrderProvider,
                             orders: _orders,
                             staffs: _staffs,

@@ -80,7 +80,6 @@ class InvoiceScreen extends StatelessWidget {
                     SizedBox(height: 8.0),
                     Expanded(
                       child: InvoiceTable(
-                        shop: shopProvider.shop,
                         shopInvoiceProvider: shopInvoiceProvider,
                         invoices: _invoices,
                       ),

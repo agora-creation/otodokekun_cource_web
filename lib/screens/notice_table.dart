@@ -2,7 +2,6 @@ import 'package:data_tables/data_tables.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
-import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/shop_notice.dart';
 import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/providers/shop_notice.dart';
@@ -14,14 +13,12 @@ import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
 
 class NoticeTable extends StatefulWidget {
-  final ShopModel shop;
   final ShopNoticeProvider shopNoticeProvider;
   final UserProvider userProvider;
   final UserNoticeProvider userNoticeProvider;
   final List<ShopNoticeModel> notices;
 
   NoticeTable({
-    @required this.shop,
     @required this.shopNoticeProvider,
     @required this.userProvider,
     @required this.userNoticeProvider,

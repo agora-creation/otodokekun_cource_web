@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'package:data_tables/data_tables.dart';
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
-import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/shop_product.dart';
 import 'package:otodokekun_cource_web/providers/shop_product.dart';
 import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
@@ -14,12 +13,10 @@ import 'package:otodokekun_cource_web/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
 
 class ProductTable extends StatefulWidget {
-  final ShopModel shop;
   final ShopProductProvider shopProductProvider;
   final List<ShopProductModel> products;
 
   ProductTable({
-    @required this.shop,
     @required this.shopProductProvider,
     @required this.products,
   });

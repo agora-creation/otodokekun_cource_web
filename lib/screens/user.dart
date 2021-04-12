@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
-import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/screens/user_table.dart';
 import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
 import 'package:otodokekun_cource_web/widgets/loading.dart';
@@ -15,7 +14,6 @@ class UserScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shopProvider = Provider.of<ShopProvider>(context);
-    final userProvider = Provider.of<UserProvider>(context);
     final Stream<QuerySnapshot> streamUser = FirebaseFirestore.instance
         .collection('user')
         .where('shopId', isEqualTo: shopProvider.shop?.id)
@@ -55,10 +53,7 @@ class UserScreen extends StatelessWidget {
                     Text('顧客の情報を見ることができます。顧客はスマホアプリのご利用者です。'),
                     SizedBox(height: 8.0),
                     Expanded(
-                      child: UserTable(
-                        shop: shopProvider.shop,
-                        users: _users,
-                      ),
+                      child: UserTable(users: _users),
                     ),
                   ],
                 ),

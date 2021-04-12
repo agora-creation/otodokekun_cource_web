@@ -81,7 +81,6 @@ class ProductScreen extends StatelessWidget {
                     SizedBox(height: 8.0),
                     Expanded(
                       child: ProductTable(
-                        shop: shopProvider.shop,
                         shopProductProvider: shopProductProvider,
                         products: _products,
                       ),

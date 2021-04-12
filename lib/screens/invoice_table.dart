@@ -2,7 +2,6 @@ import 'package:data_tables/data_tables.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
-import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/shop_invoice.dart';
 import 'package:otodokekun_cource_web/providers/shop_invoice.dart';
 import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
@@ -11,12 +10,10 @@ import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_form_button.dart';
 
 class InvoiceTable extends StatefulWidget {
-  final ShopModel shop;
   final ShopInvoiceProvider shopInvoiceProvider;
   final List<ShopInvoiceModel> invoices;
 
   InvoiceTable({
-    @required this.shop,
     @required this.shopInvoiceProvider,
     @required this.invoices,
   });

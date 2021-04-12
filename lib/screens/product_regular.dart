@@ -5,9 +5,11 @@ import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/shop_product.dart';
 import 'package:otodokekun_cource_web/models/shop_product_regular.dart';
+import 'package:otodokekun_cource_web/models/user.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_product.dart';
 import 'package:otodokekun_cource_web/providers/shop_product_regular.dart';
+import 'package:otodokekun_cource_web/providers/user.dart';
 import 'package:otodokekun_cource_web/screens/product_regular_table.dart';
 import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
@@ -26,6 +28,7 @@ class ProductRegularScreen extends StatelessWidget {
     final shopProductRegularProvider =
         Provider.of<ShopProductRegularProvider>(context);
     final shopProductProvider = Provider.of<ShopProductProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
     final Stream<QuerySnapshot> streamProductRegular = FirebaseFirestore
         .instance
         .collection('shop')
@@ -35,12 +38,18 @@ class ProductRegularScreen extends StatelessWidget {
         .snapshots();
     List<ShopProductRegularModel> _productRegulars = [];
     List<ShopProductModel> _products = [];
+    List<UserModel> _users = [];
 
     Future<void> _future() async {
       await shopProductProvider
           .selectList(shopId: shopProvider.shop?.id)
           .then((value) {
         _products = value;
+      });
+      await userProvider
+          .selectListRegular(shopId: shopProvider.shop?.id)
+          .then((value) {
+        _users = value;
       });
     }
 
@@ -87,6 +96,7 @@ class ProductRegularScreen extends StatelessWidget {
                                     shopProductRegularProvider:
                                         shopProductRegularProvider,
                                     products: _products,
+                                    users: _users,
                                   ),
                                 );
                               },
@@ -98,7 +108,6 @@ class ProductRegularScreen extends StatelessWidget {
                         SizedBox(height: 8.0),
                         Expanded(
                           child: ProductRegularTable(
-                            shop: shopProvider.shop,
                             shopProductRegularProvider:
                                 shopProductRegularProvider,
                             productRegular: _productRegulars,
@@ -123,11 +132,13 @@ class AddProductRegularDialog extends StatefulWidget {
   final ShopModel shop;
   final ShopProductRegularProvider shopProductRegularProvider;
   final List<ShopProductModel> products;
+  final List<UserModel> users;
 
   AddProductRegularDialog({
     @required this.shop,
     @required this.shopProductRegularProvider,
     @required this.products,
+    @required this.users,
   });
 
   @override
@@ -219,7 +230,7 @@ class _AddProductRegularDialogState extends State<AddProductRegularDialog> {
                         shopId: widget.shop?.id,
                         deliveryAt: _deliveryAt,
                         product: _product,
-                        users: [])) {
+                        users: widget.users)) {
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(

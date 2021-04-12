@@ -2,7 +2,6 @@ import 'package:data_tables/data_tables.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
-import 'package:otodokekun_cource_web/models/shop.dart';
 import 'package:otodokekun_cource_web/models/shop_product_regular.dart';
 import 'package:otodokekun_cource_web/providers/shop_product_regular.dart';
 import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
@@ -10,12 +9,10 @@ import 'package:otodokekun_cource_web/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource_web/widgets/fill_box_button.dart';
 
 class ProductRegularTable extends StatefulWidget {
-  final ShopModel shop;
   final ShopProductRegularProvider shopProductRegularProvider;
   final List<ShopProductRegularModel> productRegular;
 
   ProductRegularTable({
-    @required this.shop,
     @required this.shopProductRegularProvider,
     @required this.productRegular,
   });
