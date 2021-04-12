@@ -127,7 +127,7 @@ class EditNoticeDialog extends StatefulWidget {
 class _EditNoticeDialogState extends State<EditNoticeDialog> {
   final ScrollController _scrollController = ScrollController();
   List<UserModel> _users = [];
-  List<UserModel> _selected = [];
+  List<UserModel> _selectedUsers = [];
 
   void _init() async {
     await widget.userProvider
@@ -186,7 +186,7 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
                   itemCount: _users.length,
                   itemBuilder: (context, index) {
                     UserModel _user = _users[index];
-                    var contain = _selected.where((e) => e.id == _user.id);
+                    var contain = _selectedUsers.where((e) => e.id == _user.id);
                     return Container(
                       decoration: kBottomBorderDecoration,
                       child: CheckboxListTile(
@@ -195,12 +195,13 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
                         activeColor: Colors.blueAccent,
                         onChanged: (value) {
                           var contain =
-                              _selected.where((e) => e.id == _user.id);
+                              _selectedUsers.where((e) => e.id == _user.id);
                           setState(() {
                             if (contain.isEmpty) {
-                              _selected.add(_user);
+                              _selectedUsers.add(_user);
                             } else {
-                              _selected.removeWhere((e) => e.id == _user.id);
+                              _selectedUsers
+                                  .removeWhere((e) => e.id == _user.id);
                             }
                           });
                         },
@@ -265,7 +266,7 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
                   borderColor: Colors.blueAccent,
                   onTap: () async {
                     if (!await widget.userNoticeProvider.create(
-                        users: _selected,
+                        users: _selectedUsers,
                         id: widget.notice.id,
                         title: widget.shopNoticeProvider.title.text.trim(),
                         message: widget.shopNoticeProvider.message.text)) {

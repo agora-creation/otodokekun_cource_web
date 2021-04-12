@@ -6,50 +6,50 @@ class ShopOrderProvider with ChangeNotifier {
   ShopOrderService _shopOrderService = ShopOrderService();
   UserService _userService = UserService();
 
-  String staff;
+  DateTime openedAt = DateTime(DateTime.now().year - 1);
+  DateTime closedAt = DateTime(DateTime.now().year + 1);
+  bool invoiceDisabled = true;
+  DateTime deliveryAt = DateTime.now();
+  bool deliveryAtDisabled = true;
+  String userName = '';
+  String staff = '';
+  bool shipping = false;
 
-  String searchName = '';
-  DateTime searchDeliveryAt = DateTime.now();
-  bool searchDeliveryAtDisabled = true;
-  DateTime searchOpenedAt = DateTime(DateTime.now().year - 1);
-  DateTime searchClosedAt = DateTime(DateTime.now().year + 1);
-  bool searchOpenedClosedAtDisabled = false;
-  String searchStaff = '';
-  bool searchShipping = false;
-
-  void changeSearchName(String name) {
-    searchName = name;
+  void changeInvoice({DateTime openedAt, DateTime closedAt, bool disabled}) {
+    this.openedAt = openedAt;
+    this.closedAt = closedAt;
+    this.invoiceDisabled = disabled;
     notifyListeners();
   }
 
-  void changeSearchDate(DateTime deliveryAt, bool disabled) {
-    searchDeliveryAt = deliveryAt;
-    searchDeliveryAtDisabled = disabled;
-    if (!searchDeliveryAtDisabled) {
-      searchOpenedClosedAtDisabled = true;
+  void changeDeliveryAt({DateTime deliveryAt, bool disabled}) {
+    this.deliveryAt = deliveryAt;
+    this.deliveryAtDisabled = disabled;
+    if (!disabled) {
+      this.openedAt = DateTime(DateTime.now().year - 1);
+      this.closedAt = DateTime(DateTime.now().year + 1);
+      this.invoiceDisabled = true;
     }
     notifyListeners();
   }
 
-  void changeSearchDateRage(
-      DateTime openedAt, DateTime closedAt, bool disabled) {
-    searchOpenedAt = openedAt;
-    searchClosedAt = closedAt;
-    searchOpenedClosedAtDisabled = disabled;
+  void changeUserName({String userName}) {
+    this.userName = userName;
     notifyListeners();
   }
 
-  void changeSearchStaff(String staff) {
-    searchStaff = staff;
+  void changeStaff({String staff}) {
+    this.staff = staff;
     notifyListeners();
   }
 
-  void changeSearchShipping(bool shipping) {
-    searchShipping = shipping;
+  void changeShipping({bool shipping}) {
+    this.shipping = shipping;
     notifyListeners();
   }
 
-  Future<bool> update({String id, String shopId, String userId}) async {
+  Future<bool> update(
+      {String id, String shopId, String userId, String staff}) async {
     try {
       _shopOrderService.update({
         'id': id,
@@ -67,7 +67,8 @@ class ShopOrderProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateShipping({String id, String shopId, String userId}) async {
+  Future<bool> updateShipping(
+      {String id, String shopId, String userId, String staff}) async {
     try {
       _shopOrderService.update({
         'id': id,

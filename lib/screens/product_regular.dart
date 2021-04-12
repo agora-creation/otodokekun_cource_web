@@ -34,6 +34,15 @@ class ProductRegularScreen extends StatelessWidget {
         .orderBy('deliveryAt', descending: false)
         .snapshots();
     List<ShopProductRegularModel> _productRegulars = [];
+    List<ShopProductModel> _products = [];
+
+    Future<void> _future() async {
+      await shopProductProvider
+          .selectList(shopId: shopProvider.shop?.id)
+          .then((value) {
+        _products = value;
+      });
+    }
 
     return CustomAdminScaffold(
       shop: shopProvider.shop,
@@ -54,60 +63,50 @@ class ProductRegularScreen extends StatelessWidget {
               ),
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: FutureBuilder(
+                  future: _future(),
+                  builder: (context, snapshot) {
+                    if (snapshot.data == null) {}
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('定期便', style: TextStyle(fontSize: 18.0)),
-                        FutureBuilder(
-                          future: shopProductProvider.selectList(
-                              shopId: shopProvider.shop?.id),
-                          builder: (context, snapshot) {
-                            if (snapshot.data == null) {
-                              return FillBoxButton(
-                                iconData: Icons.add,
-                                labelText: '新規登録',
-                                labelColor: Colors.white,
-                                backgroundColor: Colors.grey,
-                                onTap: null,
-                              );
-                            } else {
-                              List<ShopProductModel> _products = snapshot.data;
-                              return FillBoxButton(
-                                iconData: Icons.add,
-                                labelText: '新規登録',
-                                labelColor: Colors.white,
-                                backgroundColor: Colors.blueAccent,
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (_) => AddProductRegularDialog(
-                                      shop: shopProvider.shop,
-                                      shopProductRegularProvider:
-                                          shopProductRegularProvider,
-                                      products: _products,
-                                    ),
-                                  );
-                                },
-                              );
-                            }
-                          },
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('定期便', style: TextStyle(fontSize: 18.0)),
+                            FillBoxButton(
+                              iconData: Icons.add,
+                              labelText: '新規登録',
+                              labelColor: Colors.white,
+                              backgroundColor: Colors.blueAccent,
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => AddProductRegularDialog(
+                                    shop: shopProvider.shop,
+                                    shopProductRegularProvider:
+                                        shopProductRegularProvider,
+                                    products: _products,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 4.0),
+                        Text('登録した商品を「定期便」として登録できます。本日以前のデータは自動的に削除されます。'),
+                        SizedBox(height: 8.0),
+                        Expanded(
+                          child: ProductRegularTable(
+                            shop: shopProvider.shop,
+                            shopProductRegularProvider:
+                                shopProductRegularProvider,
+                            productRegular: _productRegulars,
+                          ),
                         ),
                       ],
-                    ),
-                    SizedBox(height: 4.0),
-                    Text('登録した商品を「定期便」として登録できます。本日以前のデータは自動的に削除されます。'),
-                    SizedBox(height: 8.0),
-                    Expanded(
-                      child: ProductRegularTable(
-                        shop: shopProvider.shop,
-                        shopProductRegularProvider: shopProductRegularProvider,
-                        productRegular: _productRegulars,
-                      ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
               ),
             );

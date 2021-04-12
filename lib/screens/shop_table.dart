@@ -20,6 +20,9 @@ class ShopTable extends StatefulWidget {
 }
 
 class _ShopTableState extends State<ShopTable> {
+  List<int> _cancelLimitList = [3, 4, 5, 6, 7];
+  int _cancelLimit;
+
   void _init() {
     widget.shopProvider.clearController();
     widget.shopProvider.code.text = widget.shop?.code;
@@ -29,7 +32,7 @@ class _ShopTableState extends State<ShopTable> {
     widget.shopProvider.tel.text = widget.shop?.tel;
     widget.shopProvider.email.text = widget.shop?.email;
     widget.shopProvider.remarks.text = widget.shop?.remarks;
-    widget.shopProvider.cancelLimit = widget.shop?.cancelLimit;
+    _cancelLimit = widget.shop?.cancelLimit;
   }
 
   @override
@@ -112,13 +115,13 @@ class _ShopTableState extends State<ShopTable> {
         Text('キャンセル期限日', style: kLabelTextStyle),
         DropdownButton<int>(
           isExpanded: true,
-          value: widget.shopProvider.cancelLimit,
+          value: _cancelLimit,
           onChanged: (value) {
             setState(() {
-              widget.shopProvider.cancelLimit = value;
+              _cancelLimit = value;
             });
           },
-          items: widget.shopProvider.cancelLimitList.map((value) {
+          items: _cancelLimitList.map((value) {
             return DropdownMenuItem<int>(
               value: value,
               child: Text('$value日前'),
@@ -136,7 +139,8 @@ class _ShopTableState extends State<ShopTable> {
               labelColor: Colors.white,
               backgroundColor: Colors.blueAccent,
               onTap: () async {
-                if (!await widget.shopProvider.updateInfo()) {
+                if (!await widget.shopProvider
+                    .updateInfo(cancelLimit: _cancelLimit)) {
                   return;
                 }
                 ScaffoldMessenger.of(context).showSnackBar(

@@ -28,8 +28,6 @@ class ShopProvider with ChangeNotifier {
   TextEditingController cPassword = TextEditingController();
   TextEditingController remarks = TextEditingController();
   TextEditingController terms = TextEditingController();
-  List<int> cancelLimitList = [3, 4, 5, 6, 7];
-  int cancelLimit;
 
   ShopProvider.initialize() : _auth = FirebaseAuth.instance {
     _auth.authStateChanges().listen(_onStateChanged);
@@ -100,7 +98,7 @@ class ShopProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateInfo() async {
+  Future<bool> updateInfo({int cancelLimit}) async {
     if (name.text == null) return false;
     if (zip.text == null) return false;
     if (address.text == null) return false;
