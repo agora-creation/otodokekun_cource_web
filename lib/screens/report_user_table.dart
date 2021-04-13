@@ -1,11 +1,11 @@
 import 'package:data_tables/data_tables.dart';
 import 'package:flutter/material.dart';
-import 'package:otodokekun_cource_web/models/shop_order.dart';
+import 'package:otodokekun_cource_web/models/user.dart';
 
 class ReportUserTable extends StatefulWidget {
-  final List<ShopOrderModel> orders;
+  final List<UserModel> users;
 
-  ReportUserTable({@required this.orders});
+  ReportUserTable({@required this.users});
 
   @override
   _ReportUserTableState createState() => _ReportUserTableState();
@@ -27,7 +27,7 @@ class _ReportUserTableState extends State<ReportUserTable> {
       ],
       showSelect: false,
       rowsPerPage: _rowsPerPage,
-      itemCount: widget.orders?.length ?? 0,
+      itemCount: widget.users?.length ?? 0,
       firstRowIndex: _rowsOffset,
       handleNext: () {
         setState(() {
@@ -40,9 +40,14 @@ class _ReportUserTableState extends State<ReportUserTable> {
         });
       },
       itemBuilder: (index) {
+        final UserModel user = widget.users[index];
         return DataRow.byIndex(
           index: index,
-          cells: [],
+          cells: [
+            DataCell(Text('${user.name}')),
+            DataCell(Text('${user.orderQuantity}')),
+            DataCell(Text('¥ ${user.orderPrice}')),
+          ],
         );
       },
       sortColumnIndex: _sortColumnIndex,

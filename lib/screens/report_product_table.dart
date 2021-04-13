@@ -1,11 +1,11 @@
 import 'package:data_tables/data_tables.dart';
 import 'package:flutter/material.dart';
-import 'package:otodokekun_cource_web/models/shop_order.dart';
+import 'package:otodokekun_cource_web/models/shop_product.dart';
 
 class ReportProductTable extends StatefulWidget {
-  final List<ShopOrderModel> orders;
+  final List<ShopProductModel> products;
 
-  ReportProductTable({@required this.orders});
+  ReportProductTable({@required this.products});
 
   @override
   _ReportProductTableState createState() => _ReportProductTableState();
@@ -28,7 +28,7 @@ class _ReportProductTableState extends State<ReportProductTable> {
       ],
       showSelect: false,
       rowsPerPage: _rowsPerPage,
-      itemCount: widget.orders?.length ?? 0,
+      itemCount: widget.products?.length ?? 0,
       firstRowIndex: _rowsOffset,
       handleNext: () {
         setState(() {
@@ -41,9 +41,15 @@ class _ReportProductTableState extends State<ReportProductTable> {
         });
       },
       itemBuilder: (index) {
+        final ShopProductModel product = widget.products[index];
         return DataRow.byIndex(
           index: index,
-          cells: [],
+          cells: [
+            DataCell(Text('${product.name}')),
+            DataCell(Text('¥ ${product.price}')),
+            DataCell(Text('${product.orderQuantity}')),
+            DataCell(Text('¥ ${product.orderPrice}')),
+          ],
         );
       },
       sortColumnIndex: _sortColumnIndex,

@@ -4,9 +4,11 @@ import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
 import 'package:otodokekun_cource_web/models/shop_invoice.dart';
 import 'package:otodokekun_cource_web/models/shop_order.dart';
+import 'package:otodokekun_cource_web/models/shop_product.dart';
 import 'package:otodokekun_cource_web/providers/shop.dart';
 import 'package:otodokekun_cource_web/providers/shop_invoice.dart';
 import 'package:otodokekun_cource_web/providers/shop_order.dart';
+import 'package:otodokekun_cource_web/providers/shop_product.dart';
 import 'package:otodokekun_cource_web/screens/report_product_table.dart';
 import 'package:otodokekun_cource_web/widgets/border_box_button.dart';
 import 'package:otodokekun_cource_web/widgets/custom_admin_scaffold.dart';
@@ -23,6 +25,7 @@ class ReportProductScreen extends StatelessWidget {
     final shopProvider = Provider.of<ShopProvider>(context);
     final shopInvoiceProvider = Provider.of<ShopInvoiceProvider>(context);
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
+    final shopProductProvider = Provider.of<ShopProductProvider>(context);
     String _opened;
     String _closed;
     if (shopOrderProvider.invoiceDisabled) {
@@ -49,12 +52,18 @@ class ReportProductScreen extends StatelessWidget {
         .startAt([_startAt]).endAt([_endAt]).snapshots();
     List<ShopOrderModel> _orders = [];
     List<ShopInvoiceModel> _invoices = [];
+    List<ShopProductModel> _products = [];
 
     Future<void> _future() async {
       await shopInvoiceProvider
           .selectList(shopId: shopProvider.shop?.id)
           .then((value) {
         _invoices = value;
+      });
+      await shopProductProvider
+          .selectList(shopId: shopProvider.shop?.id)
+          .then((value) {
+        _products = value;
       });
     }
 
@@ -80,6 +89,14 @@ class ReportProductScreen extends StatelessWidget {
                   future: _future(),
                   builder: (context, snapshot) {
                     if (snapshot.data == null) {}
+                    for (ShopProductModel _product in _products) {
+                      for (ShopOrderModel _order in _orders) {
+                        if (_product.id == _order.cart[0].id) {
+                          _product.orderQuantity = _order.cart[0].quantity;
+                          _product.orderPrice = _order.cart[0].totalPrice;
+                        }
+                      }
+                    }
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -134,7 +151,7 @@ class ReportProductScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 8.0),
                         Expanded(
-                          child: ReportProductTable(orders: _orders),
+                          child: ReportProductTable(products: _products),
                         ),
                       ],
                     );

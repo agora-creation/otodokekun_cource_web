@@ -11,6 +11,9 @@ class ShopProductModel {
   bool _published;
   DateTime _createdAt;
 
+  int orderQuantity = 0;
+  int orderPrice = 0;
+
   String get id => _id;
   String get shopId => _shopId;
   String get name => _name;
