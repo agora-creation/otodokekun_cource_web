@@ -5,19 +5,19 @@ admin.initializeApp(functions.config().firebase);
 
 let db = admin.firestore();
 
-exports.deleteShopPlan = functions.region('asia-northeast1').pubsub.schedule('0 0 * * *').timeZone('Asia/Tokyo').onRun((_) => {
+exports.deleteShopProductRegular = functions.region('asia-northeast1').pubsub.schedule('0 0 * * *').timeZone('Asia/Tokyo').onRun((_) => {
     let today = new Date();
 
     let shopRef = db.collection('shop');
     shopRef.get().then((shopSnapshot) => {
         shopSnapshot.forEach((shopDoc) => {
-            shopRef.doc(shopDoc.id).collection('plan').where('deliveryAt', '<', today).get().then((planSnapshot) => {
-                if(planSnapshot.empty) {
+            shopRef.doc(shopDoc.id).collection('productRegular').where('deliveryAt', '<', today).get().then((productRegularSnapshot) => {
+                if(productRegularSnapshot.empty) {
                     console.log('No matching documents.');
                     return;
                 }
-                planSnapshot.forEach((planDoc) => {
-                    planDoc.ref.delete();
+                productRegularSnapshot.forEach((productRegularDoc) => {
+                    productRegularDoc.ref.delete();
                 });
             }).catch((e) => {
                 console.log('Error getting documents', e);
@@ -62,25 +62,25 @@ exports.updateUser = functions.region('asia-northeast1').pubsub.schedule('0 0 * 
                     if(closedAt == today){
                         userRef.where('shopId', '==', shopDoc.id).get().then((userSnapshot) => {
                             userSnapshot.forEach((userDoc) => {
-                                let locations = userDoc.data()['locations'];
+                                let tmp = userDoc.data()['tmp'];
                                 let shopIdNew = '';
-                                let locationsNew = [];
-                                Object.keys(locations).forEach(key => {
-                                    if(locations['target'] == true){
-                                        shopIdNew = locations['id'];
+                                let tmpNew = [];
+                                Object.keys(tmp).forEach(key => {
+                                    if(tmp['target'] == true){
+                                        shopIdNew = tmp['id'];
                                     }
-                                    locationsNew.push({
-                                        'id': locations['id'],
-                                        'name': locations['name'],
+                                    tmpNew.push({
+                                        'id': tmp['id'],
+                                        'name': tmp['name'],
                                         'target': false,
                                     });
                                 });
                                 if(shopIdNew != ''){
                                     userDoc.ref.update({
                                         'shopId': shopIdNew,
-                                        'locations': locationsNew,
+                                        'tmp': tmpNew,
                                         'staff': '',
-                                        'fixed': false,
+                                        'regular': false,
                                     });
                                     shopRef.doc(shopDoc.id).collection('order').where('deliveryAt', '>', today).get().then((orderSnapshot) => {
                                         if(orderSnapshot.empty) {
