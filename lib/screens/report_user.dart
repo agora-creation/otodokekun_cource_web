@@ -1,4 +1,7 @@
+import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource_web/helpers/style.dart';
@@ -109,7 +112,14 @@ class ReportUserScreen extends StatelessWidget {
                               labelText: 'CSVダウンロード',
                               labelColor: Colors.white,
                               backgroundColor: Colors.teal,
-                              onTap: () {},
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => CSVDownloadDialog(
+                                    users: _users,
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),
@@ -275,6 +285,66 @@ class _SearchInvoicesDialogState extends State<SearchInvoicesDialog> {
                         closedAt: _selectedInvoice.closedAt,
                         disabled: _disabled);
                     Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CSVDownloadDialog extends StatelessWidget {
+  final List<UserModel> users;
+
+  CSVDownloadDialog({@required this.users});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomDialog(
+      title: 'CSVダウンロード',
+      content: Container(
+        width: 350.0,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '※ダウンロードしたCSVファイルをエクセルで開く際、文字化けする可能性があります。文字コードをUTF-8からSJISに変更すると解消します。他社システムにインポートする際は問題ありません。',
+              style: TextStyle(color: Colors.redAccent),
+            ),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                BorderBoxButton(
+                  iconData: Icons.close,
+                  labelText: '閉じる',
+                  labelColor: Colors.blueGrey,
+                  borderColor: Colors.blueGrey,
+                  onTap: () => Navigator.pop(context),
+                ),
+                SizedBox(width: 4.0),
+                FillBoxButton(
+                  iconData: Icons.file_download,
+                  labelText: 'ダウンロードする',
+                  labelColor: Colors.white,
+                  backgroundColor: Colors.teal,
+                  onTap: () {
+                    List<List<dynamic>> _rows = [];
+                    for (int i = 0; i < users.length; i++) {
+                      List<dynamic> _row = [];
+                      _row.add('${users[i].name}');
+                      _row.add('${users[i].orderQuantity}');
+                      _row.add('${users[i].orderPrice}');
+                      _rows.add(_row);
+                    }
+                    String _csv = const ListToCsvConverter().convert(_rows);
+                    AnchorElement(href: 'data:text/plain;charset=utf-8,$_csv')
+                      ..setAttribute('download', 'report_user.csv')
+                      ..click();
                   },
                 ),
               ],
