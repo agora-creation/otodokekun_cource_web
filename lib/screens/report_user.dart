@@ -157,6 +157,26 @@ class ReportUserScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
+                            SizedBox(width: 4.0),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '顧客名で検索',
+                                  style: TextStyle(
+                                    color: Colors.blueAccent,
+                                    fontSize: 12.0,
+                                  ),
+                                ),
+                                BorderBoxButton(
+                                  iconData: Icons.person,
+                                  labelText: '指定なし',
+                                  labelColor: Colors.blueAccent,
+                                  borderColor: Colors.blueAccent,
+                                  onTap: () {},
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                         SizedBox(height: 8.0),

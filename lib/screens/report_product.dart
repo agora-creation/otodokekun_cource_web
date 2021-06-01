@@ -157,6 +157,26 @@ class ReportProductScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
+                            SizedBox(width: 4.0),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '商品名で検索',
+                                  style: TextStyle(
+                                    color: Colors.blueAccent,
+                                    fontSize: 12.0,
+                                  ),
+                                ),
+                                BorderBoxButton(
+                                  iconData: Icons.view_in_ar,
+                                  labelText: '指定なし',
+                                  labelColor: Colors.blueAccent,
+                                  borderColor: Colors.blueAccent,
+                                  onTap: () {},
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                         SizedBox(height: 8.0),

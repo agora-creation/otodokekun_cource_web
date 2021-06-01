@@ -85,4 +85,9 @@ const List<MenuItem> kSideMenu = [
       ),
     ],
   ),
+  MenuItem(
+    title: 'バックアップ',
+    route: ShopScreen.id,
+    icon: Icons.settings_backup_restore,
+  ),
 ];
